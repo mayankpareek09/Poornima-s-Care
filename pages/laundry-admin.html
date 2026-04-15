@@ -3,6 +3,9 @@
 <title>Laundry Admin — Poornima's Care</title>
 <link rel="stylesheet" href="../css/main.css"/>
 </head><body>
+  <!-- Mobile Menu Button -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 <div class="admin-wrap">
 <div class="admin-sb">
   <div class="asb-top"><div class="asb-logo">Poornima's <span>Care</span></div><div class="asb-av" id="sbAv">LA</div><div class="asb-nm" id="sbNm">—</div><div class="asb-id" id="sbId">—</div></div>
@@ -237,4 +240,103 @@ async function doUpdate(){
 
 loadAll();
 </script>
+<!-- ════════════════════════════════════════════════════════════
+     MOBILE MENU CODE FOR ALL PORTAL PAGES
+     
+     FILES TO UPDATE:
+     - pages/student.html
+     - pages/academic-admin.html
+     - pages/laundry-admin.html
+     - pages/council-portal.html
+════════════════════════════════════════════════════════════ -->
+
+<!-- STEP 1: Add this HTML right after <body> tag -->
+<!-- ================================================ -->
+
+<!-- Mobile Menu Button -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+
+<!-- STEP 2: Add this JavaScript before </body> tag -->
+<!-- ============================================== -->
+
+<script>
+// Mobile Sidebar Toggle
+function toggleSidebar() {
+  const sidebar = document.querySelector('.admin-sb');
+  const overlay = document.querySelector('.sidebar-overlay');
+  
+  if (sidebar && overlay) {
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+  }
+}
+
+// Close sidebar when clicking a link on mobile
+if (window.innerWidth <= 900) {
+  document.querySelectorAll('.asb-link').forEach(link => {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        setTimeout(toggleSidebar, 100); // Small delay for better UX
+      }
+    });
+  });
+}
+
+// Prevent zoom on input focus for iOS
+document.querySelectorAll('input, select, textarea').forEach(function(element) {
+  element.addEventListener('focus', function() {
+    if (window.innerWidth < 768) {
+      const viewport = document.querySelector('meta[name=viewport]');
+      if (viewport) {
+        viewport.setAttribute('content', 
+          'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
+      }
+    }
+  });
+  element.addEventListener('blur', function() {
+    const viewport = document.querySelector('meta[name=viewport]');
+    if (viewport) {
+      viewport.setAttribute('content', 
+        'width=device-width, initial-scale=1.0');
+    }
+  });
+});
+</script>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     DETAILED INSTRUCTIONS
+════════════════════════════════════════════════════════════ -->
+
+<!--
+For student.html:
+1. Find: <body>
+   Add AFTER it: The HTML from STEP 1
+   
+2. Find: </body>
+   Add BEFORE it: The JavaScript from STEP 2
+
+For academic-admin.html:
+1. Find: <body>
+   Add AFTER it: The HTML from STEP 1
+   
+2. Find: </body>
+   Add BEFORE it: The JavaScript from STEP 2
+
+For laundry-admin.html:
+1. Find: <body>
+   Add AFTER it: The HTML from STEP 1
+   
+2. Find: </body>
+   Add BEFORE it: The JavaScript from STEP 2
+
+For council-portal.html:
+1. Find: <body>
+   Add AFTER it: The HTML from STEP 1
+   
+2. Find: </body>
+   Add BEFORE it: The JavaScript from STEP 2
+-->
 </body></html>

@@ -42,7 +42,73 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
 .reg-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px;}
 .rtab{padding:12px;border-radius:12px;border:2px solid #B8E3E9;text-align:center;cursor:pointer;background:#f0fafb;transition:all .2s;font-size:13px;font-weight:700;color:#4F7C82;}
 .rtab.active{background:#0B2E33;border-color:#0B2E33;color:#B8E3E9;}
-@media(max-width:480px){.frow{grid-template-columns:1fr;}.reg-body,.reg-top{padding-left:20px;padding-right:20px;}.otp-input{width:40px;height:44px;font-size:16px;}}
+@media(max-width:768px){
+  .reg-wrap{
+    max-width:100%;
+    padding:10px;
+  }
+  .reg-body,.reg-top{
+    padding-left:20px;
+    padding-right:20px;
+  }
+  .hero-title{
+    font-size:20px;
+  }
+  .step-dot{
+    width:24px;
+    height:24px;
+    font-size:10px;
+  }
+}
+ 
+@media(max-width:480px){
+  .frow{
+    grid-template-columns:1fr;
+  }
+  .reg-body,.reg-top{
+    padding-left:16px;
+    padding-right:16px;
+  }
+  .otp-input{
+    width:40px;
+    height:44px;
+    font-size:16px;
+  }
+  .otp-row{
+    gap:6px;
+    justify-content:center;
+  }
+  .hero-title{
+    font-size:18px;
+  }
+  .finp,.fsel{
+    font-size:16px; /* Prevent iOS zoom */
+    padding:12px;
+  }
+  .btn-p{
+    font-size:14px;
+    padding:12px;
+  }
+  .info-box{
+    font-size:11px;
+    padding:9px 11px;
+  }
+}
+ 
+@media(max-width:360px){
+  .otp-input{
+    width:35px;
+    height:40px;
+    font-size:14px;
+  }
+  .step-indicator{
+    gap:4px;
+  }
+  .step-dot{
+    width:22px;
+    height:22px;
+  }
+}
 </style>
 </head><body>
 <div class="reg-wrap">

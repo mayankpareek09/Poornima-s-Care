@@ -1,0 +1,22 @@
+{
+  "name": "Poornima's Care",
+  "short_name": "PC Campus",
+  "description": "Campus management portal \u2014 complaints, laundry, timetable, clubs, ORION AI",
+  "start_url": "/login.html",
+  "display": "standalone",
+  "background_color": "#1a3668",
+  "theme_color": "#1a3668",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Login — Poornima's Care</title>
+<link rel="stylesheet" href="css/main.css"/>
+<style>
+*{box-sizing:border-box;}
+body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;font-family:'Sora',sans-serif;}
+.login-wrap{width:100%;max-width:520px;}
+.login-card{background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.login-top{background:#0B2E33;padding:36px 40px 30px;position:relative;overflow:hidden;}
+.login-top::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(79,124,130,0.15);}
+.logo-row{display:flex;align-items:center;gap:14px;margin-bottom:24px;position:relative;z-index:1;}
+.logo-sq{width:46px;height:46px;background:linear-gradient(135deg,#4F7C82,#93B1B5);border-radius:14px;display:flex;align-items:center;justify-content:center;}
+.logo-sq svg{width:22px;height:22px;fill:#fff;}
+.logo-text{font-size:18px;font-weight:800;color:#B8E3E9;}
+.logo-text span{color:#4F7C82;}
+.hero-title{font-size:28px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px;position:relative;z-index:1;}
+.hero-sub{font-size:13px;color:#93B1B5;position:relative;z-index:1;}
+.login-body{padding:32px 40px 36px;}
+.portal-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px;}
+.ptab{padding:14px 6px;border-radius:12px;border:2px solid #B8E3E9;text-align:center;cursor:pointer;background:#f0fafb;transition:all .2s;}
+.ptab:hover{border-color:#4F7C82;background:#e8f6f8;}
+.ptab.active{background:#0B2E33;border-color:#0B2E33;box-shadow:0 4px 12px rgba(11,46,51,0.2);}
+.ptab-ic{font-size:22px;display:block;margin-bottom:5px;}
+.ptab-lb{font-size:11px;font-weight:700;color:#4F7C82;}
+.ptab.active .ptab-lb{color:#B8E3E9;}
+.council-sub{display:none;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.council-sub.show{display:grid;}
+.csub{padding:12px;border-radius:11px;border:2px solid #B8E3E9;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:#4F7C82;background:#f0fafb;transition:all .2s;}
+.csub.active{background:#4F7C82;border-color:#4F7C82;color:#fff;}
+.flbl{font-size:12px;font-weight:700;color:#4F7C82;letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px;margin-top:4px;}
+.finp{width:100%;border:2px solid #B8E3E9;border-radius:11px;padding:13px 16px;font-size:14px;color:#0B2E33;background:#f8fcfd;outline:none;margin-bottom:16px;font-family:'Sora',sans-serif;transition:border .2s;}
+.finp:focus{border-color:#4F7C82;background:#fff;box-shadow:0 0 0 3px rgba(79,124,130,0.1);}
+.login-err{color:#E24B4A;font-size:12px;margin-bottom:10px;min-height:18px;font-weight:600;}
+.btn-login{width:100%;padding:15px;background:#0B2E33;border:none;border-radius:12px;color:#B8E3E9;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;font-family:'Sora',sans-serif;}
+.btn-login:hover{background:#0d3b42;transform:translateY(-1px);box-shadow:0 6px 20px rgba(11,46,51,0.3);}
+.btn-login:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.login-links{display:flex;justify-content:center;gap:20px;margin-top:20px;}
+.login-links a{font-size:12px;color:#4F7C82;font-weight:600;cursor:pointer;transition:color .2s;}
+.login-links a:hover{color:#0B2E33;}
+@media(max-width:560px){
+  .login-body,.login-top{padding-left:22px;padding-right:22px;}
+  .hero-title{font-size:22px;}
+  .ptab-ic{font-size:18px;}
+}
+</style>
+</head><body>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-top">
+      <div class="logo-row">
+        <div class="logo-sq"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+        <div class="logo-text">Poornima's <span>Care</span></div>
+      </div>
+      <div class="hero-title">Welcome back.<br/>Sign in to continue.</div>
+      <div class="hero-sub">Campus management portal · Session 2026-27</div>
+    </div>
+    <div class="login-body">
+      <div class="portal-tabs">
+        <div class="ptab active" id="pt-student" onclick="selectPortal('student')"><span class="ptab-ic">🎓</span><span class="ptab-lb">Student</span></div>
+        <div class="ptab" id="pt-academic_admin" onclick="selectPortal('academic_admin')"><span class="ptab-ic">📚</span><span class="ptab-lb">Academic</span></div>
+        <div class="ptab" id="pt-laundry_admin" onclick="selectPortal('laundry_admin')"><span class="ptab-ic">👕</span><span class="ptab-lb">Laundry</span></div>
+        <div class="ptab" id="pt-council" onclick="selectPortal('council')"><span class="ptab-ic">👑</span><span class="ptab-lb">Council</span></div>
+      </div>
+      <div class="council-sub" id="councilSub">
+        <div class="csub active" id="cs-chair" onclick="selectCouncil('council_admin','cs-chair')">👑 Chair / Co-Chair</div>
+        <div class="csub" id="cs-captain" onclick="selectCouncil('club_captain','cs-captain')">🏫 Captain / VC</div>
+      </div>
+      <div class="flbl">Enrollment ID</div>
+      <input class="finp" id="loginId" placeholder="e.g. PU2021CS045" autocomplete="username"/>
+      <div class="flbl">Password</div>
+      <input class="finp" id="loginPwd" type="password" placeholder="••••••••" autocomplete="current-password"/>
+      <div class="login-err" id="loginErr"></div>
+      <button class="btn-login" id="loginBtn" onclick="doLogin()">Sign In →</button>
+      <div class="login-links">
+        <a onclick="window.location.href='register.html'">New student? Register →</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/api.js"></script>
+<script>
+let role='student';
+function selectPortal(p){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('pt-'+p).classList.add('active');
+  role=p==='council'?'council_admin':p;
+  document.getElementById('councilSub').classList.toggle('show',p==='council');
+  document.getElementById('loginErr').textContent='';
+}
+function selectCouncil(r,id){
+  role=r;
+  document.querySelectorAll('.csub').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+async function doLogin(){
+  const id=document.getElementById('loginId').value.trim();
+  const pwd=document.getElementById('loginPwd').value.trim();
+  const err=document.getElementById('loginErr');
+  err.textContent='';
+  if(!id||!pwd){err.textContent='Please enter your ID and password.';return;}
+  const btn=document.getElementById('loginBtn');
+  btn.textContent='Signing in…';btn.disabled=true;
+  try{
+    const res=await fetch(window.location.origin+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:id,password:pwd,role})});
+    const data=await res.json();
+    if(!data.success){err.textContent=data.message;return;}
+    localStorage.setItem('pc_token',data.token);
+    localStorage.setItem('pc_user',JSON.stringify(data.user));
+    const dest={student:'pages/student.html',academic_admin:'pages/academic-admin.html',laundry_admin:'pages/laundry-admin.html',council_admin:'pages/council-portal.html',club_captain:'pages/council-portal.html',vice_captain:'pages/council-portal.html'};
+    window.location.href=dest[data.user.role]||'pages/student.html';
+  }catch(e){err.textContent='Cannot connect to server. Check backend is running.';}
+  finally{btn.textContent='Sign In →';btn.disabled=false;}
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body></html>

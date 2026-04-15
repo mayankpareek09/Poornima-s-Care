@@ -1,0 +1,355 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Register — Poornima's Care</title>
+<link rel="stylesheet" href="css/main.css"/>
+<style>
+body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;font-family:'Sora',sans-serif;}
+.reg-wrap{width:100%;max-width:580px;}
+.reg-card{background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.reg-top{background:#0B2E33;padding:28px 36px 24px;position:relative;overflow:hidden;}
+.reg-top::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(79,124,130,0.15);}
+.logo-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;position:relative;z-index:1;}
+.logo-sq{width:40px;height:40px;background:linear-gradient(135deg,#4F7C82,#93B1B5);border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.logo-sq svg{width:20px;height:20px;fill:#fff;}
+.logo-text{font-size:16px;font-weight:800;color:#B8E3E9;}
+.logo-text span{color:#4F7C82;}
+.hero-title{font-size:22px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:5px;position:relative;z-index:1;}
+.hero-sub{font-size:12px;color:#93B1B5;position:relative;z-index:1;}
+.reg-body{padding:28px 36px 32px;}
+.step{display:none;}
+.step.active{display:block;}
+.step-indicator{display:flex;align-items:center;gap:6px;margin-bottom:22px;}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;border:2px solid #B8E3E9;color:#93B1B5;background:#f0fafb;transition:all .2s;flex-shrink:0;}
+.step-dot.done{background:#4F7C82;border-color:#4F7C82;color:#fff;}
+.step-dot.active{background:#0B2E33;border-color:#0B2E33;color:#fff;}
+.step-line{flex:1;height:2px;background:#B8E3E9;border-radius:2px;}
+.step-line.done{background:#4F7C82;}
+.flbl{font-size:11px;font-weight:700;color:#4F7C82;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;margin-top:2px;}
+.finp,.fsel{width:100%;border:2px solid #B8E3E9;border-radius:10px;padding:12px 14px;font-size:13px;color:#0B2E33;background:#f8fcfd;outline:none;margin-bottom:13px;font-family:'Sora',sans-serif;transition:border .2s;}
+.finp:focus,.fsel:focus{border-color:#4F7C82;background:#fff;box-shadow:0 0 0 3px rgba(79,124,130,0.1);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-p{padding:13px 20px;background:#0B2E33;border:none;border-radius:11px;color:#B8E3E9;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;font-family:'Sora',sans-serif;width:100%;}
+.btn-p:hover{background:#0d3b42;transform:translateY(-1px);box-shadow:0 4px 14px rgba(11,46,51,0.3);}
+.btn-p:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.btn-sec{padding:12px 20px;background:#f0fafb;border:2px solid #B8E3E9;border-radius:11px;color:#4F7C82;font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;width:100%;margin-bottom:10px;}
+.btn-sec:hover{border-color:#4F7C82;}
+.errmsg{color:#E24B4A;font-size:12px;margin-bottom:10px;font-weight:600;min-height:18px;}
+.info-box{background:#e8f6f8;border:1px solid #B8E3E9;border-radius:9px;padding:11px 14px;font-size:12px;color:#4F7C82;margin-bottom:14px;line-height:1.6;}
+.otp-row{display:flex;gap:8px;}
+.otp-input{width:48px;height:52px;border:2px solid #B8E3E9;border-radius:10px;text-align:center;font-size:20px;font-weight:800;color:#0B2E33;background:#f8fcfd;outline:none;font-family:'Sora',sans-serif;transition:border .2s;}
+.otp-input:focus{border-color:#4F7C82;background:#fff;}
+.success-icon{font-size:48px;text-align:center;margin-bottom:12px;}
+.reg-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px;}
+.rtab{padding:12px;border-radius:12px;border:2px solid #B8E3E9;text-align:center;cursor:pointer;background:#f0fafb;transition:all .2s;font-size:13px;font-weight:700;color:#4F7C82;}
+.rtab.active{background:#0B2E33;border-color:#0B2E33;color:#B8E3E9;}
+@media(max-width:480px){.frow{grid-template-columns:1fr;}.reg-body,.reg-top{padding-left:20px;padding-right:20px;}.otp-input{width:40px;height:44px;font-size:16px;}}
+</style>
+</head><body>
+<div class="reg-wrap">
+  <div class="reg-card">
+    <div class="reg-top">
+      <div class="logo-row">
+        <div class="logo-sq"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+        <div class="logo-text">Poornima's <span>Care</span></div>
+      </div>
+      <div class="hero-title">Create Account</div>
+      <div class="hero-sub">Register for the campus management portal</div>
+    </div>
+    <div class="reg-body">
+
+      <!-- Register type tabs -->
+      <div id="typeTabs" class="reg-tabs">
+        <div class="rtab active" id="tab-student" onclick="selectType('student')">🎓 Student</div>
+        <div class="rtab" id="tab-admin" onclick="selectType('admin')">🔧 Admin / Staff</div>
+      </div>
+
+      <!-- STUDENT FLOW -->
+      <div id="studentFlow">
+        <!-- Step indicator -->
+        <div class="step-indicator">
+          <div class="step-dot active" id="dot1">1</div>
+          <div class="step-line" id="line1"></div>
+          <div class="step-dot" id="dot2">2</div>
+          <div class="step-line" id="line2"></div>
+          <div class="step-dot" id="dot3">3</div>
+        </div>
+
+        <!-- STEP 1: Basic Info -->
+        <div class="step active" id="step1">
+          <div style="font-size:15px;font-weight:800;color:#0B2E33;margin-bottom:4px;">Personal Details</div>
+          <div style="font-size:11px;color:#93B1B5;margin-bottom:18px;">Fill your university information</div>
+          <div class="flbl">Full Name <span style="color:#E24B4A;">*</span></div>
+          <input class="finp" id="regName" placeholder="Your full name as per records"/>
+          <div class="frow">
+            <div>
+              <div class="flbl">University Enrollment ID <span style="color:#E24B4A;">*</span></div>
+              <input class="finp" id="regId" placeholder="e.g. PU2021CS045"/>
+            </div>
+            <div>
+              <div class="flbl">Phone Number</div>
+              <input class="finp" id="regPhone" type="tel" placeholder="10-digit mobile"/>
+            </div>
+          </div>
+          <div class="frow">
+            <div>
+              <div class="flbl">Course</div>
+              <select class="fsel" id="regCourse">
+                <option value="">Select course</option>
+                <option>B.Tech CSE</option><option>B.Tech ECE</option>
+                <option>B.Tech ME</option><option>B.Tech EE</option>
+                <option>B.Tech CE</option><option>MBA</option>
+                <option>MCA</option><option>B.Com</option><option>BCA</option>
+              </select>
+            </div>
+            <div>
+              <div class="flbl">Year</div>
+              <select class="fsel" id="regYear">
+                <option>1st Year</option><option>2nd Year</option>
+                <option>3rd Year</option><option>4th Year</option>
+              </select>
+            </div>
+          </div>
+          <div class="frow">
+            <div>
+              <div class="flbl">Hostel (optional)</div>
+              <select class="fsel" id="regHostel">
+                <option value="">Not in hostel</option>
+                <optgroup label="Boys"><option>Himalaya-1</option><option>Himalaya-2</option><option>Himalaya-3</option><option>Himalaya-4</option></optgroup>
+                <optgroup label="Girls"><option>Gargi-1</option><option>Gargi-2</option></optgroup>
+              </select>
+            </div>
+            <div>
+              <div class="flbl">Room No. (optional)</div>
+              <input class="finp" id="regRoom" placeholder="e.g. 305"/>
+            </div>
+          </div>
+          <div class="errmsg" id="step1Err"></div>
+          <button class="btn-p" onclick="goStep2()">Next →</button>
+          <div style="text-align:center;margin-top:14px;"><a href="login.html" style="font-size:12px;color:#4F7C82;font-weight:600;">Already registered? Sign in</a></div>
+        </div>
+
+        <!-- STEP 2: Password -->
+        <div class="step" id="step2">
+          <div style="font-size:15px;font-weight:800;color:#0B2E33;margin-bottom:4px;">Set Password</div>
+          <div style="font-size:11px;color:#93B1B5;margin-bottom:18px;">Choose a secure password for your account</div>
+          <div class="info-box">🔒 Password must be at least 8 characters. Use a mix of letters and numbers.</div>
+          <div class="flbl">Password <span style="color:#E24B4A;">*</span></div>
+          <input class="finp" type="password" id="regPwd" placeholder="Min. 8 characters"/>
+          <div class="flbl">Confirm Password <span style="color:#E24B4A;">*</span></div>
+          <input class="finp" type="password" id="regPwd2" placeholder="Re-enter password"/>
+          <div class="errmsg" id="step2Err"></div>
+          <button class="btn-p" onclick="doRegister()" id="regBtn">Register & Get OTP →</button>
+          <button class="btn-sec" onclick="gotoStep(1)">← Back</button>
+        </div>
+
+        <!-- STEP 3: OTP -->
+        <div class="step" id="step3">
+          <div style="font-size:15px;font-weight:800;color:#0B2E33;margin-bottom:4px;">Verify OTP</div>
+          <div style="font-size:11px;color:#93B1B5;margin-bottom:18px;" id="otpSubtitle">Enter the 6-digit OTP sent to you</div>
+          <div class="info-box">📱 OTP has been generated. During development, check your server terminal/console for the OTP. In production with SMS configured, it will be sent to your phone.</div>
+          <div class="flbl">Enter 6-digit OTP</div>
+          <div class="otp-row" style="margin-bottom:16px;">
+            <input class="otp-input" maxlength="1" id="o1" oninput="otpNext(this,'o2')" onkeydown="otpBack(event,this,'')"/>
+            <input class="otp-input" maxlength="1" id="o2" oninput="otpNext(this,'o3')" onkeydown="otpBack(event,this,'o1')"/>
+            <input class="otp-input" maxlength="1" id="o3" oninput="otpNext(this,'o4')" onkeydown="otpBack(event,this,'o2')"/>
+            <input class="otp-input" maxlength="1" id="o4" oninput="otpNext(this,'o5')" onkeydown="otpBack(event,this,'o3')"/>
+            <input class="otp-input" maxlength="1" id="o5" oninput="otpNext(this,'o6')" onkeydown="otpBack(event,this,'o4')"/>
+            <input class="otp-input" maxlength="1" id="o6" oninput="otpNext(this,'')" onkeydown="otpBack(event,this,'o5')"/>
+          </div>
+          <div class="errmsg" id="step3Err"></div>
+          <button class="btn-p" onclick="verifyOtp()" id="otpBtn">Verify OTP →</button>
+          <button class="btn-sec" onclick="resendOtp()">Resend OTP</button>
+        </div>
+
+        <!-- STEP 4: Success -->
+        <div class="step" id="step4">
+          <div class="success-icon">🎉</div>
+          <div style="text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:#0B2E33;margin-bottom:6px;">Account Created!</div>
+            <div style="font-size:12px;color:#93B1B5;margin-bottom:20px;">Your account is verified. Welcome to Poornima's Care!</div>
+          </div>
+          <button class="btn-p" onclick="window.location.href='login.html'">Go to Login →</button>
+        </div>
+      </div>
+
+      <!-- ADMIN FLOW -->
+      <div id="adminFlow" style="display:none;">
+        <div class="info-box">🔐 Admin registration requires a secret key provided by the system administrator. Contact your IT department for the key.</div>
+        <div class="flbl">Full Name <span style="color:#E24B4A;">*</span></div>
+        <input class="finp" id="adName" placeholder="Full name"/>
+        <div class="frow">
+          <div><div class="flbl">Admin ID <span style="color:#E24B4A;">*</span></div><input class="finp" id="adId" placeholder="e.g. ACAD001"/></div>
+          <div>
+            <div class="flbl">Role <span style="color:#E24B4A;">*</span></div>
+            <select class="fsel" id="adRole">
+              <option value="academic_admin">Academic Admin</option>
+              <option value="laundry_admin">Laundry Admin</option>
+              <option value="hostel_admin">Hostel Admin</option>
+              <option value="campus_admin">Campus Admin</option>
+              <option value="council_admin">Council Admin</option>
+              <option value="club_captain">Club Captain</option>
+              <option value="vice_captain">Vice Captain</option>
+            </select>
+          </div>
+        </div>
+        <div id="clubFields" style="display:none;">
+          <div class="flbl">Club Name</div>
+          <input class="finp" id="adClub" placeholder="e.g. Hack Elite"/>
+        </div>
+        <div class="flbl">Password <span style="color:#E24B4A;">*</span></div>
+        <input class="finp" type="password" id="adPwd" placeholder="Min. 8 characters"/>
+        <div class="flbl">Admin Secret Key <span style="color:#E24B4A;">*</span></div>
+        <input class="finp" type="password" id="adKey" placeholder="Provided by IT department"/>
+        <div class="errmsg" id="adErr"></div>
+        <button class="btn-p" onclick="doAdminRegister()" id="adBtn">Create Admin Account →</button>
+        <div style="text-align:center;margin-top:14px;"><a href="login.html" style="font-size:12px;color:#4F7C82;font-weight:600;">Back to Login</a></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+let regType='student';
+let regUserId='';
+
+function selectType(t){
+  regType=t;
+  document.querySelectorAll('.rtab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.getElementById('studentFlow').style.display=t==='student'?'block':'none';
+  document.getElementById('adminFlow').style.display=t==='admin'?'block':'none';
+}
+
+document.getElementById('adRole').addEventListener('change',function(){
+  const showClub=['club_captain','vice_captain'].includes(this.value);
+  document.getElementById('clubFields').style.display=showClub?'block':'none';
+});
+
+function gotoStep(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  [1,2,3].forEach(i=>{
+    const dot=document.getElementById('dot'+i);
+    const line=document.getElementById('line'+i);
+    if(i<n){dot.classList.add('done');dot.classList.remove('active');if(line)line.classList.add('done');}
+    else if(i===n){dot.classList.add('active');dot.classList.remove('done');}
+    else{dot.classList.remove('done','active');}
+  });
+}
+
+function goStep2(){
+  const name=document.getElementById('regName').value.trim();
+  const id=document.getElementById('regId').value.trim();
+  if(!name){document.getElementById('step1Err').textContent='Full name is required.';return;}
+  if(!id){document.getElementById('step1Err').textContent='Enrollment ID is required.';return;}
+  document.getElementById('step1Err').textContent='';
+  gotoStep(2);
+}
+
+async function doRegister(){
+  const pwd=document.getElementById('regPwd').value;
+  const pwd2=document.getElementById('regPwd2').value;
+  const errEl=document.getElementById('step2Err');
+  errEl.textContent='';
+  if(pwd.length<8){errEl.textContent='Password must be at least 8 characters.';return;}
+  if(pwd!==pwd2){errEl.textContent='Passwords do not match.';return;}
+  const btn=document.getElementById('regBtn');
+  btn.disabled=true;btn.textContent='Registering…';
+  try{
+    const res=await fetch(window.location.origin+'/api/auth/register',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        name:document.getElementById('regName').value.trim(),
+        userId:document.getElementById('regId').value.trim(),
+        password:pwd,
+        phone:document.getElementById('regPhone').value.trim(),
+        course:document.getElementById('regCourse').value,
+        year:document.getElementById('regYear').value,
+        hostel:document.getElementById('regHostel').value,
+        room:document.getElementById('regRoom').value.trim(),
+      })
+    });
+    const data=await res.json();
+    if(!data.success){errEl.textContent=data.message;return;}
+    regUserId=data.userId||document.getElementById('regId').value.trim();
+    document.getElementById('otpSubtitle').textContent='OTP generated for '+regUserId+'. Check server terminal in development.';
+    gotoStep(3);
+  }catch(e){errEl.textContent='Cannot connect to server.';}
+  finally{btn.disabled=false;btn.textContent='Register & Get OTP →';}
+}
+
+function otpNext(el,nextId){
+  if(el.value&&nextId)document.getElementById(nextId).focus();
+  if(!nextId&&el.value) verifyOtp();
+}
+function otpBack(ev,el,prevId){
+  if(ev.key==='Backspace'&&!el.value&&prevId)document.getElementById(prevId).focus();
+}
+
+function getOtpValue(){
+  return ['o1','o2','o3','o4','o5','o6'].map(id=>document.getElementById(id).value).join('');
+}
+
+async function verifyOtp(){
+  const otp=getOtpValue();
+  const errEl=document.getElementById('step3Err');
+  errEl.textContent='';
+  if(otp.length!==6){errEl.textContent='Enter all 6 digits.';return;}
+  const btn=document.getElementById('otpBtn');
+  btn.disabled=true;btn.textContent='Verifying…';
+  try{
+    const res=await fetch(window.location.origin+'/api/auth/verify-otp',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({userId:regUserId,otp})
+    });
+    const data=await res.json();
+    if(!data.success){errEl.textContent=data.message;return;}
+    if(data.token){localStorage.setItem('pc_token',data.token);localStorage.setItem('pc_user',JSON.stringify(data.user));}
+    gotoStep(4);
+  }catch(e){errEl.textContent='Cannot connect to server.';}
+  finally{btn.disabled=false;btn.textContent='Verify OTP →';}
+}
+
+async function resendOtp(){
+  const pwd=document.getElementById('regPwd').value;
+  try{
+    await fetch(window.location.origin+'/api/auth/register',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:document.getElementById('regName').value.trim(),userId:regUserId,password:pwd})
+    });
+    showToast('OTP resent! Check terminal.','success');
+    ['o1','o2','o3','o4','o5','o6'].forEach(id=>{document.getElementById(id).value='';});
+    document.getElementById('o1').focus();
+  }catch(e){showToast('Cannot resend OTP.','error');}
+}
+
+async function doAdminRegister(){
+  const name=document.getElementById('adName').value.trim();
+  const userId=document.getElementById('adId').value.trim();
+  const password=document.getElementById('adPwd').value;
+  const role=document.getElementById('adRole').value;
+  const key=document.getElementById('adKey').value;
+  const clubName=document.getElementById('adClub').value.trim();
+  const errEl=document.getElementById('adErr');
+  errEl.textContent='';
+  if(!name||!userId||!password||!key){errEl.textContent='All fields are required.';return;}
+  if(password.length<8){errEl.textContent='Password must be at least 8 characters.';return;}
+  // Simple client-side key check (real check is on server)
+  const btn=document.getElementById('adBtn');
+  btn.disabled=true;btn.textContent='Creating account…';
+  try{
+    const res=await fetch(window.location.origin+'/api/auth/register-admin',{
+      method:'POST',headers:{'Content-Type':'application/json','x-admin-key':key},
+      body:JSON.stringify({name,userId,password,role,clubName,adminKey:key})
+    });
+    const data=await res.json();
+    if(!data.success){errEl.textContent=data.message;return;}
+    showToast('Admin account created! You can now login.','success');
+    setTimeout(()=>window.location.href='login.html',2000);
+  }catch(e){errEl.textContent='Cannot connect to server.';}
+  finally{btn.disabled=false;btn.textContent='Create Admin Account →';}
+}
+</script>
+</body></html>

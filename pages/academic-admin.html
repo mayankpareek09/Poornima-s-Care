@@ -1,0 +1,504 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Academic Admin — Poornima's Care</title>
+<link rel="stylesheet" href="../css/main.css"/>
+<style>
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:10px;}
+.photo-thumb{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:2px solid #B8E3E9;}
+.photo-thumb-wrap{position:relative;}
+.photo-del{position:absolute;top:3px;right:3px;background:#E24B4A;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+</style>
+</head><body>
+<div class="admin-wrap">
+<div class="admin-sb">
+  <div class="asb-top">
+    <div class="asb-logo">Poornima's <span>Care</span></div>
+    <div class="asb-av" id="sbAv">AA</div>
+    <div class="asb-nm" id="sbNm">—</div>
+    <div class="asb-id" id="sbId">—</div>
+  </div>
+  <div class="asb-sec">Management</div>
+  <div class="asb-link active" id="lnk-dash" onclick="show('dash',this)"><span class="asb-ic">⚡</span> Dashboard</div>
+  <div class="asb-link" id="lnk-complaints" onclick="show('complaints',this)"><span class="asb-ic">📋</span> Complaints</div>
+  <div class="asb-link" id="lnk-timetable" onclick="show('timetable',this)"><span class="asb-ic">📅</span> Timetable</div>
+  <div class="asb-link" id="lnk-events" onclick="show('events',this)"><span class="asb-ic">🎉</span> Events</div>
+  <div class="asb-link" id="lnk-bus" onclick="show('bus',this)"><span class="asb-ic">🚌</span> Bus Routes</div>
+  <div class="asb-sec">Analytics</div>
+  <div class="asb-link" id="lnk-analytics" onclick="show('analytics',this)"><span class="asb-ic">📈</span> Analytics</div>
+</div>
+<div class="admin-main">
+
+  <!-- DASHBOARD -->
+  <div class="sec active" id="s-dash">
+    <div class="admin-hdr"><div class="admin-hdr-t">⚡ Dashboard</div><button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="signOut()">Sign Out</button></div>
+    <div class="admin-body">
+      <div class="g4 mb-4">
+        <div class="sc"><div class="sc-ic">🔴</div><div class="sc-n" id="dOpen" style="color:#E24B4A;">—</div><div class="sc-l">Open Complaints</div></div>
+        <div class="sc"><div class="sc-ic">🟡</div><div class="sc-n" id="dProg" style="color:#854F0B;">—</div><div class="sc-l">In Progress</div></div>
+        <div class="sc"><div class="sc-ic">🟢</div><div class="sc-n" id="dRes" style="color:#085041;">—</div><div class="sc-l">Resolved</div></div>
+        <div class="sc"><div class="sc-ic">🎉</div><div class="sc-n" id="dEvt" style="color:#4F7C82;">—</div><div class="sc-l">Events</div></div>
+        <div class="sc"><div class="sc-ic">🚌</div><div class="sc-n" id="dBus">—</div><div class="sc-l">Bus Routes</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLAINTS -->
+  <div class="sec" id="s-complaints">
+    <div class="admin-hdr">
+      <div class="admin-hdr-t">📋 Complaint Management</div>
+      <div class="flex items-c gap-2">
+        <select class="fsel" style="margin-bottom:0;width:auto;padding:6px 10px;font-size:11px;" id="cfStatus" onchange="loadComplaints()"><option value="">All Status</option><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option></select>
+        <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="signOut()">Sign Out</button>
+      </div>
+    </div>
+    <div class="admin-body">
+      <div class="g3 mb-4">
+        <div class="sc"><div class="sc-n" id="cOpen" style="color:#E24B4A;">0</div><div class="sc-l">Open</div></div>
+        <div class="sc"><div class="sc-n" id="cProg" style="color:#854F0B;">0</div><div class="sc-l">In Progress</div></div>
+        <div class="sc"><div class="sc-n" id="cRes" style="color:#085041;">0</div><div class="sc-l">Resolved</div></div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-row head" style="grid-template-columns:2fr 1fr 1fr 80px;"><span>Student &amp; Issue</span><span>Category</span><span>Date</span><span>Status</span></div>
+        <div id="complaintRows"><div style="padding:12px 14px;font-size:11px;color:#93B1B5;">Loading…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="sec" id="s-analytics">
+    <div class="admin-hdr"><div class="admin-hdr-t">📈 Analytics</div><button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="loadAnalytics()">↺ Refresh</button></div>
+    <div class="admin-body"><div id="analyticsBody"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div></div>
+  </div>
+
+  <!-- TIMETABLE -->
+  <div class="sec" id="s-timetable">
+    <div class="admin-hdr">
+      <div class="admin-hdr-t">📅 Timetable</div>
+      <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="openModal('addTTModal')">+ Add</button>
+    </div>
+    <div class="admin-body"><div id="ttList"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div></div>
+  </div>
+
+  <!-- EVENTS -->
+  <div class="sec" id="s-events">
+    <div class="admin-hdr">
+      <div class="admin-hdr-t">🎉 Events</div>
+      <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="openAddEvModal()">+ Add Event</button>
+    </div>
+    <div class="admin-body"><div id="evList"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div></div>
+  </div>
+
+  <!-- BUS -->
+  <div class="sec" id="s-bus">
+    <div class="admin-hdr">
+      <div class="admin-hdr-t">🚌 Bus Routes</div>
+      <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="openAddBusModal()">+ Add Route</button>
+    </div>
+    <div class="admin-body"><div id="busList"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div></div>
+  </div>
+
+</div>
+</div>
+
+<!-- Update Complaint Modal -->
+<div class="modal-ov" id="updateComplaintModal"><div class="modal-box">
+  <button class="modal-close" onclick="closeModal('updateComplaintModal')">✕</button>
+  <div class="modal-title">Update Complaint</div>
+  <div id="ucInfo" style="font-size:11px;color:#4F7C82;margin-bottom:14px;"></div>
+  <div class="flbl">Status</div>
+  <select class="fsel" id="ucStatus"><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option></select>
+  <div class="flbl">Response / Notes</div>
+  <textarea class="ftxt" id="ucNotes" placeholder="Response to student…"></textarea>
+  <input type="hidden" id="ucId"/>
+  <button class="btn-p full" onclick="updateComplaint()">Update →</button>
+</div></div>
+
+<!-- Add Timetable Modal -->
+<div class="modal-ov" id="addTTModal"><div class="modal-box">
+  <button class="modal-close" onclick="closeModal('addTTModal')">✕</button>
+  <div class="modal-title">Add Timetable</div>
+  <div class="frow">
+    <div><div class="flbl">Course <span class="req">*</span></div><input class="finp" id="ttCourse" placeholder="B.Tech CSE"/></div>
+    <div><div class="flbl">Semester <span class="req">*</span></div><input class="finp" id="ttSem" placeholder="5th Semester"/></div>
+  </div>
+  <div class="flbl">Section</div><input class="finp" id="ttSec" placeholder="A"/>
+  <button class="btn-p full" onclick="addTT()">Save →</button>
+</div></div>
+
+<!-- Edit Timetable Modal -->
+<div class="modal-ov" id="editTTModal"><div class="modal-box" style="max-width:500px;">
+  <button class="modal-close" onclick="closeModal('editTTModal')">✕</button>
+  <div class="modal-title">Edit Timetable</div>
+  <input type="hidden" id="ettId"/>
+  <div class="frow">
+    <div><div class="flbl">Course</div><input class="finp" id="ettCourse"/></div>
+    <div><div class="flbl">Semester</div><input class="finp" id="ettSem"/></div>
+  </div>
+  <div class="flbl">Section</div><input class="finp" id="ettSec"/>
+  <button class="btn-p full" onclick="saveEditTT()">Save Changes →</button>
+</div></div>
+
+<!-- Add/Edit Event Modal -->
+<div class="modal-ov" id="evModal"><div class="modal-box" style="max-width:520px;max-height:90vh;overflow-y:auto;">
+  <button class="modal-close" onclick="closeModal('evModal')">✕</button>
+  <div class="modal-title" id="evModalTitle">Add Event</div>
+  <input type="hidden" id="evId"/>
+  <div class="flbl">Title <span class="req">*</span></div><input class="finp" id="evTitle" placeholder="Event name"/>
+  <div class="frow">
+    <div><div class="flbl">Date <span class="req">*</span></div><input class="finp" type="date" id="evDate"/></div>
+    <div><div class="flbl">Time</div><input class="finp" id="evTime" placeholder="10:00 AM"/></div>
+  </div>
+  <div class="frow">
+    <div><div class="flbl">Type</div><select class="fsel" id="evType"><option value="academic">Academic</option><option value="cultural">Cultural</option><option value="sports">Sports</option><option value="club">Club</option><option value="exam">Exam</option><option value="holiday">Holiday</option></select></div>
+    <div><div class="flbl">Venue</div><input class="finp" id="evVenue" placeholder="Hall A"/></div>
+  </div>
+  <div class="flbl">Description</div><textarea class="ftxt" id="evDesc"></textarea>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><input type="checkbox" id="evOngoing"/><label style="font-size:12px;cursor:pointer;" for="evOngoing">Currently Ongoing</label></div>
+  <div class="flbl">📸 Event Photos (upload images)</div>
+  <input type="file" id="evPhotos" accept="image/*" multiple style="margin-bottom:10px;font-size:12px;"/>
+  <div id="evPhotoPreview" class="photo-grid" style="margin-bottom:12px;"></div>
+  <div id="evExistingPhotos" style="margin-bottom:12px;"></div>
+  <button class="btn-p full" id="evSaveBtn" onclick="saveEvent()">Save Event →</button>
+</div></div>
+
+<!-- Add/Edit Bus Route Modal -->
+<div class="modal-ov" id="busModal"><div class="modal-box" style="max-width:520px;max-height:90vh;overflow-y:auto;">
+  <button class="modal-close" onclick="closeModal('busModal')">✕</button>
+  <div class="modal-title" id="busModalTitle">Add Bus Route</div>
+  <input type="hidden" id="busId"/>
+  <div class="frow">
+    <div><div class="flbl">Route No. <span class="req">*</span></div><input class="finp" id="busNo" placeholder="e.g. R-01"/></div>
+    <div><div class="flbl">Route Name <span class="req">*</span></div><input class="finp" id="busName" placeholder="e.g. Jaipur City Route"/></div>
+  </div>
+  <div class="frow">
+    <div><div class="flbl">Morning Time</div><input class="finp" id="busMorning" placeholder="7:30 AM"/></div>
+    <div><div class="flbl">Evening Time</div><input class="finp" id="busEvening" placeholder="5:30 PM"/></div>
+  </div>
+  <div class="frow">
+    <div><div class="flbl">Driver Name</div><input class="finp" id="busDriver" placeholder="Driver name"/></div>
+    <div><div class="flbl">Driver Phone</div><input class="finp" id="busPhone" placeholder="10-digit number"/></div>
+  </div>
+  <div class="frow">
+    <div><div class="flbl">Annual Fee (₹)</div><input class="finp" type="number" id="busFee" placeholder="e.g. 20000"/></div>
+    <div><div class="flbl">Vehicle No.</div><input class="finp" id="busVehicle" placeholder="RJ-14-1234"/></div>
+  </div>
+  <div class="flbl">Stops (one per line: Name | Time | Landmark)</div>
+  <textarea class="ftxt" id="busStops" placeholder="Sindhi Camp | 7:30 AM | Near Railway Station&#10;Ajmer Road | 7:45 AM | Near Petrol Pump&#10;Poornima | 8:10 AM | College Gate" style="min-height:100px;"></textarea>
+  <div class="flbl">Notes / Rebate Info</div>
+  <textarea class="ftxt" id="busNotes" placeholder="e.g. 50% rebate for girls hostel students" style="min-height:60px;"></textarea>
+  <button class="btn-p full" id="busSaveBtn" onclick="saveBus()">Save Route →</button>
+</div></div>
+
+<script src="../js/api.js"></script>
+<script>
+const user=requireAuth(['academic_admin']);
+if(user){
+  const ini=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('sbAv').textContent=ini;
+  document.getElementById('sbNm').textContent=user.name;
+  document.getElementById('sbId').textContent=user.userId+' · Academic Admin';
+}
+
+function show(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  document.querySelectorAll('.asb-link').forEach(a=>a.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const ldr={complaints:loadComplaints,analytics:loadAnalytics,timetable:loadTimetables,events:loadEvents,bus:loadBusAdmin};
+  if(ldr[id])ldr[id]();
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function signOut(){clearSession();window.location.href='../login.html';}
+
+async function loadDash(){
+  try{
+    const [cD,eD,bD]=await Promise.allSettled([apiFetch('/complaints'),apiFetch('/events'),apiFetch('/bus')]);
+    if(cD.status==='fulfilled'){const cs=cD.value.complaints||[];document.getElementById('dOpen').textContent=cs.filter(c=>c.status==='open').length;document.getElementById('dProg').textContent=cs.filter(c=>c.status==='inprogress').length;document.getElementById('dRes').textContent=cs.filter(c=>c.status==='resolved').length;}
+    if(eD.status==='fulfilled')document.getElementById('dEvt').textContent=(eD.value.events||[]).length;
+    if(bD.status==='fulfilled')document.getElementById('dBus').textContent=(bD.value.routes||[]).length;
+  }catch(e){}
+}
+loadDash();
+
+async function loadComplaints(){
+  const status=document.getElementById('cfStatus').value;
+  try{
+    const data=await apiFetch('/complaints'+(status?'?status='+status:''));
+    const cs=data.complaints||[];
+    document.getElementById('cOpen').textContent=cs.filter(c=>c.status==='open').length;
+    document.getElementById('cProg').textContent=cs.filter(c=>c.status==='inprogress').length;
+    document.getElementById('cRes').textContent=cs.filter(c=>c.status==='resolved').length;
+    const el=document.getElementById('complaintRows');
+    if(!cs.length){el.innerHTML='<div style="padding:12px 14px;font-size:11px;color:#93B1B5;">No complaints found</div>';return;}
+    el.innerHTML=cs.map(c=>`<div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 80px;">
+      <span style="font-size:12px;font-weight:600;color:#0B2E33;">${c.title} · <span style="font-weight:400;color:#4F7C82;">${c.studentUserId||''}</span></span>
+      <span style="color:#4F7C82;">${c.category}</span>
+      <span style="color:#93B1B5;">${c.createdAt?new Date(c.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}):''}</span>
+      <span class="${c.status==='open'?'st-open':c.status==='inprogress'?'st-prog':'st-done'}" style="cursor:pointer;" onclick="openUpdateComplaint('${c._id}','${c.title.replace(/'/g,"\\'")}','${c.status}','${(c.adminNotes||'').replace(/'/g,"\\'")}')">
+        ${c.status==='inprogress'?'Working':c.status==='resolved'?'Resolved':'Open'}
+      </span>
+    </div>`).join('');
+  }catch(e){}
+}
+function openUpdateComplaint(id,title,status,notes){
+  document.getElementById('ucId').value=id;
+  document.getElementById('ucInfo').textContent=title;
+  document.getElementById('ucStatus').value=status;
+  document.getElementById('ucNotes').value=notes;
+  openModal('updateComplaintModal');
+}
+async function updateComplaint(){
+  const id=document.getElementById('ucId').value;
+  try{
+    await apiFetch('/complaints/'+id,{method:'PATCH',body:JSON.stringify({status:document.getElementById('ucStatus').value,adminNotes:document.getElementById('ucNotes').value})});
+    closeModal('updateComplaintModal');showToast('Updated!','success');loadComplaints();
+  }catch(e){showToast(e.message,'error');}
+}
+
+async function loadAnalytics(){
+  const el=document.getElementById('analyticsBody');el.innerHTML='<div style="color:#93B1B5;font-size:12px;">Loading…</div>';
+  try{
+    const [cD,eD]=await Promise.allSettled([apiFetch('/complaints'),apiFetch('/events')]);
+    const cs=cD.status==='fulfilled'?(cD.value.complaints||[]):[];
+    const evs=eD.status==='fulfilled'?(eD.value.events||[]):[];
+    const byCat={};cs.forEach(c=>{byCat[c.category]=(byCat[c.category]||0)+1;});
+    el.innerHTML=`<div class="g4 mb-4">
+      <div class="sc"><div class="sc-n" style="color:#E24B4A;">${cs.filter(c=>c.status==='open').length}</div><div class="sc-l">Open</div></div>
+      <div class="sc"><div class="sc-n" style="color:#854F0B;">${cs.filter(c=>c.status==='inprogress').length}</div><div class="sc-l">In Progress</div></div>
+      <div class="sc"><div class="sc-n" style="color:#085041;">${cs.filter(c=>c.status==='resolved').length}</div><div class="sc-l">Resolved</div></div>
+      <div class="sc"><div class="sc-n" style="color:#4F7C82;">${evs.length}</div><div class="sc-l">Events</div></div>
+    </div>
+    <div class="card"><div class="card-t">Complaints by Category</div>
+      ${Object.entries(byCat).map(([cat,cnt])=>`<div class="flex items-c gap-2 mb-2"><span style="width:120px;font-size:11px;color:#93B1B5;">${cat}</span><div class="prog-bar" style="flex:1;margin:0;"><div class="prog-fill" style="width:${Math.min(100,Math.round(cnt/Math.max(cs.length,1)*100))}%"></div></div><span style="width:20px;font-size:11px;color:#93B1B5;text-align:right;">${cnt}</span></div>`).join('')}
+    </div>`;
+  }catch(e){el.innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+}
+
+// ── TIMETABLE ──
+async function loadTimetables(){
+  try{
+    const data=await apiFetch('/timetable');const tts=data.timetables||[];
+    const el=document.getElementById('ttList');
+    if(!tts.length){el.innerHTML='<div class="empty"><div class="ei">📅</div><p>No timetables. Add one!</p></div>';return;}
+    el.innerHTML=tts.map(tt=>`<div class="cc mb-2"><div class="cc-hdr">
+      <div><div class="cc-title">${tt.course} — ${tt.semester} (Sec ${tt.section||'A'})</div><div class="cc-sub">Updated: ${tt.updatedAt?new Date(tt.updatedAt).toLocaleDateString('en-IN'):''} by ${tt.updatedBy||'—'} · ${(tt.slots||[]).length} slots</div></div>
+      <div class="flex gap-2">
+        <button class="btn-sm" onclick='openEditTT(${JSON.stringify({_id:tt._id,course:tt.course,semester:tt.semester,section:tt.section||"A"})})'>✏️ Edit</button>
+        <button class="btn-red" onclick="deleteTT('${tt._id}')">Delete</button>
+      </div>
+    </div></div>`).join('');
+  }catch(e){}
+}
+async function addTT(){
+  const course=document.getElementById('ttCourse').value.trim(),sem=document.getElementById('ttSem').value.trim();
+  if(!course||!sem){showToast('Fill course and semester','error');return;}
+  try{
+    await apiFetch('/timetable',{method:'POST',body:JSON.stringify({course,semester:sem,section:document.getElementById('ttSec').value||'A',slots:[]})});
+    closeModal('addTTModal');showToast('Timetable added!','success');loadTimetables();
+  }catch(e){showToast(e.message,'error');}
+}
+function openEditTT(tt){
+  document.getElementById('ettId').value=tt._id;
+  document.getElementById('ettCourse').value=tt.course;
+  document.getElementById('ettSem').value=tt.semester;
+  document.getElementById('ettSec').value=tt.section;
+  openModal('editTTModal');
+}
+async function saveEditTT(){
+  const id=document.getElementById('ettId').value;
+  try{
+    await apiFetch('/timetable/'+id,{method:'PUT',body:JSON.stringify({course:document.getElementById('ettCourse').value,semester:document.getElementById('ettSem').value,section:document.getElementById('ettSec').value})});
+    closeModal('editTTModal');showToast('Timetable updated!','success');loadTimetables();
+  }catch(e){showToast(e.message,'error');}
+}
+async function deleteTT(id){
+  if(!confirm('Delete this timetable?'))return;
+  try{await apiFetch('/timetable/'+id,{method:'DELETE'});showToast('Deleted','success');loadTimetables();}
+  catch(e){showToast(e.message,'error');}
+}
+
+// ── EVENTS ──
+let evPhotosNew=[];let evPhotosExisting=[];
+function openAddEvModal(){
+  document.getElementById('evId').value='';
+  document.getElementById('evModalTitle').textContent='Add Event';
+  document.getElementById('evSaveBtn').textContent='Save Event →';
+  document.getElementById('evTitle').value='';
+  document.getElementById('evDate').value='';
+  document.getElementById('evTime').value='';
+  document.getElementById('evType').value='academic';
+  document.getElementById('evVenue').value='';
+  document.getElementById('evDesc').value='';
+  document.getElementById('evOngoing').checked=false;
+  document.getElementById('evPhotos').value='';
+  document.getElementById('evPhotoPreview').innerHTML='';
+  document.getElementById('evExistingPhotos').innerHTML='';
+  evPhotosNew=[];evPhotosExisting=[];
+  openModal('evModal');
+}
+
+document.getElementById('evPhotos').addEventListener('change',function(){
+  const files=Array.from(this.files);
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      evPhotosNew.push(e.target.result);
+      renderPhotoPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
+function renderPhotoPreview(){
+  const el=document.getElementById('evPhotoPreview');
+  el.innerHTML=evPhotosNew.map((src,i)=>`<div class="photo-thumb-wrap">
+    <img src="${src}" class="photo-thumb"/>
+    <button class="photo-del" onclick="removeNewPhoto(${i})">✕</button>
+  </div>`).join('');
+}
+function removeNewPhoto(i){evPhotosNew.splice(i,1);renderPhotoPreview();}
+function removeExistingPhoto(i){evPhotosExisting.splice(i,1);renderExistingPhotos();}
+function renderExistingPhotos(){
+  const el=document.getElementById('evExistingPhotos');
+  if(!evPhotosExisting.length){el.innerHTML='';return;}
+  el.innerHTML='<div style="font-size:11px;font-weight:600;color:#4F7C82;margin-bottom:6px;">Existing Photos:</div><div class="photo-grid">'+evPhotosExisting.map((src,i)=>`<div class="photo-thumb-wrap"><img src="${src}" class="photo-thumb"/><button class="photo-del" onclick="removeExistingPhoto(${i})">✕</button></div>`).join('')+'</div>';
+}
+
+async function loadEvents(){
+  try{
+    const data=await apiFetch('/events');const evs=data.events||[];
+    const el=document.getElementById('evList');
+    if(!evs.length){el.innerHTML='<div class="empty"><div class="ei">🎉</div><p>No events yet</p></div>';return;}
+    el.innerHTML=evs.map(e=>`<div class="cc mb-2"><div class="cc-hdr">
+      <div>
+        <div class="cc-title">${e.title} ${e.isOngoing?'<span class="st-done" style="font-size:9px;padding:2px 7px;">Ongoing</span>':''}</div>
+        <div class="cc-sub">${e.date?new Date(e.date).toLocaleDateString('en-IN'):''} · ${e.type||''} ${e.venue?' · '+e.venue:''}</div>
+        ${e.photos&&e.photos.length?`<div style="margin-top:6px;display:flex;gap:5px;">${e.photos.slice(0,4).map(p=>`<img src="${p}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid #B8E3E9;"/>`).join('')}${e.photos.length>4?`<div style="width:40px;height:40px;border-radius:6px;background:#B8E3E9;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0B2E33;">+${e.photos.length-4}</div>`:''}
+        </div>`:''}
+      </div>
+      <div class="flex gap-2 items-c">
+        <button class="btn-sm" onclick='openEditEvModal(${JSON.stringify(e).replace(/'/g,"&#39;")})'>✏️ Edit</button>
+        <button class="btn-red" onclick="deleteEvent('${e._id}')">Delete</button>
+      </div>
+    </div></div>`).join('');
+  }catch(e){}
+}
+
+function openEditEvModal(ev){
+  document.getElementById('evId').value=ev._id;
+  document.getElementById('evModalTitle').textContent='Edit Event';
+  document.getElementById('evSaveBtn').textContent='Save Changes →';
+  document.getElementById('evTitle').value=ev.title||'';
+  document.getElementById('evDate').value=ev.date?ev.date.split('T')[0]:'';
+  document.getElementById('evTime').value=ev.time||'';
+  document.getElementById('evType').value=ev.type||'academic';
+  document.getElementById('evVenue').value=ev.venue||'';
+  document.getElementById('evDesc').value=ev.description||'';
+  document.getElementById('evOngoing').checked=!!ev.isOngoing;
+  document.getElementById('evPhotos').value='';
+  document.getElementById('evPhotoPreview').innerHTML='';
+  evPhotosNew=[];
+  evPhotosExisting=ev.photos||[];
+  renderExistingPhotos();
+  openModal('evModal');
+}
+
+async function saveEvent(){
+  const id=document.getElementById('evId').value;
+  const title=document.getElementById('evTitle').value.trim();
+  const date=document.getElementById('evDate').value;
+  if(!title||!date){showToast('Title and date are required','error');return;}
+  const photos=[...evPhotosExisting,...evPhotosNew];
+  const payload={title,date,time:document.getElementById('evTime').value,type:document.getElementById('evType').value,venue:document.getElementById('evVenue').value,description:document.getElementById('evDesc').value,isOngoing:document.getElementById('evOngoing').checked,photos};
+  try{
+    if(id){
+      await apiFetch('/events/'+id,{method:'PUT',body:JSON.stringify(payload)});
+      showToast('Event updated!','success');
+    }else{
+      await apiFetch('/events',{method:'POST',body:JSON.stringify(payload)});
+      showToast('Event added!','success');
+    }
+    closeModal('evModal');loadEvents();
+  }catch(e){showToast(e.message,'error');}
+}
+
+async function deleteEvent(id){
+  if(!confirm('Delete this event?'))return;
+  try{await apiFetch('/events/'+id,{method:'DELETE'});showToast('Deleted','success');loadEvents();}
+  catch(e){showToast(e.message,'error');}
+}
+
+// ── BUS ROUTES ──
+async function loadBusAdmin(){
+  try{
+    const data=await apiFetch('/bus');const routes=data.routes||[];
+    const el=document.getElementById('busList');
+    if(!routes.length){el.innerHTML='<div class="empty"><div class="ei">🚌</div><p>No routes. Add one!</p></div>';return;}
+    el.innerHTML=routes.map(r=>`<div class="cc mb-2"><div class="cc-hdr">
+      <div>
+        <div class="cc-title">Route ${r.routeNo} — ${r.routeName}</div>
+        <div class="cc-sub">${r.stops.length} stops${r.annualFee?' · ₹'+r.annualFee.toLocaleString('en-IN')+'/yr':''}${r.morning?' · Morning: '+r.morning:''}${r.driver?' · '+r.driver:''}</div>
+        ${r.notes?`<div style="font-size:10px;color:#4F7C82;margin-top:3px;">${r.notes}</div>`:''}
+      </div>
+      <div class="flex gap-2">
+        <button class="btn-sm" onclick='openEditBus(${JSON.stringify(r).replace(/'/g,"&#39;")})'>✏️ Edit</button>
+        <button class="btn-red" onclick="deleteBus('${r._id}')">Deactivate</button>
+      </div>
+    </div></div>`).join('');
+  }catch(e){}
+}
+
+function openAddBusModal(){
+  document.getElementById('busId').value='';
+  document.getElementById('busModalTitle').textContent='Add Bus Route';
+  document.getElementById('busSaveBtn').textContent='Save Route →';
+  ['busNo','busName','busMorning','busEvening','busDriver','busPhone','busVehicle','busStops','busNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('busFee').value='';
+  openModal('busModal');
+}
+
+function openEditBus(r){
+  document.getElementById('busId').value=r._id;
+  document.getElementById('busModalTitle').textContent='Edit Bus Route';
+  document.getElementById('busSaveBtn').textContent='Save Changes →';
+  document.getElementById('busNo').value=r.routeNo||'';
+  document.getElementById('busName').value=r.routeName||'';
+  document.getElementById('busMorning').value=r.morning||'';
+  document.getElementById('busEvening').value=r.evening||'';
+  document.getElementById('busDriver').value=r.driver||'';
+  document.getElementById('busPhone').value=r.driverPhone||'';
+  document.getElementById('busVehicle').value=r.vehicle||'';
+  document.getElementById('busFee').value=r.annualFee||'';
+  document.getElementById('busNotes').value=r.notes||'';
+  document.getElementById('busStops').value=(r.stops||[]).map(s=>s.name+(s.time?' | '+s.time:'')+(s.landmark?' | '+s.landmark:'')).join('\n');
+  openModal('busModal');
+}
+
+async function saveBus(){
+  const id=document.getElementById('busId').value;
+  const routeNo=document.getElementById('busNo').value.trim();
+  const routeName=document.getElementById('busName').value.trim();
+  if(!routeNo||!routeName){showToast('Route number and name are required','error');return;}
+  const stopsRaw=document.getElementById('busStops').value.trim();
+  const stops=stopsRaw?stopsRaw.split('\n').filter(l=>l.trim()).map(l=>{const parts=l.split('|').map(s=>s.trim());return{name:parts[0]||'',time:parts[1]||'',landmark:parts[2]||''};}):[];
+  const payload={routeNo,routeName,morning:document.getElementById('busMorning').value,evening:document.getElementById('busEvening').value,driver:document.getElementById('busDriver').value,driverPhone:document.getElementById('busPhone').value,vehicle:document.getElementById('busVehicle').value,annualFee:document.getElementById('busFee').value?parseInt(document.getElementById('busFee').value):null,notes:document.getElementById('busNotes').value,stops};
+  try{
+    if(id){
+      await apiFetch('/bus/'+id,{method:'PUT',body:JSON.stringify(payload)});
+      showToast('Route updated!','success');
+    }else{
+      await apiFetch('/bus',{method:'POST',body:JSON.stringify(payload)});
+      showToast('Route added!','success');
+    }
+    closeModal('busModal');loadBusAdmin();
+  }catch(e){showToast(e.message,'error');}
+}
+
+async function deleteBus(id){
+  if(!confirm('Deactivate this bus route?'))return;
+  try{await apiFetch('/bus/'+id,{method:'DELETE'});showToast('Deactivated','success');loadBusAdmin();}
+  catch(e){showToast(e.message,'error');}
+}
+</script>
+</body></html>

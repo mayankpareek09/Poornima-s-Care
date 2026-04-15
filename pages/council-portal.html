@@ -1,0 +1,315 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Council Portal — Poornima's Care</title>
+<link rel="stylesheet" href="../css/main.css"/>
+<style>
+.cat-badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.cat-tech{background:#e8f0fe;color:#1a4fad;}
+.cat-cult{background:#fce8f3;color:#8a1a5e;}
+.cat-sport{background:#e8ffe8;color:#0a5e0a;}
+.cat-soc{background:#fff8e0;color:#6b4400;}
+.cat-art{background:#f3e8ff;color:#5e1a8a;}
+.cat-acad{background:#e8fcff;color:#0a4f5e;}
+.cat-biz{background:#fff3e8;color:#6b2200;}
+.cat-nss{background:#ffeae8;color:#8a1a1a;}
+.cat-env{background:#e8fff3;color:#0a5e30;}
+.cat-other{background:#f0f0f0;color:#555;}
+</style>
+</head><body>
+<div class="admin-wrap">
+<div class="admin-sb">
+  <div class="asb-top"><div class="asb-logo">Poornima's <span>Care</span></div><div class="asb-av" id="sbAv">SC</div><div class="asb-nm" id="sbNm">—</div><div class="asb-id" id="sbId">—</div></div>
+  <div style="padding:10px 16px;border-bottom:1px solid rgba(184,227,233,.1);">
+    <div style="font-size:10px;font-weight:700;color:#4F7C82;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">Council 2026–27</div>
+    <div style="font-size:11px;color:#B8E3E9;font-weight:600;margin-bottom:2px;">👑 Vanshaj Pradhan</div>
+    <div style="font-size:10px;color:#93B1B5;margin-bottom:6px;">Chair</div>
+    <div style="font-size:10px;color:#93B1B5;">Uma Todi · Aaryan Singh<br/>Pranjal Yadav — Co-Chairs</div>
+  </div>
+  <div class="asb-sec">Council</div>
+  <div class="asb-link active" id="lnk-clubs" onclick="show('clubs',this)"><span class="asb-ic">🏆</span> All Clubs</div>
+  <div class="asb-link" id="lnk-events" onclick="show('events',this)"><span class="asb-ic">🎉</span> Events</div>
+</div>
+<div class="admin-main">
+
+  <!-- CLUBS -->
+  <div class="sec active" id="s-clubs">
+    <div class="admin-hdr"><div class="admin-hdr-t">🏆 All Clubs</div>
+      <div class="flex items-c gap-2">
+        <div style="display:flex;gap:14px;align-items:center;">
+          <div style="font-size:11px;color:#4F7C82;">Clubs: <strong id="stClubs" style="color:#0B2E33;">35</strong></div>
+          <div style="font-size:11px;color:#4F7C82;">Members: <strong id="stMembers" style="color:#0B2E33;">—</strong></div>
+          <div style="font-size:11px;color:#4F7C82;">Events: <strong id="stEvts" style="color:#0B2E33;">—</strong></div>
+        </div>
+        <button class="btn-p" style="font-size:11px;padding:7px 13px;display:none;" id="addClubBtn" onclick="openModal('addClubModal')">+ Club</button>
+        <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="signOut()">Sign Out</button>
+      </div>
+    </div>
+    <div class="admin-body">
+      <div class="search-bar"><input type="text" id="clubSearch" placeholder="Search clubs by name, captain…" oninput="filterClubs(this.value)"/></div>
+      <div class="ftabs" id="catTabs" style="flex-wrap:wrap;">
+        <button class="ftab active" onclick="setCat('',this)">All</button>
+        <button class="ftab" onclick="setCat('Technology',this)">💻 Technology</button>
+        <button class="ftab" onclick="setCat('Cultural',this)">🎭 Cultural</button>
+        <button class="ftab" onclick="setCat('Sports',this)">⚽ Sports</button>
+        <button class="ftab" onclick="setCat('Social',this)">🤝 Social</button>
+        <button class="ftab" onclick="setCat('Arts',this)">🎨 Arts</button>
+        <button class="ftab" onclick="setCat('Academic',this)">📖 Academic</button>
+        <button class="ftab" onclick="setCat('Business',this)">💡 Business</button>
+        <button class="ftab" onclick="setCat('NSS',this)">🫱 NSS / Seva</button>
+        <button class="ftab" onclick="setCat('Environment',this)">🌿 Environment</button>
+      </div>
+      <div id="clubStats" style="font-size:11px;color:#93B1B5;margin-bottom:10px;"></div>
+      <div class="g-auto" id="clubGrid"><div class="empty" style="grid-column:1/-1"><div class="ei">🏆</div><p>Loading clubs…</p></div></div>
+    </div>
+  </div>
+
+  <!-- EVENTS -->
+  <div class="sec" id="s-events">
+    <div class="admin-hdr">
+      <div class="admin-hdr-t">🎉 Events</div>
+      <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="openModal('addEvModal')">+ Add Event</button>
+    </div>
+    <div class="admin-body"><div id="evList"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div></div>
+  </div>
+</div>
+</div>
+
+<!-- Add Club Modal -->
+<div class="modal-ov" id="addClubModal"><div class="modal-box">
+  <button class="modal-close" onclick="closeModal('addClubModal')">✕</button>
+  <div class="modal-title">Add Club</div>
+  <div class="flbl">Name <span class="req">*</span></div><input class="finp" id="acName"/>
+  <div class="frow">
+    <div><div class="flbl">Icon (emoji)</div><input class="finp" id="acIcon" placeholder="🏫"/></div>
+    <div><div class="flbl">Category</div>
+      <select class="fsel" id="acCat">
+        <option>Technology</option><option>Cultural</option><option>Sports</option>
+        <option>Social</option><option>Arts</option><option>Academic</option>
+        <option>Business</option><option>NSS</option><option>Environment</option>
+      </select>
+    </div>
+  </div>
+  <div class="flbl">Description</div><textarea class="ftxt" id="acDesc"></textarea>
+  <div class="flbl">Captain Name</div><input class="finp" id="acCap"/>
+  <button class="btn-p full" onclick="addClub()">Add Club →</button>
+</div></div>
+
+<!-- Edit Club Modal -->
+<div class="modal-ov" id="editClubModal"><div class="modal-box">
+  <button class="modal-close" onclick="closeModal('editClubModal')">✕</button>
+  <div class="modal-title">Edit Club</div>
+  <input type="hidden" id="ecId"/>
+  <div class="flbl">Club Name</div><input class="finp" id="ecName" readonly style="background:#f0f0f0;color:#93B1B5;"/>
+  <div class="flbl">Description</div><textarea class="ftxt" id="ecDesc"></textarea>
+  <div class="frow">
+    <div><div class="flbl">Captain</div><input class="finp" id="ecCap"/></div>
+    <div><div class="flbl">Vice Captain</div><input class="finp" id="ecVc"/></div>
+  </div>
+  <div class="frow">
+    <div><div class="flbl">Members Count</div><input class="finp" type="number" id="ecMem"/></div>
+    <div><div class="flbl">Founded Year</div><input class="finp" id="ecYear" placeholder="2018"/></div>
+  </div>
+  <button class="btn-p full" onclick="saveClub()">Save Changes →</button>
+</div></div>
+
+<!-- Add Event Modal -->
+<div class="modal-ov" id="addEvModal"><div class="modal-box">
+  <button class="modal-close" onclick="closeModal('addEvModal')">✕</button>
+  <div class="modal-title">Add Event</div>
+  <div class="flbl">Title <span class="req">*</span></div><input class="finp" id="evTitle"/>
+  <div class="frow">
+    <div><div class="flbl">Date <span class="req">*</span></div><input class="finp" type="date" id="evDate"/></div>
+    <div><div class="flbl">Time</div><input class="finp" id="evTime" placeholder="10:00 AM"/></div>
+  </div>
+  <div id="evClubWrap"><div class="flbl">Club</div><select class="fsel" id="evClub"></select></div>
+  <div class="flbl">Venue</div><input class="finp" id="evVenue"/>
+  <div class="flbl">Description</div><textarea class="ftxt" id="evDesc"></textarea>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><input type="checkbox" id="evOngoing"/><label style="font-size:12px;" for="evOngoing">Currently Ongoing</label></div>
+  <button class="btn-p full" onclick="addEvent()">Add Event →</button>
+</div></div>
+
+<!-- Edit Event Modal -->
+<div class="modal-ov" id="editEvModal"><div class="modal-box">
+  <button class="modal-close" onclick="closeModal('editEvModal')">✕</button>
+  <div class="modal-title">Edit Event</div>
+  <input type="hidden" id="eeId"/>
+  <div class="flbl">Title <span class="req">*</span></div><input class="finp" id="eeTitle"/>
+  <div class="frow">
+    <div><div class="flbl">Date <span class="req">*</span></div><input class="finp" type="date" id="eeDate"/></div>
+    <div><div class="flbl">Time</div><input class="finp" id="eeTime"/></div>
+  </div>
+  <div class="flbl">Venue</div><input class="finp" id="eeVenue"/>
+  <div class="flbl">Description</div><textarea class="ftxt" id="eeDesc"></textarea>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><input type="checkbox" id="eeOngoing"/><label style="font-size:12px;" for="eeOngoing">Currently Ongoing</label></div>
+  <button class="btn-p full" onclick="saveEditEvent()">Save Changes →</button>
+</div></div>
+
+<script src="../js/api.js"></script>
+<script>
+const user=requireAuth(['council_admin','club_captain','vice_captain']);
+const isChair=user?.role==='council_admin';
+const isCap=['club_captain','vice_captain'].includes(user?.role);
+if(user){
+  const ini=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('sbAv').textContent=ini;
+  document.getElementById('sbNm').textContent=user.name;
+  document.getElementById('sbId').textContent=user.userId+' · '+(user.role==='council_admin'?'Council Admin':user.role==='vice_captain'?'Vice Captain':'Club Captain');
+}
+if(isChair) document.getElementById('addClubBtn').style.display='inline-flex';
+
+function show(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  document.querySelectorAll('.asb-link').forEach(a=>a.classList.remove('active'));
+  if(el)el.classList.add('active');
+  if(id==='events')loadEvents();
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function signOut(){clearSession();window.location.href='../login.html';}
+
+const CAT_CLASS={Technology:'cat-tech',Cultural:'cat-cult',Sports:'cat-sport',Social:'cat-soc',Arts:'cat-art',Academic:'cat-acad',Business:'cat-biz',NSS:'cat-nss',Environment:'cat-env'};
+
+let allClubs=[],clubCat='',clubQ='';
+
+async function loadClubs(){
+  try{
+    const data=await apiFetch('/clubs');
+    allClubs=isCap?data.clubs.filter(c=>String(c._id)===String(user.clubId)||c.name===user.clubName):data.clubs;
+    document.getElementById('stClubs').textContent=data.clubs.length;
+    document.getElementById('stMembers').textContent=data.clubs.reduce((s,c)=>s+(c.members||0),0).toLocaleString('en-IN');
+    const sel=document.getElementById('evClub');
+    sel.innerHTML=(isCap?allClubs:data.clubs).map(c=>`<option>${c.name}</option>`).join('');
+    if(isCap)document.getElementById('evClubWrap').style.display='none';
+    renderClubs();
+  }catch(e){document.getElementById('clubGrid').innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
+  try{const eD=await apiFetch('/events');document.getElementById('stEvts').textContent=(eD.events||[]).length;}catch(e){}
+}
+
+function setCat(c,btn){clubCat=c;document.querySelectorAll('#s-clubs .ftab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderClubs();}
+function filterClubs(q){clubQ=q.toLowerCase();renderClubs();}
+function renderClubs(){
+  let clubs=[...allClubs];
+  if(clubCat)clubs=clubs.filter(c=>c.category===clubCat);
+  if(clubQ)clubs=clubs.filter(c=>(c.name+' '+(c.captain||c.president||'')).toLowerCase().includes(clubQ));
+  const el=document.getElementById('clubGrid');
+  document.getElementById('clubStats').textContent=`Showing ${clubs.length} clubs${clubCat?' in '+clubCat:''}`;
+  if(!clubs.length){el.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">🔍</div><p>No clubs found</p></div>';return;}
+  el.innerHTML=clubs.map(c=>{
+    const catClass=CAT_CLASS[c.category]||'cat-other';
+    return `<div class="club-card">
+      <div class="club-icon">${c.icon||'🏫'}</div>
+      <div class="club-name">${c.name}</div>
+      <div style="margin-bottom:6px;"><span class="cat-badge ${catClass}">${c.category||'General'}</span></div>
+      <div class="club-desc">${c.description||''}</div>
+      <div class="club-people">
+        ${(c.captain||c.president)?`<div><span>Captain: </span><strong>${c.captain||c.president}</strong></div>`:''}
+        ${(c.viceCaptain||c.vicePresident)?`<div><span>VC: </span><strong>${c.viceCaptain||c.vicePresident}</strong></div>`:''}
+      </div>
+      <div class="club-mbrs">👥 ${c.members||0} members · Est. ${c.foundedYear||'—'}</div>
+      <div class="flex gap-2 mt-2">
+        <button class="btn-sm" onclick='editClub(${JSON.stringify({_id:c._id,name:c.name,description:c.description,captain:c.captain||c.president,viceCaptain:c.viceCaptain||c.vicePresident,members:c.members,foundedYear:c.foundedYear}).replace(/'/g,"&#39;")})'>✏️ Edit</button>
+        ${isChair?`<button class="btn-red" onclick="delClub('${c._id}')">Delete</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function editClub(c){
+  document.getElementById('ecId').value=c._id;
+  document.getElementById('ecName').value=c.name||'';
+  document.getElementById('ecDesc').value=c.description||'';
+  document.getElementById('ecCap').value=c.captain||'';
+  document.getElementById('ecVc').value=c.viceCaptain||'';
+  document.getElementById('ecMem').value=c.members||0;
+  document.getElementById('ecYear').value=c.foundedYear||'';
+  openModal('editClubModal');
+}
+async function saveClub(){
+  const id=document.getElementById('ecId').value;
+  try{
+    await apiFetch('/clubs/'+id,{method:'PUT',body:JSON.stringify({
+      description:document.getElementById('ecDesc').value,
+      president:document.getElementById('ecCap').value,
+      captain:document.getElementById('ecCap').value,
+      vicePresident:document.getElementById('ecVc').value,
+      viceCaptain:document.getElementById('ecVc').value,
+      members:parseInt(document.getElementById('ecMem').value)||0,
+      foundedYear:document.getElementById('ecYear').value,
+    })});
+    closeModal('editClubModal');showToast('Club updated!','success');loadClubs();
+  }catch(e){showToast(e.message,'error');}
+}
+async function addClub(){
+  const name=document.getElementById('acName').value.trim();
+  if(!name){showToast('Name required','error');return;}
+  try{
+    await apiFetch('/clubs',{method:'POST',body:JSON.stringify({name,icon:document.getElementById('acIcon').value||'🏫',category:document.getElementById('acCat').value,description:document.getElementById('acDesc').value,captain:document.getElementById('acCap').value,president:document.getElementById('acCap').value,isActive:true})});
+    closeModal('addClubModal');showToast('Club added!','success');loadClubs();
+  }catch(e){showToast(e.message,'error');}
+}
+async function delClub(id){
+  if(!confirm('Delete this club?'))return;
+  try{await apiFetch('/clubs/'+id,{method:'DELETE'});showToast('Deleted','success');loadClubs();}
+  catch(e){showToast(e.message,'error');}
+}
+
+// ── EVENTS ──
+let allEvs=[];
+async function loadEvents(){
+  try{
+    const data=await apiFetch('/events');
+    allEvs=isCap?(data.events||[]).filter(e=>(e.clubName||'').toLowerCase()===(user.clubName||'').toLowerCase()):data.events||[];
+    const el=document.getElementById('evList');
+    if(!allEvs.length){el.innerHTML='<div class="empty"><div class="ei">🎉</div><p>No events yet</p></div>';return;}
+    el.innerHTML=allEvs.map(e=>`<div class="cc mb-2"><div class="cc-hdr">
+      <div>
+        <div class="cc-title">${e.title} ${e.isOngoing?'<span class="st-done" style="font-size:9px;padding:2px 7px;">Ongoing</span>':''}</div>
+        <div class="cc-sub">${e.date?new Date(e.date).toLocaleDateString('en-IN'):''} · ${e.clubName||''} ${e.venue?' · '+e.venue:''}</div>
+      </div>
+      <div class="flex items-c gap-2">
+        <button class="btn-sm" onclick='openEditEvModal(${JSON.stringify(e).replace(/'/g,"&#39;")})'>✏️ Edit</button>
+        <button class="btn-red" onclick="delEvent('${e._id}')">Delete</button>
+      </div>
+    </div></div>`).join('');
+  }catch(e){document.getElementById('evList').innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+}
+
+async function addEvent(){
+  const title=document.getElementById('evTitle').value.trim(),date=document.getElementById('evDate').value;
+  if(!title||!date){showToast('Title and date required','error');return;}
+  const clubName=isCap?user.clubName:document.getElementById('evClub').value;
+  try{
+    await apiFetch('/events',{method:'POST',body:JSON.stringify({title,date,time:document.getElementById('evTime').value,clubName,venue:document.getElementById('evVenue').value,description:document.getElementById('evDesc').value,isOngoing:document.getElementById('evOngoing').checked,type:'club'})});
+    closeModal('addEvModal');showToast('Event added!','success');loadEvents();
+  }catch(e){showToast(e.message,'error');}
+}
+
+function openEditEvModal(ev){
+  document.getElementById('eeId').value=ev._id;
+  document.getElementById('eeTitle').value=ev.title||'';
+  document.getElementById('eeDate').value=ev.date?ev.date.split('T')[0]:'';
+  document.getElementById('eeTime').value=ev.time||'';
+  document.getElementById('eeVenue').value=ev.venue||'';
+  document.getElementById('eeDesc').value=ev.description||'';
+  document.getElementById('eeOngoing').checked=!!ev.isOngoing;
+  openModal('editEvModal');
+}
+async function saveEditEvent(){
+  const id=document.getElementById('eeId').value;
+  const title=document.getElementById('eeTitle').value.trim(),date=document.getElementById('eeDate').value;
+  if(!title||!date){showToast('Title and date required','error');return;}
+  try{
+    await apiFetch('/events/'+id,{method:'PUT',body:JSON.stringify({title,date,time:document.getElementById('eeTime').value,venue:document.getElementById('eeVenue').value,description:document.getElementById('eeDesc').value,isOngoing:document.getElementById('eeOngoing').checked})});
+    closeModal('editEvModal');showToast('Event updated!','success');loadEvents();
+  }catch(e){showToast(e.message,'error');}
+}
+async function delEvent(id){
+  if(!confirm('Delete this event?'))return;
+  try{await apiFetch('/events/'+id,{method:'DELETE'});showToast('Deleted','success');loadEvents();}
+  catch(e){showToast(e.message,'error');}
+}
+
+loadClubs();
+</script>
+</body></html>

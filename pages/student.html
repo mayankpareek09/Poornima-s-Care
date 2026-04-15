@@ -1,0 +1,629 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Student Portal — Poornima's Care</title>
+<link rel="stylesheet" href="../css/main.css"/>
+</head><body>
+
+<div class="admin-wrap">
+<!-- LEFT SIDEBAR -->
+<div class="admin-sb">
+  <div class="asb-top">
+    <div class="asb-logo">Poornima's <span>Care</span></div>
+    <div class="asb-av" id="tnAv">RS</div>
+    <div class="asb-nm" id="sbNm">—</div>
+    <div class="asb-id" id="sbId">—</div>
+  </div>
+  <div class="asb-sec">My Portal</div>
+  <div class="asb-link active" id="nl-dash" onclick="show('dash',this)"><span class="asb-ic">⚡</span> Home</div>
+  <div class="asb-link" id="nl-complaints" onclick="show('complaints',this)"><span class="asb-ic">📋</span> Complaints</div>
+  <div class="asb-link" id="nl-laundry" onclick="show('laundry',this)"><span class="asb-ic">👕</span> Laundry</div>
+  <div class="asb-link" id="nl-timetable" onclick="show('timetable',this)"><span class="asb-ic">📅</span> Timetable</div>
+  <div class="asb-link" id="nl-materials" onclick="show('materials',this)"><span class="asb-ic">📚</span> Materials</div>
+  <div class="asb-sec">Campus</div>
+  <div class="asb-link" id="nl-events" onclick="show('events',this)"><span class="asb-ic">🎉</span> Events</div>
+  <div class="asb-link" id="nl-clubs" onclick="show('clubs',this)"><span class="asb-ic">🏫</span> Clubs</div>
+  <div class="asb-link" id="nl-hostel" onclick="show('hostel',this)"><span class="asb-ic">🏠</span> Hostel</div>
+  <div class="asb-link" id="nl-bus" onclick="show('bus',this)"><span class="asb-ic">🚌</span> Bus</div>
+  <div class="asb-sec">Account</div>
+  <div class="asb-link" id="nl-profile" onclick="show('profile',this)"><span class="asb-ic">👤</span> Profile</div>
+  <div class="asb-link ai" id="nl-chatbot" onclick="show('chatbot',this)"><span class="asb-ic">🤖</span> ORION AI</div>
+  <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
+    <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+<!-- MAIN CONTENT -->
+<div class="admin-main">
+<div class="page-body" style="padding:0;">
+
+<!-- DASHBOARD -->
+<div class="sec active" id="s-dash">
+<div class="hero" id="dashHero">
+  <div class="hero-row">
+    <div>
+      <div class="hero-hi" id="heroHi">Good day 👋</div>
+      <div class="hero-sub" id="heroSub">Loading…</div>
+    </div>
+  </div>
+  <div class="hero-pills">
+    <div class="pill"><div class="pill-n" id="hPillWash">—</div><div class="pill-l">Washes left</div></div>
+    <div class="pill"><div class="pill-n" id="hPillCompl">—</div><div class="pill-l">Open issues</div></div>
+    <div class="pill"><div class="pill-n" id="hPillEvts">—</div><div class="pill-l">Events this week</div></div>
+    <div class="pill"><div class="pill-n" id="hPillRoom">—</div><div class="pill-l">My room</div></div>
+  </div>
+</div>
+  <div class="sec-lbl">Quick access</div>
+  <div class="g4 mb-4">
+    <div class="sc"><div class="sc-ic">📋</div><div class="sc-n" id="sc-comp" style="color:#4F7C82;">—</div><div class="sc-l">Complaints</div></div>
+    <div class="sc"><div class="sc-ic">👕</div><div class="sc-n" id="sc-wash" style="color:#854F0B;">—</div><div class="sc-l">Washes left</div></div>
+    <div class="sc"><div class="sc-ic">🎉</div><div class="sc-n" id="sc-evts" style="color:#0B2E33;">—</div><div class="sc-l">Events</div></div>
+    <div class="sc"><div class="sc-ic">🏫</div><div class="sc-n" style="color:#085041;">35</div><div class="sc-l">Clubs</div></div>
+  </div>
+  <div class="sec-lbl">Today</div>
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-t">📅 Classes today</div>
+      <ul class="tl" id="todayTl"><li><div class="tl-d">Loading schedule…</div></li></ul>
+    </div>
+    <div class="panel">
+      <div class="panel-t">📋 Recent complaints</div>
+      <div id="recentComplaints"><div style="font-size:11px;color:var(--muted);">Loading…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLAINTS -->
+<div class="sec" id="s-complaints">
+  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:4px;">📋 My Complaints</div>
+  <div style="font-size:11px;color:#4F7C82;margin-bottom:16px;">Describe your issue — routed to the right department automatically.</div>
+  <div class="g4 mb-4">
+    <div class="sc"><div class="sc-ic">🔴</div><div class="sc-n" id="cOpen" style="color:#E24B4A;">0</div><div class="sc-l">Open</div></div>
+    <div class="sc"><div class="sc-ic">🟡</div><div class="sc-n" id="cProg" style="color:#854F0B;">0</div><div class="sc-l">In Progress</div></div>
+    <div class="sc"><div class="sc-icon">🟢</div><div class="sc-n" id="cRes" style="color:#085041;">0</div><div class="sc-l">Resolved</div></div>
+    <div class="sc"><div class="sc-ic">📋</div><div class="sc-n" id="cTotal">0</div><div class="sc-l">Total</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-t">New Complaint</div>
+      <div class="flbl">Title <span class="req">*</span></div>
+      <input class="finp" id="cTitle" placeholder="Brief description of issue"/>
+      <div class="frow">
+        <div>
+          <div class="flbl">Category <span class="req">*</span></div>
+          <select class="fsel" id="cCat"><option>Academic</option><option>Hostel</option><option>Campus</option><option>Transport</option><option>Other</option></select>
+        </div>
+        <div>
+          <div class="flbl">Priority</div>
+          <select class="fsel" id="cPri"><option>Low</option><option selected>Medium</option><option>High</option></select>
+        </div>
+      </div>
+      <div class="flbl">Description <span class="req">*</span></div>
+      <textarea class="ftxt" id="cDesc" placeholder="Explain the issue in detail…"></textarea>
+      <button class="btn-p full" onclick="submitComplaint()">Submit Complaint →</button>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:#0B2E33;margin-bottom:10px;">My Complaints</div>
+      <div id="myComplaints"><div class="empty"><div class="ei">📋</div><p>No complaints yet</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- LAUNDRY (sample4 exact style) -->
+<div class="sec" id="s-laundry">
+  <div style="font-size:20px;font-weight:800;color:#0B2E33;margin-bottom:3px;">👕 Laundry Tracker</div>
+  <div style="font-size:12px;color:#4F7C82;margin-bottom:16px;" id="laundrySubtitle">Manage your annual 30-wash quota</div>
+  <div id="fridayAlert" style="display:none;" class="info-box mb-3">🚫 Today is Friday — laundry is closed. Come back Monday.</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-t">Current Status <span class="status-pill" id="lStatusPill">Loading…</span></div>
+      <div style="font-size:40px;font-weight:800;color:#0B2E33;line-height:1;" id="lBigNum">—</div>
+      <div style="font-size:11px;color:#93B1B5;margin-top:4px;" id="lBigSub">washes used this year</div>
+      <div class="prog-bar"><div class="prog-fill" id="lProgFill" style="width:0%"></div></div>
+      <div class="prog-lbl" id="lProgLbl">loading…</div>
+      <div style="font-size:11px;color:#4F7C82;margin-top:10px;font-weight:600;" id="lLastSub"></div>
+      <div class="qdots" id="lDots"></div>
+    </div>
+    <div class="card">
+      <div class="card-t">New Wash Request</div>
+      <div id="lSubmitArea">
+        <div class="info-box" style="padding:14px 15px;line-height:1.7;">
+          <div style="font-weight:800;color:#0B2E33;margin-bottom:10px;font-size:12px;">👕 How Laundry Works</div>
+          <div style="display:grid;gap:7px;">
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#0B2E33;color:#B8E3E9;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">1</span><span><strong style="color:#0B2E33;">Submit your request</strong> — Fill in your clothes list below and click Submit (Mon–Thu only, not on Fridays).</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#0B2E33;color:#B8E3E9;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">2</span><span><strong style="color:#0B2E33;">Keep your bag ready</strong> — Pack all listed clothes in one bag. Staff will collect from your hostel room, so be available by 8:00 AM next morning.</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#0B2E33;color:#B8E3E9;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">3</span><span><strong style="color:#0B2E33;">Washing &amp; drying</strong> — Clothes are washed, dried, and neatly folded. Takes 1–2 days after collection.</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#0B2E33;color:#B8E3E9;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">4</span><span><strong style="color:#0B2E33;">Collect your clothes</strong> — Once status shows ✅ Ready, collect your bag from the Laundry Room (Ground Floor, Hostel Block).</span></div>
+          </div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid #B8E3E9;font-size:11px;color:#4F7C82;"><strong>📌 Rules:</strong> 30 washes per year · One bag at a time · No submissions on Fridays · Minimum 3 items per wash</div>
+        </div>
+        <div class="flbl">Clothes description</div>
+        <textarea class="ftxt" id="clothesDesc" placeholder="e.g. 3 shirts, 2 trousers, 4 socks…"></textarea>
+        <button class="btn-p full" id="lSubmitBtn" onclick="submitBag()">Submit for Washing →</button>
+      </div>
+    </div>
+  </div>
+  <!-- Wash History -->
+  <div class="card mt-4">
+    <div class="card-t">Wash History <span id="lHistCount" style="font-size:11px;font-weight:400;color:#93B1B5;"></span></div>
+    <div id="lHistory"><div class="empty"><div class="ei">👕</div><p>No wash history yet</p></div></div>
+  </div>
+</div>
+
+<!-- TIMETABLE -->
+<div class="sec" id="s-timetable">
+  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:14px;">📅 Timetable</div>
+  <div class="ann mb-3">
+    <div class="ann-t">📅 Exam Calendar</div>
+    <div class="ann-b"><a href="https://poornima.edu.in/exam-calendars" target="_blank" style="color:#4F7C82;font-weight:700;">View Official Exam Calendar →</a></div>
+  </div>
+  <div class="flex gap-2 mb-3" style="flex-wrap:wrap;">
+    <select class="fsel" id="ttCourse" style="margin-bottom:0;flex:1;min-width:140px;"><option>All Courses</option><option>B.Tech CSE</option><option>B.Tech ECE</option><option>B.Tech ME</option><option>MBA</option></select>
+    <select class="fsel" id="ttSem" style="margin-bottom:0;flex:1;min-width:130px;"><option>All Semesters</option><option>1st Semester</option><option>3rd Semester</option><option>5th Semester</option><option>7th Semester</option></select>
+    <button class="btn-p" onclick="loadTT()">Search</button>
+  </div>
+  <div id="ttContent"><div class="empty"><div class="ei">📅</div><p>Select course and click Search</p></div></div>
+</div>
+
+<!-- MATERIALS -->
+<div class="sec" id="s-materials">
+  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:4px;">📚 Study Materials</div>
+  <div style="font-size:11px;color:#4F7C82;margin-bottom:16px;">Access notes, question papers, syllabi and books shared by students and faculty.</div>
+  <div class="card mb-3" style="background:#e8f6f8;border-color:#93B1B5;">
+    <div class="flex items-c gap-3 j-bet">
+      <div class="flex items-c gap-3"><span style="font-size:1.8rem;">📖</span><div><div style="font-weight:700;color:#0B2E33;">Poornima Digital Library</div><div style="font-size:11px;color:#4F7C82;">E-books, journals, NPTEL, research papers</div></div></div>
+      <a href="https://sites.google.com/poornima.edu.in/poornima-library-resources/home" target="_blank" class="btn-p">Open Library →</a>
+    </div>
+  </div>
+  <div class="g2 mb-3">
+    <a href="https://nptel.ac.in" target="_blank" class="card"><div class="card-t">📺 NPTEL</div><p style="font-size:11px;color:#93B1B5;">Free online courses from IITs &amp; IISc</p></a>
+    <a href="https://archive.org" target="_blank" class="card"><div class="card-t">📚 Internet Archive</div><p style="font-size:11px;color:#93B1B5;">Free books &amp; academic papers</p></a>
+  </div>
+  <div class="search-bar"><input type="text" id="matSearch" placeholder="Search materials by title or course…" oninput="searchMat(this.value)"/></div>
+  <div id="matList"><div class="empty"><div class="ei">📚</div><p>No materials uploaded yet</p></div></div>
+  <div class="mt-3"><button class="btn-sec" onclick="openModal('uploadMatModal')">+ Upload Material</button></div>
+</div>
+
+<!-- EVENTS -->
+<div class="sec" id="s-events">
+  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:14px;">🎉 Campus Events</div>
+  <div class="ftabs">
+    <button class="ftab active" onclick="filterEvt('all',this)">All</button>
+    <button class="ftab" onclick="filterEvt('ongoing',this)">🟢 Ongoing</button>
+    <button class="ftab" onclick="filterEvt('upcoming',this)">🔵 Upcoming</button>
+    <button class="ftab" onclick="filterEvt('academic',this)">Academic</button>
+    <button class="ftab" onclick="filterEvt('cultural',this)">Cultural</button>
+    <button class="ftab" onclick="filterEvt('sports',this)">Sports</button>
+    <button class="ftab" onclick="filterEvt('club',this)">Club</button>
+    <button class="ftab" onclick="filterEvt('exam',this)">Exam</button>
+  </div>
+  <div id="evList"><div class="empty"><div class="ei">🎉</div><p>Loading events…</p></div></div>
+</div>
+
+<!-- CLUBS -->
+<div class="sec" id="s-clubs">
+  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:14px;">🏫 Student Clubs</div>
+  <div class="search-bar"><input type="text" id="clubSearch" placeholder="Search clubs…" oninput="filterClub(this.value)"/></div>
+  <div class="ftabs" id="clubCatBtns">
+    <button class="ftab active" onclick="setCat('',this)">All</button>
+    <button class="ftab" onclick="setCat('Technology',this)">Technology</button>
+    <button class="ftab" onclick="setCat('Cultural',this)">Cultural</button>
+    <button class="ftab" onclick="setCat('Sports',this)">Sports</button>
+    <button class="ftab" onclick="setCat('Social',this)">Social</button>
+    <button class="ftab" onclick="setCat('Arts',this)">Arts</button>
+    <button class="ftab" onclick="setCat('Academic',this)">Academic</button>
+    <button class="ftab" onclick="setCat('Business',this)">Business</button>
+  </div>
+  <div class="g-auto" id="clubGrid"><div class="empty" style="grid-column:1/-1"><div class="ei">🏫</div><p>Loading clubs…</p></div></div>
+</div>
+
+<!-- HOSTEL -->
+<div class="sec" id="s-hostel">
+  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:14px;">🏠 Hostel Accommodation</div>
+  <div class="g2 mb-4">
+    <div class="card">
+      <div class="card-t">My Room</div>
+      <table style="width:100%;font-size:12px;">
+        <tr><td style="padding:5px 0;color:#93B1B5;">Hostel</td><td id="hHostel" style="font-weight:600;">—</td></tr>
+        <tr><td style="padding:5px 0;color:#93B1B5;">Room</td><td id="hRoom" style="font-weight:600;">—</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-t">Fee Relaxation Scheme</div>
+      <p style="font-size:11px;color:#4F7C82;line-height:1.6;"><strong style="color:#0B2E33;">40% off</strong> if NOC received by December | <strong style="color:#0B2E33;">30% off</strong> by January<br/>For final year students on semester-long internships/placements.</p>
+    </div>
+  </div>
+  <div class="card mb-3">
+    <div class="card-t">Himalaya (Boys) &amp; Gargi (Girls) — Room Fees</div>
+    <div class="g2 mt-2">
+      <div class="ann"><div class="ann-t">Double Fan, Common Washroom</div><div class="ann-b" style="font-weight:700;">₹1,15,000 / year</div></div>
+      <div class="ann"><div class="ann-t">Double AC, Common Washroom</div><div class="ann-b" style="font-weight:700;">₹1,35,000 / year</div></div>
+      <div class="ann"><div class="ann-t">Double AC, Attached Washroom</div><div class="ann-b" style="font-weight:700;">₹1,50,000 / year</div></div>
+      <div class="ann"><div class="ann-t">Double AC, Attached + Balcony</div><div class="ann-b" style="font-weight:700;">₹1,60,000 / year</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-t">Apply for Accommodation</div>
+    <div class="frow">
+      <div>
+        <div class="flbl">Preferred Room Type <span class="req">*</span></div>
+        <select class="fsel" id="prefRoom">
+          <option value="">Select room type</option>
+          <optgroup label="Himalaya (Boys)">
+            <option>Himalaya — Double Fan Common WR (₹1,15,000)</option>
+            <option>Himalaya — Double AC Common WR (₹1,35,000)</option>
+            <option>Himalaya — Double AC Attached WR (₹1,50,000)</option>
+            <option>Himalaya — Double AC Attached + Balcony (₹1,60,000)</option>
+          </optgroup>
+          <optgroup label="Gargi (Girls)">
+            <option>Gargi — Double AC Common WR (₹1,35,000)</option>
+            <option>Gargi — Double AC Attached WR (₹1,50,000)</option>
+            <option>Gargi — Double AC Attached + Balcony (₹1,60,000)</option>
+          </optgroup>
+        </select>
+      </div>
+      <div>
+        <div class="flbl">Preferred Block</div>
+        <select class="fsel" id="prefBlock">
+          <option value="">No preference</option>
+          <optgroup label="Boys"><option>Himalaya-1</option><option>Himalaya-2</option><option>Himalaya-3</option><option>Himalaya-4</option></optgroup>
+          <optgroup label="Girls"><option>Gargi-1</option><option>Gargi-2</option></optgroup>
+        </select>
+      </div>
+    </div>
+    <div class="frow">
+      <div><div class="flbl">Parent Name <span class="req">*</span></div><input class="finp" id="pName" placeholder="Full name"/></div>
+      <div><div class="flbl">Parent Contact <span class="req">*</span></div><input class="finp" type="tel" id="pContact" placeholder="10-digit number"/></div>
+    </div>
+    <div class="flbl">Home Address <span class="req">*</span></div>
+    <textarea class="ftxt" id="homeAddr" placeholder="Full home address…"></textarea>
+    <button class="btn-p" onclick="submitHostel()">Submit Application →</button>
+  </div>
+</div>
+
+<!-- BUS -->
+<div class="sec" id="s-bus">
+  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:4px;">🚌 Bus Routes</div>
+  <div style="font-size:11px;color:#4F7C82;margin-bottom:14px;">Transport Officer: Vishnu Kumar Yadav · 9829855516</div>
+  <div class="search-bar"><input type="text" id="busSearch" placeholder="Search any stop, area or landmark…" oninput="searchStop(this.value)"/></div>
+  <div id="busSearchRes" style="margin-bottom:12px;"></div>
+  <div class="g2" id="busGrid"><div class="empty" style="grid-column:1/-1"><div class="ei">🚌</div><p>Loading routes…</p></div></div>
+</div>
+
+<!-- PROFILE -->
+<div class="sec" id="s-profile">
+  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:14px;">👤 My Profile</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-t">Account Information</div>
+      <table style="width:100%;font-size:12px;">
+        <tr><td style="padding:5px 0;color:#93B1B5;width:100px;">Full Name</td><td id="pProfileName" style="font-weight:600;">—</td></tr>
+        <tr><td style="padding:5px 0;color:#93B1B5;">University ID</td><td id="pProfileId" style="font-weight:600;">—</td></tr>
+        <tr><td style="padding:5px 0;color:#93B1B5;">Course</td><td id="pProfileCourse">—</td></tr>
+        <tr><td style="padding:5px 0;color:#93B1B5;">Year</td><td id="pProfileYear">—</td></tr>
+        <tr><td style="padding:5px 0;color:#93B1B5;">Hostel</td><td id="pProfileHostel">—</td></tr>
+        <tr><td style="padding:5px 0;color:#93B1B5;">Room</td><td id="pProfileRoom">—</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-t">Edit Profile</div>
+      <div class="info-box mb-3">⚠️ Name cannot be changed. Contact Academic Admin for corrections.</div>
+      <div class="flbl">Date of Birth</div>
+      <input class="finp" type="date" id="editDob"/>
+      <div class="flbl">Phone Number</div>
+      <input class="finp" type="tel" id="editPhone" placeholder="10-digit mobile number"/>
+      <div id="profileMsg" style="display:none;" class="info-box mb-2"></div>
+      <button class="btn-p full" onclick="saveProfile()">Save Changes →</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<div class="sec" id="s-chatbot">
+  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:4px;">🤖 ORION — Campus AI</div>
+  <div style="font-size:11px;color:#4F7C82;margin-bottom:16px;">Ask anything about Poornima University</div>
+  <div class="card" style="max-width:680px;">
+    <div id="chatMsgs" style="min-height:300px;max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+      <div style="align-self:flex-start;background:#e8f6f8;border:1px solid #B8E3E9;border-radius:10px;padding:11px 14px;max-width:80%;font-size:12px;">
+        <div style="font-weight:700;color:#0B2E33;margin-bottom:4px;">ORION</div>
+        Hi! I'm ORION, your campus assistant. Ask me about contacts, fees, rules, transport or anything campus-related.
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <input class="finp" style="margin-bottom:0;flex:1;" id="chatInput" placeholder="Ask ORION anything…" onkeydown="if(event.key==='Enter')sendChat()"/>
+      <button class="btn-p" onclick="sendChat()">Send →</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page-body -->
+</div><!-- /admin-main -->
+</div><!-- /admin-wrap -->
+
+<!-- Upload Material Modal -->
+<div class="modal-ov" id="uploadMatModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('uploadMatModal')">✕</button>
+    <div class="modal-title">Upload Study Material</div>
+    <div class="modal-sub">Share notes, PYQs, syllabus or books</div>
+    <div class="flbl">Title <span class="req">*</span></div><input class="finp" id="mTitle" placeholder="e.g. DBMS Notes Unit 3"/>
+    <div class="frow">
+      <div><div class="flbl">Course</div><select class="fsel" id="mCourse"><option>B.Tech CSE</option><option>B.Tech ECE</option><option>MBA</option></select></div>
+      <div><div class="flbl">Type</div><select class="fsel" id="mType"><option>Notes</option><option>PYQ</option><option>Syllabus</option><option>Book</option></select></div>
+    </div>
+    <div class="flbl">Link (Drive/Docs)</div><input class="finp" type="url" id="mLink" placeholder="https://drive.google.com/…"/>
+    <div class="flbl">Description</div><textarea class="ftxt" id="mDesc" placeholder="Brief description…"></textarea>
+    <div id="mErr" class="ferr"></div>
+    <button class="btn-p full" onclick="uploadMaterial()">Upload →</button>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script>
+const user = requireAuth(['student']);
+if(user){
+  // Nav initials
+  const ini = user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('tnAv').textContent = ini;
+  document.getElementById('sbNm').textContent = user.name;
+  document.getElementById('sbId').textContent = user.userId + ' · ' + (user.course||'Student');
+  // Hero
+  const hr = new Date().getHours();
+  // greeting computed inline below
+  document.getElementById('heroHi').textContent = (hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', '+user.name.split(' ')[0]+' 👋';
+  document.getElementById('heroSub').textContent = user.userId+' · '+(user.course||'Student')+' · Session 2026-27';
+  document.getElementById('hPillRoom').textContent = user.hostel&&user.room?user.hostel.replace('Himalaya','H').replace('Gargi','G')+'-'+user.room:'—';
+  document.getElementById('hHostel').textContent = user.hostel||'Not assigned';
+  document.getElementById('hRoom').textContent = user.room||'—';
+  document.getElementById('pProfileName').textContent = user.name;
+  document.getElementById('pProfileId').textContent = user.userId;
+  document.getElementById('pProfileCourse').textContent = user.course||'—';
+  document.getElementById('pProfileYear').textContent = user.year||'—';
+  document.getElementById('pProfileHostel').textContent = user.hostel||'—';
+  document.getElementById('pProfileRoom').textContent = user.room||'—';
+  if(user.dob) document.getElementById('editDob').value = user.dob;
+  if(user.phone) document.getElementById('editPhone').value = user.phone;
+  const lSub = 'Manage your annual 30-wash quota'+(user.hostel?' · '+user.hostel:'')+(user.room?' · Room '+user.room:'');
+  document.getElementById('laundrySubtitle').textContent = lSub;
+}
+
+// NAV
+function show(id, btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const loaders={complaints:loadComplaints,laundry:loadLaundry,timetable:loadTT,events:loadEvents,clubs:loadClubs,materials:loadMaterials,bus:loadBus};
+  if(loaders[id]) loaders[id]();
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function signOut(){clearSession();window.location.href='../login.html';}
+
+// DASHBOARD LOAD
+async function loadDash(){
+  try{
+    const [cD,lD,eD,ttD]=await Promise.allSettled([apiFetch('/complaints'),apiFetch('/laundry/my'),apiFetch('/events'),apiFetch('/timetable')]);
+    if(cD.status==='fulfilled'){
+      const n=(cD.value.complaints||[]).filter(c=>c.status==='open').length;
+      document.getElementById('sc-comp').textContent=n;
+      document.getElementById('hPillCompl').textContent=n;
+      const el=document.getElementById('recentComplaints');
+      const cs=(cD.value.complaints||[]).slice(0,3);
+      const sMap={open:'badge-open',inprogress:'badge-prog',resolved:'badge-done'};
+      el.innerHTML=cs.length?cs.map(c=>`<div class="row-item"><div class="row-dot" style="background:${c.status==='open'?'#E24B4A':c.status==='resolved'?'#085041':'#4F7C82'};"></div><div><div class="row-title">${c.title}</div><div class="row-sub">${c.category} · ${c.createdAt?Math.floor((Date.now()-new Date(c.createdAt))/(1000*60*60*24))+'d ago':''}</div></div><span class="row-badge ${sMap[c.status]||'badge-open'}">${c.status==='inprogress'?'Working':c.status==='resolved'?'Done':'Open'}</span></div>`).join(''):'<div style="font-size:11px;color:#93B1B5;padding:8px 0;">No complaints yet</div>';
+    }
+    if(lD.status==='fulfilled'){
+      const r=lD.value.record||{};
+      const left=(r.totalWashes||30)-(r.usedWashes||0);
+      document.getElementById('sc-wash').textContent=left;
+      document.getElementById('hPillWash').textContent=left;
+    }
+    if(eD.status==='fulfilled'){
+      const n=(eD.value.events||[]).filter(e=>e.isOngoing||new Date(e.date)>=new Date()).length;
+      document.getElementById('sc-evts').textContent=n;
+      document.getElementById('hPillEvts').textContent=n;
+    }
+    if(ttD.status==='fulfilled'){
+      const tt=(ttD.value.timetables||[])[0];
+      if(tt&&tt.slots){
+        const days=['','monday','tuesday','wednesday','thursday','friday','saturday'];
+        const today=days[new Date().getDay()]||'monday';
+        const items=tt.slots.filter(s=>s[today]&&s[today]!=='—'&&s[today]!=='Free').slice(0,4);
+        document.getElementById('todayTl').innerHTML=items.length?items.map(s=>`<li><div class="tl-t">${s.time}</div><div class="tl-h">${s[today]}</div></li>`).join(''):'<li><div class="tl-d" style="color:#93B1B5;">No classes today</div></li>';
+      }
+    }
+  }catch(e){}
+}
+loadDash();
+
+// COMPLAINTS
+async function loadComplaints(){
+  try{
+    const data=await apiFetch('/complaints');
+    const cs=data.complaints||[];
+    document.getElementById('cOpen').textContent=cs.filter(c=>c.status==='open').length;
+    document.getElementById('cProg').textContent=cs.filter(c=>c.status==='inprogress').length;
+    document.getElementById('cRes').textContent=cs.filter(c=>c.status==='resolved').length;
+    document.getElementById('cTotal').textContent=cs.length;
+    const el=document.getElementById('myComplaints');
+    if(!cs.length){el.innerHTML='<div class="empty"><div class="ei">📋</div><p>No complaints yet</p></div>';return;}
+    const sMap={open:'st-open',inprogress:'st-prog',resolved:'st-done'};
+    el.innerHTML=cs.map(c=>`<div class="cc"><div class="cc-hdr"><div><div class="cc-title">${c.title}</div><div class="cc-sub">${c.category} · ${c.priority}</div></div><span class="${sMap[c.status]||'st-open'}">${c.status}</span></div><div class="cc-body">${c.description}</div></div>`).join('');
+  }catch(e){document.getElementById('myComplaints').innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+}
+async function submitComplaint(){
+  const title=document.getElementById('cTitle').value.trim();
+  const desc=document.getElementById('cDesc').value.trim();
+  if(!title||!desc){showToast('Fill title and description','error');return;}
+  try{await apiFetch('/complaints',{method:'POST',body:JSON.stringify({title,description:desc,category:document.getElementById('cCat').value,priority:document.getElementById('cPri').value})});showToast('Complaint submitted! ✅','success');document.getElementById('cTitle').value='';document.getElementById('cDesc').value='';loadComplaints();}
+  catch(e){showToast(e.message,'error');}
+}
+
+// LAUNDRY (sample4 exact)
+async function loadLaundry(){
+  if(new Date().getDay()===5){document.getElementById('fridayAlert').style.display='block';}
+  try{
+    const data=await apiFetch('/laundry/my');
+    const r=data.record||{};
+    const used=r.usedWashes||0,total=r.totalWashes||30;
+    const pct=Math.round(used/total*100);
+    document.getElementById('lBigNum').innerHTML=`${used} <span style="font-size:16px;color:#93B1B5;font-weight:400;">/ ${total}</span>`;
+    document.getElementById('lProgFill').style.width=pct+'%';
+    document.getElementById('lProgLbl').textContent=`${pct}% quota used · ${total-used} remaining`;
+    const sMap={idle:'No active bag',submitted:'📦 Submitted',washing:'🔄 Washing',ready:'✅ Ready for Pickup'};
+    document.getElementById('lStatusPill').textContent=sMap[r.currentStatus||'idle']||'—';
+    if(r.currentSubmittedAt) document.getElementById('lLastSub').textContent='Last submitted: '+new Date(r.currentSubmittedAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    // Quota dots
+    const dots=document.getElementById('lDots');
+    dots.innerHTML=Array.from({length:Math.min(15,total)},(_,i)=>`<div class="qdot${i<used?' used':''}"><span>${i<used?'✓':i+1}</span></div>`).join('');
+    // Submit area
+    const canSub=(!r.currentStatus||r.currentStatus==='idle')&&used<total&&new Date().getDay()!==5;
+    if(!canSub){
+      document.getElementById('lSubmitArea').innerHTML=`<div class="info-box">${r.currentStatus&&r.currentStatus!=='idle'?'⏳ You have a bag currently being processed. Collect it before submitting again.':used>=total?'❌ Annual quota of 30 washes exhausted.':'🚫 Laundry closed on Fridays.'}</div>`;
+    }
+    // History
+    const hist=r.washHistory||[];
+    document.getElementById('lHistCount').textContent=hist.length+' entries';
+    document.getElementById('lHistory').innerHTML=hist.length?`<div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:#B8E3E9;"><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">#</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Clothes</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Submitted</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Collected</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Status</th></tr></thead><tbody>${hist.slice().reverse().map(h=>`<tr style="border-bottom:1px solid #e8f4f6;"><td style="padding:8px 10px;">${h.washNo}</td><td style="padding:8px 10px;">${h.clothesDesc||'—'}</td><td style="padding:8px 10px;">${h.submittedAt?new Date(h.submittedAt).toLocaleDateString('en-IN'):'—'}</td><td style="padding:8px 10px;">${h.collectedAt?new Date(h.collectedAt).toLocaleDateString('en-IN'):'—'}</td><td style="padding:8px 10px;"><span class="${h.status==='collected'?'st-done':'st-sub'}">${h.status}</span></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><div class="ei">👕</div><p>No wash history yet</p></div>';
+  }catch(e){document.getElementById('lBigNum').textContent='—';showToast(e.message,'error');}
+}
+async function submitBag(){
+  const desc=document.getElementById('clothesDesc').value.trim();
+  const btn=document.getElementById('lSubmitBtn');
+  btn.disabled=true;btn.textContent='Submitting…';
+  try{await apiFetch('/laundry/submit',{method:'POST',body:JSON.stringify({clothesDesc:desc})});showToast('Bag submitted! 👕','success');loadLaundry();}
+  catch(e){showToast(e.message,'error');btn.disabled=false;btn.textContent='Submit for Washing →';}
+}
+
+// TIMETABLE
+async function loadTT(){
+  const el=document.getElementById('ttContent');
+  el.innerHTML='<div style="padding:20px;color:#93B1B5;font-size:12px;">Loading…</div>';
+  try{
+    const data=await apiFetch('/timetable');const tts=data.timetables||[];
+    if(!tts.length){el.innerHTML='<div class="empty"><div class="ei">📅</div><p>No timetables found</p></div>';return;}
+    el.innerHTML=tts.map(tt=>`<div class="card mb-3">
+      <div class="card-t">${tt.course} — ${tt.semester} (Section ${tt.section||'A'}) <span style="font-size:10px;font-weight:400;color:#93B1B5;">Updated: ${tt.updatedAt?new Date(tt.updatedAt).toLocaleDateString('en-IN'):''}</span></div>
+      <div class="tt-wrap"><table><thead><tr><th>Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+      <tbody>${(tt.slots||[]).map(s=>`<tr><td class="tt-time">${s.time}</td>${['monday','tuesday','wednesday','thursday','friday'].map(d=>`<td>${s.type==='break'?`<span class="tt-break">${s[d]||'Break'}</span>`:s.type==='lab'?`<span class="tt-lab">${s[d]||'—'}</span>`:s[d]&&s[d]!=='—'&&s[d]!=='Free'?`<span class="tt-sub">${s[d]}</span>`:'<span style="color:#93B1B5;">—</span>'}</td>`).join('')}</tr>`).join('')}
+      </tbody></table></div></div>`).join('');
+  }catch(e){el.innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+}
+
+// EVENTS
+let allEvts=[];
+async function loadEvents(){
+  try{const data=await apiFetch('/events');allEvts=data.events||[];renderEvts('all');}
+  catch(e){document.getElementById('evList').innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+}
+function filterEvt(f,btn){document.querySelectorAll('#s-events .ftab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderEvts(f);}
+function renderEvts(f){
+  const now=new Date();
+  let evs=[...allEvts];
+  if(f==='ongoing')evs=evs.filter(e=>e.isOngoing);
+  else if(f==='upcoming')evs=evs.filter(e=>!e.isOngoing&&new Date(e.date)>=now);
+  else if(f!=='all')evs=evs.filter(e=>e.type===f);
+  const el=document.getElementById('evList');
+  if(!evs.length){el.innerHTML='<div class="empty"><div class="ei">📭</div><p>No events in this category</p></div>';return;}
+  el.innerHTML=evs.map(e=>{
+    const d=e.date?new Date(e.date):null;
+    const tMap={academic:'st-sub',cultural:'st-prog',sports:'st-done',club:'badge-done',exam:'badge-red'};
+    return`<div class="ev-card"><div class="ev-date"><div class="ev-day">${d?String(d.getDate()).padStart(2,'0'):'—'}</div><div class="ev-mon">${d?d.toLocaleString('en',{month:'short'}).toUpperCase():'—'}</div></div>
+      <div class="ev-body"><div class="ev-title">${e.title}</div><div class="ev-desc">${e.description||''}</div>
+      <div class="ev-meta">${e.time?`<span>🕐 ${e.time}</span>`:''} ${e.venue?`<span>📍 ${e.venue}</span>`:''} ${e.type?`<span class="${tMap[e.type]||'badge-prog'}" style="padding:2px 7px;border-radius:6px;font-size:9px;font-weight:700;">${e.type}</span>`:''} ${e.isOngoing?'<span class="st-done" style="padding:2px 7px;">🟢 Ongoing</span>':''}</div>
+      </div></div>`;
+  }).join('');
+}
+
+// CLUBS
+let allClubs=[],clubCat='';
+async function loadClubs(){
+  try{const data=await apiFetch('/clubs');allClubs=data.clubs||[];renderClubs();}
+  catch(e){document.getElementById('clubGrid').innerHTML=`<div class="info-box" style="color:#E24B4A;grid-column:1/-1">${e.message}</div>`;}
+}
+function setCat(c,btn){clubCat=c;document.querySelectorAll('#s-clubs .ftab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderClubs();}
+function filterClub(q){renderClubs(q);}
+function renderClubs(q=''){
+  let clubs=[...allClubs];
+  if(clubCat)clubs=clubs.filter(c=>c.category===clubCat);
+  if(q)clubs=clubs.filter(c=>(c.name+' '+(c.captain||'')).toLowerCase().includes(q.toLowerCase()));
+  const el=document.getElementById('clubGrid');
+  if(!clubs.length){el.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">🔍</div><p>No clubs found</p></div>';return;}
+  el.innerHTML=clubs.map(c=>`<div class="club-card"><div class="club-icon">${c.icon||'🏫'}</div><div class="club-name">${c.name}</div><div class="club-cat">${c.category||'General'}</div><div class="club-desc">${c.description||''}</div><div class="club-people">${(c.captain||c.president)?`<div><span>Captain: </span><strong>${c.captain||c.president}</strong></div>`:''} ${c.viceCaptain?`<div><span>VC: </span><strong>${c.viceCaptain}</strong></div>`:''}</div><div class="club-mbrs">👥 ${c.members||0} members · Est. ${c.foundedYear||'—'}</div></div>`).join('');
+}
+
+// MATERIALS
+let allMats=[];
+async function loadMaterials(){
+  try{const data=await apiFetch('/materials');allMats=data.materials||[];renderMats(allMats);}catch(e){}
+}
+function searchMat(q){renderMats(allMats.filter(m=>(m.title+' '+(m.course||'')).toLowerCase().includes(q.toLowerCase())));}
+function renderMats(mats){
+  const el=document.getElementById('matList');
+  if(!mats.length){el.innerHTML='<div class="empty"><div class="ei">📚</div><p>No materials uploaded yet</p></div>';return;}
+  el.innerHTML=mats.map(m=>`<div class="cc"><div class="cc-hdr"><div><div class="cc-title">${m.title}</div><div class="cc-sub">${m.course||''} · ${m.type||'Notes'}</div></div>${m.fileUrl?`<a href="${m.fileUrl}" target="_blank" class="btn-sm">Open →</a>`:''}</div>${m.description?`<div class="cc-body">${m.description}</div>`:''}</div>`).join('');
+}
+async function uploadMaterial(){
+  const title=document.getElementById('mTitle').value.trim();
+  if(!title){document.getElementById('mErr').textContent='Title required';return;}
+  try{await apiFetch('/materials',{method:'POST',body:JSON.stringify({title,course:document.getElementById('mCourse').value,type:document.getElementById('mType').value,fileUrl:document.getElementById('mLink').value,description:document.getElementById('mDesc').value})});closeModal('uploadMatModal');showToast('Uploaded!','success');loadMaterials();}
+  catch(e){document.getElementById('mErr').textContent=e.message;}
+}
+
+// HOSTEL
+async function submitHostel(){
+  const pr=document.getElementById('prefRoom').value,pn=document.getElementById('pName').value.trim(),pc=document.getElementById('pContact').value.trim(),ha=document.getElementById('homeAddr').value.trim();
+  if(!pr||!pn||!pc||!ha){showToast('Fill all required fields','error');return;}
+  try{await apiFetch('/complaints',{method:'POST',body:JSON.stringify({title:`Hostel Application — ${pr}`,category:'Hostel',priority:'Medium',description:`Room: ${pr}\nBlock: ${document.getElementById('prefBlock').value||'No preference'}\nParent: ${pn}\nContact: ${pc}\nAddress: ${ha}`})});showToast('Application submitted! ✅','success');}
+  catch(e){showToast(e.message,'error');}
+}
+
+// BUS
+let allRoutes=[];
+async function loadBus(){
+  try{const data=await apiFetch('/bus');allRoutes=data.routes||[];renderBus();}
+  catch(e){document.getElementById('busGrid').innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+}
+function searchStop(q){
+  const el=document.getElementById('busSearchRes');
+  if(!q.trim()){el.innerHTML='';return;}
+  const ql=q.toLowerCase(),found=[];
+  allRoutes.forEach(r=>r.stops.forEach((s,i)=>{if((s.name+' '+(s.landmark||'')).toLowerCase().includes(ql))found.push({r,s,i});}));
+  if(!found.length){el.innerHTML='<div class="info-box">No stops found for "'+q+'"</div>';return;}
+  el.innerHTML='<div class="card mb-2"><div class="card-t">Results ('+found.length+')</div>'+found.slice(0,8).map(f=>`<div class="laundry-item"><div class="li-icon">📍</div><div class="li-info"><div class="li-name">Stop ${f.i+1}: ${f.s.name}</div><div class="li-sub">${f.r.routeName}${f.r.annualFee?' · ₹'+f.r.annualFee.toLocaleString('en-IN')+'/yr':''}</div></div></div>`).join('')+'</div>';
+}
+function renderBus(){
+  const el=document.getElementById('busGrid');
+  if(!allRoutes.length){el.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">🚌</div><p>No routes found</p></div>';return;}
+  el.innerHTML=allRoutes.map(r=>`<div class="card"><div class="card-t">${r.routeNo} <span class="status-pill" style="font-size:10px;">${r.annualFee?'₹'+r.annualFee.toLocaleString('en-IN')+'/yr':'Free'}</span></div>
+    <div style="font-size:11px;color:#4F7C82;margin-bottom:10px;">${r.routeName}</div>
+    ${r.morning?`<div style="font-size:11px;margin-bottom:6px;">🕐 Morning: <strong>${r.morning}</strong></div>`:''}
+    ${r.notes?`<div class="info-box mb-2" style="font-size:10px;">${r.notes}</div>`:''}
+    <ul class="stop-list">${r.stops.map((s,i)=>`<li><div class="stop-dot"></div><span class="stop-num">${i+1}.</span>${s.name}</li>`).join('')}</ul>
+    <div style="font-size:10px;color:#93B1B5;margin-top:8px;">Officer: ${r.driver||'Vishnu Kumar Yadav'} · ${r.driverPhone||'9829855516'}</div>
+  </div>`).join('');
+}
+
+// PROFILE
+async function saveProfile(){
+  const dob=document.getElementById('editDob').value,phone=document.getElementById('editPhone').value.trim();
+  if(phone&&!/^\d{10}$/.test(phone)){showToast('Phone must be 10 digits','error');return;}
+  try{await apiFetch('/auth/profile',{method:'PATCH',body:JSON.stringify({dob,phone})});const u=getUser();u.dob=dob;u.phone=phone;localStorage.setItem('pc_user',JSON.stringify(u));const msg=document.getElementById('profileMsg');msg.textContent='✅ Profile updated!';msg.style.display='block';setTimeout(()=>msg.style.display='none',3000);}
+  catch(e){showToast(e.message,'error');}
+}
+
+// CHATBOT
+async function sendChat(){
+  const input=document.getElementById('chatInput');const q=input.value.trim();if(!q)return;input.value='';
+  const msgs=document.getElementById('chatMsgs');
+  msgs.innerHTML+=`<div style="align-self:flex-end;background:#0B2E33;border-radius:10px;padding:10px 13px;max-width:75%;font-size:12px;color:#B8E3E9;">${q}</div>`;
+  msgs.innerHTML+=`<div id="orionThink" style="align-self:flex-start;background:#e8f6f8;border:1px solid #B8E3E9;border-radius:10px;padding:10px 13px;font-size:12px;color:#93B1B5;">ORION is thinking…</div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'You are ORION, the AI assistant for Poornima University, Jaipur. Be helpful, concise and friendly.',messages:[{role:'user',content:q}]})});
+    const data=await res.json();const reply=(data.content||[]).map(i=>i.text||'').join('');
+    document.getElementById('orionThink').outerHTML=`<div style="align-self:flex-start;background:#e8f6f8;border:1px solid #B8E3E9;border-radius:10px;padding:11px 14px;max-width:80%;font-size:12px;"><div style="font-weight:700;color:#0B2E33;margin-bottom:4px;">ORION</div>${reply||'Could not get response.'}</div>`;
+  }catch(e){document.getElementById('orionThink').outerHTML=`<div style="align-self:flex-start;background:#fbe8e8;border:1px solid #f0c0c0;border-radius:10px;padding:10px 13px;font-size:12px;color:#A32D2D;">ORION unavailable right now.</div>`;}
+  msgs.scrollTop=msgs.scrollHeight;
+}
+</script>
+</body></html>

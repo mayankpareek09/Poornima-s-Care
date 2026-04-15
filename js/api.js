@@ -1,0 +1,111 @@
+// ═══════════════════════════════════════════════
+//  Poornima's Care — Shared API + UI Utilities
+//  v12 — Vercel + Render ready
+// ═══════════════════════════════════════════════
+
+// ── Backend URL: auto-detect environment ─────────
+//  • In production (Vercel):  set window.PC_API_URL in your Vercel env
+//    via a small inline script, OR set VITE_API_URL if you ever migrate.
+//  • In local dev: defaults to same-origin /api (works with express proxy or
+//    when running the express server locally on same port).
+//  • To hardcode your Render backend temporarily, replace the URL below.
+const API = (function() {
+  // 1. Check for injected runtime config (recommended for Vercel)
+  if (window.PC_API_URL) return window.PC_API_URL.replace(/\/$/, '') + '/api';
+  // 2. Check meta tag: <meta name="api-base" content="https://your-app.onrender.com">
+  const meta = document.querySelector('meta[name="api-base"]');
+  if (meta && meta.content) return meta.content.replace(/\/$/, '') + '/api';
+  // 3. Fallback: same origin (local dev or reverse-proxied deployment)
+  return window.location.origin + '/api';
+})();
+
+// ── Token helpers ────────────────────────────────
+function getToken()  { return localStorage.getItem('pc_token'); }
+function getUser()   { const u = localStorage.getItem('pc_user'); try { return u ? JSON.parse(u) : null; } catch { return null; } }
+function setSession(token, user) { localStorage.setItem('pc_token', token); localStorage.setItem('pc_user', JSON.stringify(user)); }
+function clearSession() { localStorage.removeItem('pc_token'); localStorage.removeItem('pc_user'); }
+
+function requireAuth(allowedRoles) {
+  const user  = getUser();
+  const token = getToken();
+  if (!user || !token) { window.location.href = '/login.html'; return null; }
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    alert('Access denied. You do not have permission to view this page.');
+    window.location.href = '/login.html';
+    return null;
+  }
+  return user;
+}
+
+// ── Fetch wrapper ────────────────────────────────
+async function apiFetch(endpoint, options = {}) {
+  const token = getToken();
+  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const res  = await fetch(`${API}${endpoint}`, { ...options, headers });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Something went wrong');
+  return data;
+}
+
+// ── Toast ────────────────────────────────────────
+function showToast(msg, type = 'success') {
+  const old = document.querySelector('.pc-toast'); if (old) old.remove();
+  const colors = { success:'#27ae60', error:'#e74c3c', info:'#2980b9', warning:'#e67e22' };
+  const icons  = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' };
+  const t = document.createElement('div');
+  t.className = 'pc-toast';
+  t.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;background:${colors[type]||colors.info};color:white;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,0.22);display:flex;align-items:center;gap:10px;max-width:340px;font-family:'Plus Jakarta Sans','Poppins',sans-serif;animation:slideIn .25s cubic-bezier(0.34,1.56,0.64,1);`;
+  t.innerHTML = `<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 3500);
+}
+
+// ── Modal helpers ────────────────────────────────
+function openModal(id)  { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+
+// ── Badge helpers ────────────────────────────────
+function statusBadge(status) {
+  const m = { open:['badge-open','🔴 Open'], inprogress:['badge-inprogress','🟡 In Progress'], resolved:['badge-resolved','🟢 Resolved'] };
+  const [cls, label] = m[status] || ['badge-new', status];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+function laundryBadge(status) {
+  const m = { pending:['badge-new','⏳ Pending'], submitted:['badge-inprogress','📦 Submitted'], washing:['badge-inprogress','🔄 Washing'], ready:['badge-resolved','✅ Ready'], collected:['badge-gold','📬 Collected'] };
+  const [cls, label] = m[status] || ['badge-new', status];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+// ── Date formatter ────────────────────────────────
+function fmtDate(d)     { return d ? new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'; }
+function fmtDateTime(d) { return d ? new Date(d).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—'; }
+
+// ── Render logged-in user in header ──────────────
+function renderUserHeader(prefix = '') {
+  const user = getUser();
+  if (!user) return;
+  const av  = document.getElementById('userAvatar');
+  const nm  = document.getElementById('userName');
+  const uid = document.getElementById('userId');
+  if (av) {
+    av.textContent = user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    if (user.profilePhoto) {
+      av.innerHTML = `<img src="${user.profilePhoto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Profile"/>`;
+    }
+    const pill = document.getElementById('userPill') || av.closest('.user-info-pill');
+    if (pill) { pill.style.cursor='pointer'; pill.onclick=()=>{ window.location.href=(window.location.pathname.includes('/pages/')?'':'pages/')+'profile.html'; }; }
+  }
+  if (nm)  nm.textContent  = user.name;
+  if (uid) uid.textContent = `${user.userId} · ${user.course||user.department||user.role.replace('_',' ')}`;
+}
+
+// ── Sign out ──────────────────────────────────────
+function signOut() { clearSession(); window.location.href='/login.html'; }
+
+// ── CSS animations ───────────────────────────────
+const _s = document.createElement('style');
+_s.textContent = `
+  @keyframes slideIn { from { transform:translateX(60px);opacity:0; } to { transform:none;opacity:1; } }
+`;
+document.head.appendChild(_s);

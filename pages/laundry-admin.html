@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Laundry Admin — Poornima's Care</title>
+<link rel="stylesheet" href="../css/main.css"/>
+</head><body>
+<div class="admin-wrap">
+<div class="admin-sb">
+  <div class="asb-top"><div class="asb-logo">Poornima's <span>Care</span></div><div class="asb-av" id="sbAv">LA</div><div class="asb-nm" id="sbNm">—</div><div class="asb-id" id="sbId">—</div></div>
+  <div class="asb-sec">Laundry</div>
+  <div class="asb-link active" id="lnk-dash" onclick="show('dash',this)"><span class="asb-ic">⚡</span> Dashboard</div>
+  <div class="asb-link" id="lnk-all" onclick="show('all',this)"><span class="asb-ic">📋</span> All Laundry</div>
+  <div class="asb-link" id="lnk-submitted" onclick="show('submitted',this)"><span class="asb-ic">📦</span> Submitted</div>
+  <div class="asb-link" id="lnk-washing" onclick="show('washing',this)"><span class="asb-ic">🔄</span> Washing</div>
+  <div class="asb-link" id="lnk-ready" onclick="show('ready',this)"><span class="asb-ic">✅</span> Ready</div>
+  <div class="asb-link" id="lnk-collected" onclick="show('collected',this)"><span class="asb-ic">📬</span> Collected</div>
+</div>
+<div class="admin-main">
+  <!-- DASHBOARD -->
+  <div class="sec active" id="s-dash">
+    <div class="admin-hdr"><div class="admin-hdr-t">👕 Laundry Dashboard</div><button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="signOut()">Sign Out</button></div>
+    <div class="admin-body">
+      <div class="g4 mb-4">
+        <div class="sc"><div class="sc-ic">👥</div><div class="sc-n" id="dTotal">—</div><div class="sc-l">Students</div></div>
+        <div class="sc"><div class="sc-ic">📦</div><div class="sc-n" id="dSub" style="color:#854F0B;">—</div><div class="sc-l">Submitted</div></div>
+        <div class="sc"><div class="sc-ic">🔄</div><div class="sc-n" id="dWash" style="color:#4F7C82;">—</div><div class="sc-l">Washing</div></div>
+        <div class="sc"><div class="sc-ic">✅</div><div class="sc-n" id="dReady" style="color:#085041;">—</div><div class="sc-l">Ready</div></div>
+        <div class="sc"><div class="sc-ic">📬</div><div class="sc-n" id="dColl" style="color:#085041;">—</div><div class="sc-l">Collected Today</div></div>
+      </div>
+    </div>
+  </div>
+  <!-- ALL -->
+  <div class="sec" id="s-all">
+    <div class="admin-hdr"><div class="admin-hdr-t">📋 All Laundry</div><button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="loadAll()">↺ Refresh</button></div>
+    <div class="admin-body">
+      <div class="search-bar mb-3"><input type="text" id="srch" placeholder="Search by student name or ID…" oninput="filterTable(this.value)"/></div>
+      <div id="listAll"></div>
+    </div>
+  </div>
+  <!-- SUBMITTED -->
+  <div class="sec" id="s-submitted">
+    <div class="admin-hdr"><div class="admin-hdr-t">📦 Submitted Bags</div></div>
+    <div class="admin-body"><div id="listSub"></div></div>
+  </div>
+  <!-- WASHING -->
+  <div class="sec" id="s-washing">
+    <div class="admin-hdr"><div class="admin-hdr-t">🔄 Being Washed</div></div>
+    <div class="admin-body"><div id="listWash"></div></div>
+  </div>
+  <!-- READY -->
+  <div class="sec" id="s-ready">
+    <div class="admin-hdr"><div class="admin-hdr-t">✅ Ready for Pickup</div></div>
+    <div class="admin-body"><div id="listReady"></div></div>
+  </div>
+  <!-- COLLECTED -->
+  <div class="sec" id="s-collected">
+    <div class="admin-hdr"><div class="admin-hdr-t">📬 Collected</div></div>
+    <div class="admin-body"><div id="listColl"></div></div>
+  </div>
+</div>
+</div>
+
+<!-- Update Modal -->
+<div class="modal-ov" id="updateModal"><div class="modal-box">
+  <button class="modal-close" onclick="closeModal('updateModal')">✕</button>
+  <div class="modal-title">Update Laundry Status</div>
+  <div id="uInfo" style="font-size:12px;color:#4F7C82;margin-bottom:6px;font-weight:600;"></div>
+  <div id="uDetails" style="font-size:11px;color:#93B1B5;margin-bottom:14px;"></div>
+  <div class="flbl">New Status</div>
+  <select class="fsel" id="uStatus">
+    <option value="submitted">📦 Submitted</option>
+    <option value="washing">🔄 Washing</option>
+    <option value="ready">✅ Ready for Pickup</option>
+    <option value="collected">📬 Collected</option>
+  </select>
+  <div class="flbl">Admin Notes (optional)</div>
+  <textarea class="ftxt" id="uNotes" placeholder="Optional notes for student…"></textarea>
+  <input type="hidden" id="uId"/>
+  <button class="btn-p full" onclick="doUpdate()">Update Status →</button>
+</div></div>
+
+<script src="../js/api.js"></script>
+<script>
+const user=requireAuth(['laundry_admin']);
+if(user){
+  const ini=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('sbAv').textContent=ini;
+  document.getElementById('sbNm').textContent=user.name;
+  document.getElementById('sbId').textContent=user.userId+' · Laundry Services';
+}
+function show(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  document.querySelectorAll('.asb-link').forEach(a=>a.classList.remove('active'));
+  if(el)el.classList.add('active');
+  loadAll();
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function signOut(){clearSession();window.location.href='../login.html';}
+
+let allRecs=[];
+
+async function loadAll(){
+  try{
+    const data=await apiFetch('/laundry/all');
+    const raw=data.records||[];
+    // De-duplicate by student, keep latest
+    const seen={};
+    raw.forEach(r=>{
+      const k=r.studentUserId||String(r.studentId);
+      if(!seen[k]||new Date(r.updatedAt)>new Date(seen[k].updatedAt)) seen[k]=r;
+    });
+    allRecs=Object.values(seen);
+
+    const gs=r=>r.currentStatus||'idle';
+    const today=new Date().toDateString();
+
+    document.getElementById('dTotal').textContent=allRecs.length;
+    document.getElementById('dSub').textContent=allRecs.filter(r=>gs(r)==='submitted').length;
+    document.getElementById('dWash').textContent=allRecs.filter(r=>gs(r)==='washing').length;
+    document.getElementById('dReady').textContent=allRecs.filter(r=>gs(r)==='ready').length;
+
+    // Count collected today from wash history
+    let collectedToday=0;
+    raw.forEach(r=>{
+      (r.washHistory||[]).forEach(h=>{
+        if(h.status==='collected'&&h.collectedAt&&new Date(h.collectedAt).toDateString()===today) collectedToday++;
+      });
+    });
+    document.getElementById('dColl').textContent=collectedToday;
+
+    renderList('listAll',allRecs,'all');
+    renderList('listSub',allRecs.filter(r=>gs(r)==='submitted'));
+    renderList('listWash',allRecs.filter(r=>gs(r)==='washing'));
+    renderList('listReady',allRecs.filter(r=>gs(r)==='ready'));
+
+    // Collected = records with at least one collected history entry
+    const collectedRecs=raw.filter(r=>(r.washHistory||[]).some(h=>h.status==='collected'));
+    renderCollected('listColl',collectedRecs);
+  }catch(e){console.error(e);}
+}
+
+function filterTable(q){
+  const ql=q.toLowerCase();
+  document.querySelectorAll('#listAll .l-row').forEach(r=>{
+    r.style.display=!ql||r.textContent.toLowerCase().includes(ql)?'':'none';
+  });
+}
+
+function fmtDate(d){return d?new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';}
+function fmtDateShort(d){return d?new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}):'—';}
+
+function renderList(elId,records,mode){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  if(!records.length){el.innerHTML='<div class="empty"><div class="ei">📭</div><p>No records here</p></div>';return;}
+  const gs=r=>r.currentStatus||'idle';
+  const statusColor={submitted:'#854F0B',washing:'#4F7C82',ready:'#085041',idle:'#93B1B5'};
+  const statusBg={submitted:'#fff8e0',washing:'#e8f6f8',ready:'#e0f2ee',idle:'#f5f5f5'};
+
+  el.innerHTML=`<div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:11px;">
+    <thead><tr style="background:#B8E3E9;">
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Student</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">ID / Room</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Status</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Clothes</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Submitted</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Quota</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Action</th>
+    </tr></thead>
+    <tbody>${records.map(r=>{
+      const st=gs(r);
+      const clothes=(r.currentClothesDesc||r.clothesDesc||'—').substring(0,40);
+      const subDate=r.currentSubmittedAt?fmtDate(r.currentSubmittedAt):'—';
+      return `<tr class="l-row" style="border-bottom:1px solid #e8f4f6;">
+        <td style="padding:9px 11px;font-weight:700;color:#0B2E33;">${r.studentName||'—'}</td>
+        <td style="padding:9px 11px;font-size:10px;"><div style="color:#4F7C82;">${r.studentUserId||'—'}</div><div style="color:#93B1B5;">${r.hostel||''} ${r.room?'Rm '+r.room:''}</div></td>
+        <td style="padding:9px 11px;"><span style="background:${statusBg[st]||'#f5f5f5'};color:${statusColor[st]||'#93B1B5'};padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;text-transform:capitalize;">${st==='idle'?'No Active Bag':st}</span></td>
+        <td style="padding:9px 11px;font-size:10px;color:#4F7C82;max-width:150px;">${clothes}</td>
+        <td style="padding:9px 11px;font-size:10px;color:#93B1B5;">${subDate}</td>
+        <td style="padding:9px 11px;font-size:10px;"><span style="font-weight:700;">${r.usedWashes||0}</span><span style="color:#93B1B5;">/${r.totalWashes||30}</span></td>
+        <td style="padding:9px 11px;">
+          ${st!=='idle'?`<button class="btn-sm" onclick="openUpdate('${r._id}','${(r.studentName||'').replace(/'/g,"\\'")}','${r.studentUserId||''}','${st}','${clothes}','${subDate}')">Update</button>`:'<span style="color:#93B1B5;font-size:10px;">No active bag</span>'}
+        </td>
+      </tr>`;
+    }).join('')}</tbody></table></div>`;
+}
+
+function renderCollected(elId,records){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  if(!records.length){el.innerHTML='<div class="empty"><div class="ei">📬</div><p>No collected records yet</p></div>';return;}
+  let rows='';
+  records.forEach(r=>{
+    (r.washHistory||[]).filter(h=>h.status==='collected').forEach(h=>{
+      rows+=`<tr style="border-bottom:1px solid #e8f4f6;">
+        <td style="padding:9px 11px;font-weight:700;color:#0B2E33;">${r.studentName||'—'}</td>
+        <td style="padding:9px 11px;font-size:10px;color:#4F7C82;">${r.studentUserId||'—'}</td>
+        <td style="padding:9px 11px;font-size:10px;color:#4F7C82;">${h.clothesDesc||'—'}</td>
+        <td style="padding:9px 11px;font-size:10px;color:#93B1B5;">${fmtDate(h.submittedAt)}</td>
+        <td style="padding:9px 11px;font-size:10px;color:#085041;font-weight:700;">${fmtDate(h.collectedAt)}</td>
+        <td style="padding:9px 11px;"><span style="background:#e0f2ee;color:#085041;padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;">Collected ✓</span></td>
+      </tr>`;
+    });
+  });
+  el.innerHTML=`<div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:11px;">
+    <thead><tr style="background:#B8E3E9;">
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Student</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">ID</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Clothes</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Date Submitted</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Date Collected</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Status</th>
+    </tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+
+function openUpdate(id,name,uid,status,clothes,subDate){
+  document.getElementById('uId').value=id;
+  document.getElementById('uInfo').textContent=name+' · '+uid;
+  document.getElementById('uDetails').textContent='Clothes: '+clothes+' | Submitted: '+subDate;
+  document.getElementById('uStatus').value=status==='idle'?'submitted':status;
+  document.getElementById('uNotes').value='';
+  openModal('updateModal');
+}
+
+async function doUpdate(){
+  const id=document.getElementById('uId').value;
+  const newStatus=document.getElementById('uStatus').value;
+  try{
+    await apiFetch('/laundry/'+id,{method:'PATCH',body:JSON.stringify({status:newStatus,adminNotes:document.getElementById('uNotes').value})});
+    closeModal('updateModal');
+    showToast('Status updated to: '+newStatus+' ✅','success');
+    loadAll();
+  }catch(e){showToast(e.message,'error');}
+}
+
+loadAll();
+</script>
+</body></html>

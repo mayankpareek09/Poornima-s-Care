@@ -36,7 +36,7 @@
 </div>
 <!-- MAIN CONTENT -->
 <div class="admin-main">
-<div class="page-body" style="padding:0;">
+<div class="page-body" style="padding:0;min-width:0;">
 
 <!-- DASHBOARD -->
 <div class="sec active" id="s-dash">
@@ -81,7 +81,7 @@
   <div class="g4 mb-4">
     <div class="sc"><div class="sc-ic">🔴</div><div class="sc-n" id="cOpen" style="color:#E24B4A;">0</div><div class="sc-l">Open</div></div>
     <div class="sc"><div class="sc-ic">🟡</div><div class="sc-n" id="cProg" style="color:#854F0B;">0</div><div class="sc-l">In Progress</div></div>
-    <div class="sc"><div class="sc-icon">🟢</div><div class="sc-n" id="cRes" style="color:#085041;">0</div><div class="sc-l">Resolved</div></div>
+    <div class="sc"><div class="sc-ic">🟢</div><div class="sc-n" id="cRes" style="color:#085041;">0</div><div class="sc-l">Resolved</div></div>
     <div class="sc"><div class="sc-ic">📋</div><div class="sc-n" id="cTotal">0</div><div class="sc-l">Total</div></div>
   </div>
   <div class="g2">
@@ -323,7 +323,7 @@
 <div class="sec" id="s-chatbot">
   <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:4px;">🤖 ORION — Campus AI</div>
   <div style="font-size:11px;color:#4F7C82;margin-bottom:16px;">Ask anything about Poornima University</div>
-  <div class="card" style="max-width:680px;">
+  <div class="card" style="max-width:680px;width:100%;">
     <div id="chatMsgs" style="min-height:300px;max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
       <div style="align-self:flex-start;background:#e8f6f8;border:1px solid #B8E3E9;border-radius:10px;padding:11px 14px;max-width:80%;font-size:12px;">
         <div style="font-weight:700;color:#0B2E33;margin-bottom:4px;">ORION</div>
@@ -642,9 +642,7 @@ async function sendChat(){
 <!-- STEP 1: Add this HTML right after <body> tag -->
 <!-- ================================================ -->
 
-<!-- Mobile Menu Button -->
-<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
-<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
 
 
 <!-- STEP 2: Add this JavaScript before </body> tag -->

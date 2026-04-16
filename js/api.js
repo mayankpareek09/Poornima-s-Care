@@ -42,12 +42,26 @@ async function apiFetch(endpoint, options = {}) {
   const token = getToken();
   const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  const res  = await fetch(`${API}${endpoint}`, { ...options, headers });
+  const res = await fetch(`${API}${endpoint}`, { ...options, headers });
+  
+  // Handle non-JSON responses (e.g. Render waking up and returning HTML error pages)
+  const contentType = res.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    const text = await res.text();
+    if (res.status === 401 || res.status === 403) {
+      clearSession();
+      window.location.href = '/';
+      return;
+    }
+    throw new Error(res.status === 503 
+      ? 'Server is waking up, please wait a moment and try again.' 
+      : `Server error (${res.status}). Please try again.`);
+  }
+  
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Something went wrong');
   return data;
 }
-
 // ── Toast ────────────────────────────────────────
 function showToast(msg, type = 'success') {
   const old = document.querySelector('.pc-toast'); if (old) old.remove();
@@ -101,7 +115,7 @@ function renderUserHeader(prefix = '') {
 }
 
 // ── Sign out ──────────────────────────────────────
-function signOut() { clearSession(); window.location.href='/login.html'; }
+function signOut() { clearSession(); window.location.href = '/'; }
 
 // ── CSS animations ───────────────────────────────
 const _s = document.createElement('style');

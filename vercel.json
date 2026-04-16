@@ -1,6 +1,15 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/student", "destination": "/pages/student.html" },
+    { "source": "/register", "destination": "/register.html" },
+    { "source": "/laundry-admin", "destination": "/pages/laundry-admin.html" },
+    { "source": "/council-portal", "destination": "/pages/council-portal.html" },
+    { "source": "/academic-admin", "destination": "/pages/academic-admin.html" }
+  ],
   "routes": [
-    { "src": "/login", "dest": "/" }
+    { "src": "/login", "dest": "/index.html" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

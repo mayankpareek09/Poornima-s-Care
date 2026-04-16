@@ -17,7 +17,7 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
 .hero-title{font-size:28px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px;position:relative;z-index:1;}
 .hero-sub{font-size:13px;color:#93B1B5;position:relative;z-index:1;}
 .login-body{padding:32px 40px 36px;}
-.portal-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px;}
+.portal-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:24px;}
 .ptab{padding:14px 6px;border-radius:12px;border:2px solid #B8E3E9;text-align:center;cursor:pointer;background:#f0fafb;transition:all .2s;}
 .ptab:hover{border-color:#4F7C82;background:#e8f6f8;}
 .ptab.active{background:#0B2E33;border-color:#0B2E33;box-shadow:0 4px 12px rgba(11,46,51,0.2);}
@@ -40,6 +40,10 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
 .login-links a:hover{color:#0B2E33;}
 @media (max-width: 768px){
 
+  .portal-tabs { grid-template-columns: repeat(2, 1fr); }
+.council-sub { grid-template-columns: 1fr 1fr; }
+.ptab-ic { font-size: 18px; }
+.login-body { padding: 20px 16px 24px; }
   .login-wrap{
     max-width:100%;
     padding:10px;
@@ -100,6 +104,7 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
   }
 }
 </style>
+<script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
 </head><body>
 <div class="login-wrap">
   <div class="login-card">
@@ -183,7 +188,11 @@ let wakeMsg = setTimeout(() => {
     const dest={student:'pages/student.html',academic_admin:'pages/academic-admin.html',laundry_admin:'pages/laundry-admin.html',council_admin:'pages/council-portal.html',club_captain:'pages/council-portal.html',vice_captain:'pages/council-portal.html'};
     window.location.href=dest[data.user.role]||'pages/student.html';
   }catch(e){err.textContent='Cannot connect to server. Check backend is running.';}
-  finally{btn.textContent='Sign In →';btn.disabled=false;}
+  finally{
+  clearTimeout(wakeMsg);
+  btn.textContent='Sign In →';
+  btn.disabled=false;
+}
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 </script>

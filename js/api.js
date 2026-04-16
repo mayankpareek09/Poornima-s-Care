@@ -27,7 +27,10 @@ function clearSession() { localStorage.removeItem('pc_token'); localStorage.remo
 
 function requireAuth(allowedRoles) {
   const user  = getUser();
-  const token = getToken();
+  const token = getToken(); 
+  if (!user || !token) { window.location.href = '/'; return null; }
+// ...
+window.location.href = '/';
   if (!user || !token) { window.location.href = '/login.html'; return null; }
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     alert('Access denied. You do not have permission to view this page.');

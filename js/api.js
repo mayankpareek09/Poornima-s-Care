@@ -54,10 +54,14 @@ async function apiFetch(endpoint, options = {}) {
   
   // Handle non-JSON responses (e.g. Render waking up and returning HTML error pages)
   const contentType = res.headers.get('content-type') || '';
-  if (!contentType.includes('application/json')) {
+ if (!contentType.includes('application/json')) {
     const text = await res.text();
     if (res.status === 401 || res.status === 403) {
       clearSession();
+      // Only redirect if we're not already on the login page
+      if (!window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
+        window.location.href = '/index.html';
+      }
       return;
     }
     throw new Error(res.status === 503 
@@ -66,9 +70,15 @@ async function apiFetch(endpoint, options = {}) {
   }
   
   const data = await res.json();
+  if (res.status === 401 || res.status === 403) {
+    clearSession();
+    if (!window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
+      window.location.href = '/index.html';
+    }
+    return;
+  }
   if (!res.ok) throw new Error(data.message || 'Something went wrong');
   return data;
-}
 // ── Toast ────────────────────────────────────────
 function showToast(msg, type = 'success') {
   const old = document.querySelector('.pc-toast'); if (old) old.remove();

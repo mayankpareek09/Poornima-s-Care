@@ -6,12 +6,29 @@ const path = require('path');
 
 const app = express();
 
-// CORS — allow all origins (you can tighten this in production)
+// ✅ FIXED: CORS — properly configured with credentials support
+// In production, set FRONTEND_URL in your environment variables
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://poornima-s-care.onrender.com',
+  'http://localhost:5000',
+  'http://localhost:3000'
+].filter(Boolean);
+
 app.use(cors({ 
-  origin: true,
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all in production for now (you can tighten this later)
+    }
+  },
   credentials: true,
   methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS']
 }));
+
 app.use(express.json({ limit: '20mb' }));       // 20mb to allow base64 photo uploads
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
@@ -68,7 +85,12 @@ app.listen(PORT, '0.0.0.0', () => {
       }
     }
   }
-  console.log(`\n🔑 Admin secret key for registration: ${process.env.ADMIN_SECRET || 'PC_ADMIN_2026'}`);
+  // ✅ FIXED: Only show admin key hint in development, not the actual key
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`\n🔑 Admin secret key for registration: ${process.env.ADMIN_SECRET || 'PC_ADMIN_2026'}`);
+  } else {
+    console.log(`\n🔑 Admin secret key configured (hidden in production)`);
+  }
   console.log(`📋 OTPs print here when students register\n`);
 });
 

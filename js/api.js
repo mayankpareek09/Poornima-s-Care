@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════
 //  Poornima's Care — Shared API + UI Utilities
-//  v12 — Vercel + Render ready
+//  v12 — Vercel + Render ready — FIXED VERSION
 // ═══════════════════════════════════════════════
 
 // ── Backend URL: auto-detect environment ─────────
@@ -79,6 +79,9 @@ async function apiFetch(endpoint, options = {}) {
   }
   if (!res.ok) throw new Error(data.message || 'Something went wrong');
   return data;
+}
+// ⬆️ CRITICAL FIX: Added missing closing brace above this line
+
 // ── Toast ────────────────────────────────────────
 function showToast(msg, type = 'success') {
   const old = document.querySelector('.pc-toast'); if (old) old.remove();

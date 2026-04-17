@@ -27,16 +27,21 @@ function clearSession() { localStorage.removeItem('pc_token'); localStorage.remo
 
 function requireAuth(allowedRoles) {
   const user  = getUser();
-  const token = getToken(); 
-  if (!user || !token) { window.location.href = '/'; return null; }
-// ...
-window.location.href = '/';
-  if (!user || !token) { window.location.href = '/login.html'; return null; }
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    alert('Access denied. You do not have permission to view this page.');
-    window.location.href = '/login.html';
+  const token = getToken();
+
+  // If not logged in → go to login
+  if (!user || !token) {
+    window.location.href = '/index.html';
     return null;
   }
+
+  // If role not allowed → block
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    alert('Access denied. You do not have permission to view this page.');
+    window.location.href = '/index.html';
+    return null;
+  }
+
   return user;
 }
 
@@ -53,7 +58,6 @@ async function apiFetch(endpoint, options = {}) {
     const text = await res.text();
     if (res.status === 401 || res.status === 403) {
       clearSession();
-      window.location.href = '/';
       return;
     }
     throw new Error(res.status === 503 
@@ -118,7 +122,10 @@ function renderUserHeader(prefix = '') {
 }
 
 // ── Sign out ──────────────────────────────────────
-function signOut() { clearSession(); window.location.href = '/'; }
+function signOut() { 
+  clearSession(); 
+  window.location.href = '/index.html';
+}
 
 // ── CSS animations ───────────────────────────────
 const _s = document.createElement('style');

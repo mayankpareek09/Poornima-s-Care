@@ -7,7 +7,11 @@ const path = require('path');
 const app = express();
 
 // CORS — allow all origins (you can tighten this in production)
-app.use(cors({ origin: '*', methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'] }));
+app.use(cors({ 
+  origin: true,
+  credentials: true,
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS']
+}));
 app.use(express.json({ limit: '20mb' }));       // 20mb to allow base64 photo uploads
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 

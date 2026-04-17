@@ -32,7 +32,7 @@ app.use('/api/materials',  require('./routes/materials'));
 app.use('/api/analytics',  require('./routes/analytics'));
 
 // Serve login page for root
-app.get('/', (req, res) => res.sendFile(path.join(frontendPath, 'login.html')));
+app.get('/', (req, res) => res.sendFile(path.join(frontendPath, 'index.html')));
 
 // Serve register page
 app.get('/register', (req, res) => res.sendFile(path.join(frontendPath, 'register.html')));
@@ -41,7 +41,7 @@ app.get('/register.html', (req, res) => res.sendFile(path.join(frontendPath, 're
 // Fallback: serve index / login for unmatched routes (SPA style)
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api/')) return res.status(404).json({ success: false, message: 'API route not found.' });
-  res.sendFile(path.join(frontendPath, 'login.html'));
+ res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // Global error handler

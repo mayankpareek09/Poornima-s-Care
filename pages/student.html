@@ -77,7 +77,7 @@
 
 <!-- COMPLAINTS -->
 <div class="sec" id="s-complaints">
-  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:4px;">📋 My Complaints</div>
+ <div style="font-size:22px;font-weight:800;color:#0B2E33;margin-bottom:6px;letter-spacing:-0.3px;">📋 My Complaints</div>
   <div style="font-size:11px;color:#4F7C82;margin-bottom:16px;">Describe your issue — routed to the right department automatically.</div>
   <div class="g4 mb-4">
     <div class="sc"><div class="sc-ic">🔴</div><div class="sc-n" id="cOpen" style="color:#E24B4A;">0</div><div class="sc-l">Open</div></div>
@@ -93,7 +93,16 @@
       <div class="frow">
         <div>
           <div class="flbl">Category <span class="req">*</span></div>
-          <select class="fsel" id="cCat"><option>Academic</option><option>Hostel</option><option>Campus</option><option>Transport</option><option>Other</option></select>
+          <select class="fsel" id="cCat">
+  <option value="Academic">Academic</option>
+  <option value="Hostel">Hostel</option>
+  <option value="Electricity">Electricity</option>
+  <option value="Cleanliness">Cleanliness</option>
+  <option value="Facilities">Facilities</option>
+  <option value="Transport">Transport</option>
+  <option value="Internet">Internet</option>
+  <option value="Other">Other</option>
+</select>
         </div>
         <div>
           <div class="flbl">Priority</div>
@@ -113,7 +122,7 @@
 
 <!-- LAUNDRY (sample4 exact style) -->
 <div class="sec" id="s-laundry">
-  <div style="font-size:20px;font-weight:800;color:#0B2E33;margin-bottom:3px;">👕 Laundry Tracker</div>
+ <div style="font-size:22px;font-weight:800;color:#0B2E33;margin-bottom:3px;letter-spacing:-0.3px;">👕 Laundry Tracker</div>
   <div style="font-size:12px;color:#4F7C82;margin-bottom:16px;" id="laundrySubtitle">Manage your annual 30-wash quota</div>
   <div id="fridayAlert" style="display:none;" class="info-box mb-3">🚫 Today is Friday — laundry is closed. Come back Monday.</div>
   <div class="g2">
@@ -154,7 +163,7 @@
 
 <!-- TIMETABLE -->
 <div class="sec" id="s-timetable">
-  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:14px;">📅 Timetable</div>
+ <div style="font-size:22px;font-weight:800;color:#0B2E33;margin-bottom:3px;letter-spacing:-0.3px;">📅 Timetable</div>
   <div class="ann mb-3">
     <div class="ann-t">📅 Exam Calendar</div>
     <div class="ann-b"><a href="https://poornima.edu.in/exam-calendars" target="_blank" style="color:#4F7C82;font-weight:700;">View Official Exam Calendar →</a></div>
@@ -188,7 +197,7 @@
 
 <!-- EVENTS -->
 <div class="sec" id="s-events">
-  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:14px;">🎉 Campus Events</div>
+  <div style="font-size:22px;font-weight:800;color:#0B2E33;margin-bottom:14px;">🎉 Campus Events</div>
   <div class="ftabs">
     <button class="ftab active" onclick="filterEvt('all',this)">All</button>
     <button class="ftab" onclick="filterEvt('ongoing',this)">🟢 Ongoing</button>

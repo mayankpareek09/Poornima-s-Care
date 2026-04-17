@@ -195,7 +195,7 @@
 
 <script src="../js/api.js"></script>
 <script>
-const user=requireAuth(['academic_admin']);
+const user=requireAuth(['academic_admin','hostel_admin','campus_admin']);
 if(user){
   const ini=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   document.getElementById('sbAv').textContent=ini;
@@ -255,26 +255,86 @@ function openUpdateComplaint(id,title,status,notes){
 async function updateComplaint(){
   const id=document.getElementById('ucId').value;
   try{
-    await apiFetch('/complaints/'+id,{method:'PATCH',body:JSON.stringify({status:document.getElementById('ucStatus').value,adminNotes:document.getElementById('ucNotes').value})});
+await apiFetch('/complaints/'+id,{method:'PATCH',body:JSON.stringify({status:document.getElementById('ucStatus').value,adminRemarks:document.getElementById('ucNotes').value})});
     closeModal('updateComplaintModal');showToast('Updated!','success');loadComplaints();
   }catch(e){showToast(e.message,'error');}
 }
 
 async function loadAnalytics(){
-  const el=document.getElementById('analyticsBody');el.innerHTML='<div style="color:#93B1B5;font-size:12px;">Loading…</div>';
+  const el=document.getElementById('analyticsBody');
+  el.innerHTML='<div style="color:#93B1B5;font-size:12px;padding:20px;">Loading analytics…</div>';
   try{
-    const [cD,eD]=await Promise.allSettled([apiFetch('/complaints'),apiFetch('/events')]);
-    const cs=cD.status==='fulfilled'?(cD.value.complaints||[]):[];
-    const evs=eD.status==='fulfilled'?(eD.value.events||[]):[];
-    const byCat={};cs.forEach(c=>{byCat[c.category]=(byCat[c.category]||0)+1;});
-    el.innerHTML=`<div class="g4 mb-4">
-      <div class="sc"><div class="sc-n" style="color:#E24B4A;">${cs.filter(c=>c.status==='open').length}</div><div class="sc-l">Open</div></div>
-      <div class="sc"><div class="sc-n" style="color:#854F0B;">${cs.filter(c=>c.status==='inprogress').length}</div><div class="sc-l">In Progress</div></div>
-      <div class="sc"><div class="sc-n" style="color:#085041;">${cs.filter(c=>c.status==='resolved').length}</div><div class="sc-l">Resolved</div></div>
-      <div class="sc"><div class="sc-n" style="color:#4F7C82;">${evs.length}</div><div class="sc-l">Events</div></div>
+    const data = await apiFetch('/analytics');
+    const s = data.stats || {};
+    const cats = data.categoryBreakdown || [];
+    const trend = data.trend || [];
+    const maxTrend = Math.max(...trend.map(t=>t.count),1);
+
+    el.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px;">
+      <div class="sc" style="border-left:4px solid #E24B4A;">
+        <div class="sc-ic">🔴</div>
+        <div class="sc-n" style="color:#E24B4A;font-size:28px;">${s.open||0}</div>
+        <div class="sc-l">Open Complaints</div>
+      </div>
+      <div class="sc" style="border-left:4px solid #854F0B;">
+        <div class="sc-ic">🟡</div>
+        <div class="sc-n" style="color:#854F0B;font-size:28px;">${s.inprogress||0}</div>
+        <div class="sc-l">In Progress</div>
+      </div>
+      <div class="sc" style="border-left:4px solid #085041;">
+        <div class="sc-ic">🟢</div>
+        <div class="sc-n" style="color:#085041;font-size:28px;">${s.resolved||0}</div>
+        <div class="sc-l">Resolved</div>
+      </div>
+      <div class="sc" style="border-left:4px solid #4F7C82;">
+        <div class="sc-ic">📋</div>
+        <div class="sc-n" style="color:#4F7C82;font-size:28px;">${s.total||0}</div>
+        <div class="sc-l">Total</div>
+      </div>
     </div>
-    <div class="card"><div class="card-t">Complaints by Category</div>
-      ${Object.entries(byCat).map(([cat,cnt])=>`<div class="flex items-c gap-2 mb-2"><span style="width:120px;font-size:11px;color:#93B1B5;">${cat}</span><div class="prog-bar" style="flex:1;margin:0;"><div class="prog-fill" style="width:${Math.min(100,Math.round(cnt/Math.max(cs.length,1)*100))}%"></div></div><span style="width:20px;font-size:11px;color:#93B1B5;text-align:right;">${cnt}</span></div>`).join('')}
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+      <div class="card">
+        <div class="card-t" style="font-size:15px;font-weight:800;margin-bottom:14px;">📊 Resolution Rate</div>
+        <div style="text-align:center;padding:10px 0;">
+          <div style="font-size:42px;font-weight:800;color:#085041;">${s.resolutionRate||0}%</div>
+          <div style="font-size:12px;color:#93B1B5;margin-top:4px;">of all complaints resolved</div>
+        </div>
+        <div class="prog-bar" style="margin-top:10px;"><div class="prog-fill" style="width:${s.resolutionRate||0}%;background:#085041;"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-t" style="font-size:15px;font-weight:800;margin-bottom:14px;">⏱️ Avg Resolution Time</div>
+        <div style="text-align:center;padding:10px 0;">
+          <div style="font-size:42px;font-weight:800;color:#4F7C82;">${s.avgResolutionHours||0}</div>
+          <div style="font-size:12px;color:#93B1B5;margin-top:4px;">hours average</div>
+        </div>
+        <div style="font-size:11px;color:#93B1B5;text-align:center;margin-top:8px;">${s.avgResolutionHours<24?'✅ Same day resolution':'⚠️ Takes more than a day'}</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card">
+        <div class="card-t" style="font-size:15px;font-weight:800;margin-bottom:14px;">📂 Complaints by Category</div>
+        ${cats.length ? cats.map(c=>`
+          <div style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:12px;font-weight:600;color:#0B2E33;">${c._id}</span>
+              <span style="font-size:12px;font-weight:700;color:#4F7C82;">${c.count}</span>
+            </div>
+            <div class="prog-bar" style="margin:0;"><div class="prog-fill" style="width:${Math.round(c.count/(s.total||1)*100)}%;"></div></div>
+          </div>`).join('') : '<div style="color:#93B1B5;font-size:11px;">No data</div>'}
+      </div>
+      <div class="card">
+        <div class="card-t" style="font-size:15px;font-weight:800;margin-bottom:14px;">📅 Last 7 Days Trend</div>
+        ${trend.length ? `<div style="display:flex;align-items:flex-end;gap:6px;height:100px;padding:0 4px;">
+          ${trend.map(t=>`<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+            <div style="font-size:10px;color:#4F7C82;font-weight:700;">${t.count}</div>
+            <div style="width:100%;background:#4F7C82;border-radius:4px 4px 0 0;height:${Math.round((t.count/maxTrend)*80)}px;min-height:4px;"></div>
+            <div style="font-size:9px;color:#93B1B5;white-space:nowrap;">${t._id.slice(5)}</div>
+          </div>`).join('')}
+        </div>` : '<div style="color:#93B1B5;font-size:11px;text-align:center;padding:20px 0;">No complaints in last 7 days 🎉</div>'}
+      </div>
     </div>`;
   }catch(e){el.innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
 }

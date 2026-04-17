@@ -37,7 +37,11 @@ router.post('/', protect, requireRole('student'), async (req, res) => {
     const { title, category, description, priority, mediaUrl } = req.body;
     if (!title || !category || !description)
       return res.status(400).json({ success: false, message: 'Title, category, and description are required.' });
-
+// Limit check: max 5 open complaints at a time
+const openCount = await Complaint.countDocuments({ studentId: req.user._id, status: { $in: ['open', 'inprogress'] } });
+if (openCount >= 5) {
+  return res.status(400).json({ success: false, message: 'You already have 5 open complaints. Wait for them to be resolved before submitting more.' });
+}
     const ROUTING = Complaint.CATEGORY_ROUTING || {
       'Hostel':'hostel_admin','Food':'hostel_admin','Water':'hostel_admin','Security':'hostel_admin',
       'Academic':'academic_admin','Timetable':'academic_admin','Faculty':'academic_admin',

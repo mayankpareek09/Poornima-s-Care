@@ -119,10 +119,18 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
     <div class="login-body">
       <div class="portal-tabs">
         <div class="ptab active" id="pt-student" onclick="selectPortal('student')"><span class="ptab-ic">🎓</span><span class="ptab-lb">Student</span></div>
-        <div class="ptab" id="pt-academic_admin" onclick="selectPortal('academic_admin')"><span class="ptab-ic">📚</span><span class="ptab-lb">Academic</span></div>
+     <div class="ptab" id="pt-admin" onclick="selectPortal('admin')">
+  <span class="ptab-ic">🔐</span>
+  <span class="ptab-lb">Admin</span>
+</div>
         <div class="ptab" id="pt-laundry_admin" onclick="selectPortal('laundry_admin')"><span class="ptab-ic">👕</span><span class="ptab-lb">Laundry</span></div>
         <div class="ptab" id="pt-council" onclick="selectPortal('council')"><span class="ptab-ic">👑</span><span class="ptab-lb">Council</span></div>
       </div>
+      <div class="admin-sub" id="adminSub" style="display:none;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;">
+  <div class="csub active" onclick="selectAdmin('academic_admin', this)">🎓 Academic Admin</div>
+  <div class="csub" onclick="selectAdmin('hostel_admin', this)">🏠 Hostel Admin</div>
+  <div class="csub" onclick="selectAdmin('campus_admin', this)">🏛️ Campus Admin</div>
+</div>
       <div class="council-sub" id="councilSub">
         <div class="csub active" id="cs-chair" onclick="selectCouncil('council_admin','cs-chair')">👑 Chair / Co-Chair</div>
         <div class="csub" id="cs-captain" onclick="selectCouncil('club_captain','cs-captain')">🏫 Captain / VC</div>
@@ -145,14 +153,22 @@ let role='student';
 function selectPortal(p){
   document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
   document.getElementById('pt-'+p).classList.add('active');
-  role=p==='council'?'council_admin':p;
+
+  if(p === 'admin'){
+    role = 'academic_admin';
+    document.getElementById('adminSub').style.display = 'grid';
+  } else {
+    document.getElementById('adminSub').style.display = 'none';
+    role = p==='council' ? 'council_admin' : p;
+  }
+
   document.getElementById('councilSub').classList.toggle('show',p==='council');
   document.getElementById('loginErr').textContent='';
 }
-function selectCouncil(r,id){
-  role=r;
-  document.querySelectorAll('.csub').forEach(t=>t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+function selectAdmin(r, el){
+  role = r;
+  document.querySelectorAll('#adminSub .csub').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
 }
 async function doLogin(){
   const id=document.getElementById('loginId').value.trim();
@@ -185,7 +201,7 @@ let wakeMsg = setTimeout(() => {
 }
     localStorage.setItem('pc_token',data.token);
     localStorage.setItem('pc_user',JSON.stringify(data.user));
-    const dest={student:'pages/student.html',academic_admin:'pages/academic-admin.html',laundry_admin:'pages/laundry-admin.html',council_admin:'pages/council-portal.html',club_captain:'pages/council-portal.html',vice_captain:'pages/council-portal.html'};
+const dest={student:'pages/student.html',academic_admin:'pages/academic-admin.html',hostel_admin:'pages/academic-admin.html',campus_admin:'pages/academic-admin.html',laundry_admin:'pages/laundry-admin.html',council_admin:'pages/council-portal.html',club_captain:'pages/council-portal.html',vice_captain:'pages/council-portal.html'};
     window.location.href=dest[data.user.role]||'pages/student.html';
   }catch(e){err.textContent='Cannot connect to server. Check backend is running.';}
   finally{

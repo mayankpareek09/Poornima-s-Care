@@ -61,5 +61,25 @@ router.delete('/:id', protect, requireRole('academic_admin','council_admin','clu
     res.status(500).json({ success: false, message: err.message });
   }
 });
+// POST /api/events/:id/register — student registers for event
+router.post('/:id/register', protect, requireRole('student'), async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ success: false, message: 'Event not found.' });
 
+    if (!event.registeredStudents) event.registeredStudents = [];
+    const alreadyReg = event.registeredStudents.includes(req.user._id);
+    if (alreadyReg) {
+      event.registeredStudents.pull(req.user._id);
+      await event.save();
+      return res.json({ success: true, registered: false, count: event.registeredStudents.length });
+    } else {
+      event.registeredStudents.push(req.user._id);
+      await event.save();
+      return res.json({ success: true, registered: true, count: event.registeredStudents.length });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 module.exports = router;

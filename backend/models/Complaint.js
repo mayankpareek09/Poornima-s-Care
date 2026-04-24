@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Category → which admin department handles it
 const CATEGORY_ROUTING = {
   'Hostel':       'hostel_admin',
   'Food':         'hostel_admin',
@@ -17,29 +16,42 @@ const CATEGORY_ROUTING = {
   'Other':        'campus_admin',
 };
 
+// Escalation level → who handles it
+const ESCALATION_ROLES = ['campus_admin', 'hostel_admin', 'academic_admin'];
+
+const escalationSchema = new mongoose.Schema({
+  level:      { type: Number, required: true },
+  escalatedTo:{ type: String, required: true },
+  escalatedAt:{ type: Date, default: Date.now },
+  reason:     { type: String, default: 'Auto-escalated: unresolved after 24 hours' },
+}, { _id: false });
+
 const complaintSchema = new mongoose.Schema({
   studentId:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   studentName:    { type: String, required: true },
   studentUserId:  { type: String, required: true },
   title:          { type: String, required: true, trim: true },
-  category:       {
-    type: String, required: true,
-    enum: Object.keys(CATEGORY_ROUTING)
-  },
-  // Automatically set based on category
-  routedTo:       {
-    type: String,
-    enum: ['academic_admin','hostel_admin','campus_admin'],
-    required: true
-  },
+  category:       { type: String, required: true, enum: Object.keys(CATEGORY_ROUTING) },
+  routedTo:       { type: String, enum: ['academic_admin','hostel_admin','campus_admin'], required: true },
   description:    { type: String, required: true, trim: true },
-  priority:       { type: String, enum: ['Low','Medium','High'], default: 'Medium' },
+  priority:       { type: String, enum: ['Low','Medium','High','SOS'], default: 'Medium' },
   status:         { type: String, enum: ['open','inprogress','resolved'], default: 'open' },
   adminRemarks:   { type: String, default: '' },
   resolvedAt:     { type: Date },
   mediaUrl:       { type: String, default: '' },
+  // SOS
+  isSOS:          { type: Boolean, default: false },
+  // Upvote
+  upvotes:        { type: Number, default: 0 },
+  upvotedBy:      [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  // Escalation
+  escalationLevel:{ type: Number, default: 0 },
+  escalationHistory: [escalationSchema],
+  lastEscalatedAt:{ type: Date },
+  isEscalated:    { type: Boolean, default: false },
 }, { timestamps: true });
 
 complaintSchema.statics.CATEGORY_ROUTING = CATEGORY_ROUTING;
+complaintSchema.statics.ESCALATION_ROLES = ESCALATION_ROLES;
 
 module.exports = mongoose.model('Complaint', complaintSchema);

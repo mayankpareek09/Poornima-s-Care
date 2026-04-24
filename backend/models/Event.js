@@ -14,6 +14,7 @@ const eventSchema = new mongoose.Schema({
   photos:        [{ type: String }],
   createdBy:     { type: String },
   createdByRole: { type: String },
-  createdById:   { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  createdById:   { type: mongoose.Schema.Types.ObjectId, ref: 'User' },registeredStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  maxParticipants: { type: Number, default: 0 },
 }, { timestamps: true });
 module.exports = mongoose.model('Event', eventSchema);

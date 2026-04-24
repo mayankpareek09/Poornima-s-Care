@@ -1,5 +1,5 @@
-const CACHE = 'pc-v5';
-const STATIC = ['/login.html','/index.html','/css/style.css','/js/api.js','/clubs.html'];
+const CACHE = 'pc-v18';
+const STATIC = ['/index.html','/css/style.css','/js/api.js','/clubs.html'];
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(STATIC))));
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;

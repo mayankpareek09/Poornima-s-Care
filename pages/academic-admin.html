@@ -25,6 +25,7 @@
   <div class="asb-link active" id="lnk-dash" onclick="show('dash',this)"><span class="asb-ic">⚡</span> Dashboard</div>
   <div class="asb-link" id="lnk-complaints" onclick="show('complaints',this)"><span class="asb-ic">📋</span> Complaints</div>
   <div class="asb-link" id="lnk-timetable" onclick="show('timetable',this)"><span class="asb-ic">📅</span> Timetable</div>
+  <div class="asb-link" id="lnk-exam" onclick="show('exam',this)"><span class="asb-ic">📝</span> Exam Calendar</div>
   <div class="asb-link" id="lnk-events" onclick="show('events',this)"><span class="asb-ic">🎉</span> Events</div>
   <div class="asb-link" id="lnk-bus" onclick="show('bus',this)"><span class="asb-ic">🚌</span> Bus Routes</div>
   <div class="asb-sec">Analytics</div>
@@ -101,10 +102,25 @@
     <div class="admin-body"><div id="busList"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div></div>
   </div>
 
-</div>
-</div>
+  <!-- EXAM CALENDAR -->
+  <div class="sec" id="s-exam">
+    <div class="admin-hdr">
+      <div class="admin-hdr-t">📝 Exam Calendar</div>
+      <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="openExamModal()">+ Add Calendar</button>
+    </div>
+    <div class="admin-body">
+      <!-- Filter bar -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+        <select class="fsel" id="examFilterDept" style="margin-bottom:0;width:auto;" onchange="loadExamCalendar()"><option value="">All Departments</option></select>
+        <select class="fsel" id="examFilterYear" style="margin-bottom:0;width:auto;" onchange="loadExamCalendar()"><option value="">All Years</option></select>
+        <select class="fsel" id="examFilterType" style="margin-bottom:0;width:auto;" onchange="loadExamCalendar()"><option value="">All Exam Types</option></select>
+      </div>
+      <div id="examList"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div>
+    </div>
+  </div>
 
-<!-- Update Complaint Modal -->
+</div>
+</div>
 <div class="modal-ov" id="updateComplaintModal"><div class="modal-box">
   <button class="modal-close" onclick="closeModal('updateComplaintModal')">✕</button>
   <div class="modal-title">Update Complaint</div>
@@ -193,6 +209,71 @@
   <button class="btn-p full" id="busSaveBtn" onclick="saveBus()">Save Route →</button>
 </div></div>
 
+<!-- ══ EXAM CALENDAR MODALS ══════════════════════════════════════ -->
+
+<!-- Add/Edit Calendar Modal -->
+<div class="modal-ov" id="examCalModal"><div class="modal-box" style="max-width:480px;">
+  <button class="modal-close" onclick="closeModal('examCalModal')">✕</button>
+  <div class="modal-title" id="examCalModalTitle">Add Exam Calendar</div>
+  <input type="hidden" id="examCalId"/>
+  <div class="flbl">Department <span class="req">*</span></div>
+  <input class="finp" id="examCalDept" placeholder="e.g. BTech, MTech"/>
+  <div class="flbl">Year <span class="req">*</span></div>
+  <input class="finp" id="examCalYear" placeholder="e.g. 1st Year, 2nd Year"/>
+  <div class="flbl">Exam Type <span class="req">*</span></div>
+  <input class="finp" id="examCalType" placeholder="e.g. CIE 1, MSE, End Sem"/>
+  <button class="btn-p full" onclick="saveExamCal()">Save →</button>
+</div></div>
+
+<!-- Manage Calendar (subjects + schedule) Modal -->
+<div class="modal-ov" id="examManageModal"><div class="modal-box" style="max-width:700px;max-height:90vh;overflow-y:auto;">
+  <button class="modal-close" onclick="closeModal('examManageModal')">✕</button>
+  <div class="modal-title" id="examManageTitle">Manage Exam Calendar</div>
+  <input type="hidden" id="examManageId"/>
+
+  <!-- Tabs -->
+  <div style="display:flex;gap:6px;margin-bottom:16px;border-bottom:2px solid #B8E3E9;padding-bottom:10px;">
+    <button id="emTab-subjects" class="btn-p" style="font-size:11px;padding:6px 14px;" onclick="switchExamTab('subjects')">📚 Subjects</button>
+    <button id="emTab-schedule" class="btn-p" style="font-size:11px;padding:6px 14px;background:#4F7C82;" onclick="switchExamTab('schedule')">🗓 Schedule</button>
+  </div>
+
+  <!-- SUBJECTS TAB -->
+  <div id="emSubjectsTab">
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <input class="finp" id="emSubName" placeholder="Subject Name" style="margin-bottom:0;flex:1;"/>
+      <input class="finp" id="emSubCode" placeholder="Code" style="margin-bottom:0;width:100px;"/>
+      <input type="hidden" id="emSubEditId"/>
+      <button class="btn-p" style="font-size:11px;padding:7px 13px;white-space:nowrap;" onclick="saveSubject()">+ Add</button>
+    </div>
+    <div id="emSubjectList" style="display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+
+  <!-- SCHEDULE TAB -->
+  <div id="emScheduleTab" style="display:none;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;margin-bottom:10px;align-items:end;">
+      <div>
+        <div class="flbl">Subject</div>
+        <select class="fsel" id="emSchSubject" style="margin-bottom:0;"></select>
+      </div>
+      <div>
+        <div class="flbl">Date <span class="req">*</span></div>
+        <input class="finp" type="date" id="emSchDate" style="margin-bottom:0;"/>
+      </div>
+      <div>
+        <div class="flbl">Time <span class="req">*</span></div>
+        <input class="finp" id="emSchTime" placeholder="09:00 AM – 12:00 PM" style="margin-bottom:0;"/>
+      </div>
+      <div>
+        <div class="flbl">Room</div>
+        <input class="finp" id="emSchRoom" placeholder="Exam Hall" style="margin-bottom:0;"/>
+      </div>
+    </div>
+    <input type="hidden" id="emSchEditId"/>
+    <button class="btn-p" style="font-size:11px;padding:7px 14px;margin-bottom:12px;" onclick="saveScheduleEntry()">+ Add Entry</button>
+    <div id="emScheduleList" style="display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+</div></div>
+
 <script src="../js/api.js"></script>
 <script>
 const user=requireAuth(['academic_admin','hostel_admin','campus_admin']);
@@ -208,7 +289,7 @@ function show(id,el){
   document.getElementById('s-'+id).classList.add('active');
   document.querySelectorAll('.asb-link').forEach(a=>a.classList.remove('active'));
   if(el)el.classList.add('active');
-  const ldr={complaints:loadComplaints,analytics:loadAnalytics,timetable:loadTimetables,events:loadEvents,bus:loadBusAdmin};
+  const ldr={complaints:loadComplaints,analytics:loadAnalytics,timetable:loadTimetables,events:loadEvents,bus:loadBusAdmin,exam:loadExamCalendar};
   if(ldr[id])ldr[id]();
 }
 function openModal(id){document.getElementById(id).classList.add('open');}
@@ -579,7 +660,282 @@ async function deleteBus(id){
 <!-- ================================================ -->
 
 
-<!-- STEP 2: Add this JavaScript before </body> tag -->
+<!-- ══ EXAM CALENDAR JAVASCRIPT ══════════════════════════════════ -->
+<script>
+// ── State ────────────────────────────────────────────────────────
+let _examCals   = [];   // all loaded calendar docs
+let _examCurId  = null; // currently managed calendar _id
+let _examCurCal = null; // currently managed calendar object
+let _examTab    = 'subjects';
+
+// ── Load + populate filters ──────────────────────────────────────
+async function loadExamCalendar(){
+  const dept = document.getElementById('examFilterDept').value;
+  const year = document.getElementById('examFilterYear').value;
+  const type = document.getElementById('examFilterType').value;
+  let qs='';
+  if(dept) qs+=`&department=${encodeURIComponent(dept)}`;
+  if(year) qs+=`&year=${encodeURIComponent(year)}`;
+  if(type) qs+=`&examType=${encodeURIComponent(type)}`;
+  try{
+    const data = await apiFetch('/exam-calendar?'+qs.replace(/^&/,''));
+    _examCals = data.calendars||[];
+    renderExamList();
+    await populateExamFilters();
+  }catch(e){
+    document.getElementById('examList').innerHTML=`<div style="color:#E24B4A;font-size:12px;">${e.message}</div>`;
+  }
+}
+
+async function populateExamFilters(){
+  try{
+    const meta = await apiFetch('/exam-calendar/meta');
+    const fillSel=(id,arr,cur)=>{
+      const el=document.getElementById(id);
+      const val=el.value;
+      el.innerHTML=`<option value="">${cur}</option>`+arr.map(v=>`<option value="${v}"${v===val?'selected':''}>${v}</option>`).join('');
+    };
+    fillSel('examFilterDept',meta.departments,'All Departments');
+    fillSel('examFilterYear',meta.years,'All Years');
+    fillSel('examFilterType',meta.examTypes,'All Exam Types');
+  }catch(e){}
+}
+
+// ── Render calendar list ─────────────────────────────────────────
+function renderExamList(){
+  const el=document.getElementById('examList');
+  if(!_examCals.length){el.innerHTML='<div style="color:#93B1B5;font-size:12px;">No exam calendars yet. Click + Add Calendar.</div>';return;}
+  el.innerHTML=_examCals.map(c=>{
+    const schCount = (c.schedule||[]).length;
+    const subCount = (c.subjects||[]).length;
+    return `<div style="background:#fff;border:1.5px solid #B8E3E9;border-radius:10px;padding:14px 16px;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div>
+          <div style="font-size:13px;font-weight:800;color:#0B2E33;">${c.department} · ${c.year}</div>
+          <div style="font-size:11px;color:#4F7C82;margin-top:2px;">
+            <span style="background:#E8F7F9;padding:2px 7px;border-radius:20px;font-weight:700;">${c.examType}</span>
+            &nbsp;${subCount} subject${subCount!==1?'s':''}
+            &nbsp;·&nbsp;${schCount} exam slot${schCount!==1?'s':''}
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-p" style="font-size:11px;padding:5px 11px;" onclick="openManageExam('${c._id}')">Manage</button>
+          <button class="btn-p" style="font-size:11px;padding:5px 11px;background:#4F7C82;" onclick="openEditExamCal('${c._id}')">Edit</button>
+          <button onclick="deleteExamCal('${c._id}')" style="font-size:11px;padding:5px 11px;background:#E24B4A;color:#fff;border:none;border-radius:6px;cursor:pointer;">Delete</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Add / Edit calendar header ────────────────────────────────────
+function openExamModal(){
+  document.getElementById('examCalId').value='';
+  document.getElementById('examCalDept').value='';
+  document.getElementById('examCalYear').value='';
+  document.getElementById('examCalType').value='';
+  document.getElementById('examCalModalTitle').textContent='Add Exam Calendar';
+  openModal('examCalModal');
+}
+
+function openEditExamCal(id){
+  const c=_examCals.find(x=>x._id===id); if(!c)return;
+  document.getElementById('examCalId').value=c._id;
+  document.getElementById('examCalDept').value=c.department;
+  document.getElementById('examCalYear').value=c.year;
+  document.getElementById('examCalType').value=c.examType;
+  document.getElementById('examCalModalTitle').textContent='Edit Exam Calendar';
+  openModal('examCalModal');
+}
+
+async function saveExamCal(){
+  const id   = document.getElementById('examCalId').value;
+  const dept = document.getElementById('examCalDept').value.trim();
+  const year = document.getElementById('examCalYear').value.trim();
+  const type = document.getElementById('examCalType').value.trim();
+  if(!dept||!year||!type){showToast('All fields required','error');return;}
+  try{
+    if(id){
+      await apiFetch('/exam-calendar/'+id,{method:'PUT',body:JSON.stringify({department:dept,year,examType:type})});
+      showToast('Updated!','success');
+    }else{
+      await apiFetch('/exam-calendar',{method:'POST',body:JSON.stringify({department:dept,year,examType:type})});
+      showToast('Created!','success');
+    }
+    closeModal('examCalModal');
+    loadExamCalendar();
+  }catch(e){showToast(e.message,'error');}
+}
+
+async function deleteExamCal(id){
+  if(!confirm('Delete this exam calendar and all its data?'))return;
+  try{await apiFetch('/exam-calendar/'+id,{method:'DELETE'});showToast('Deleted','success');loadExamCalendar();}
+  catch(e){showToast(e.message,'error');}
+}
+
+// ── Open manage modal ─────────────────────────────────────────────
+async function openManageExam(id){
+  try{
+    const data=await apiFetch('/exam-calendar/'+id);
+    _examCurCal=data.calendar;
+    _examCurId=id;
+    document.getElementById('examManageId').value=id;
+    document.getElementById('examManageTitle').textContent=
+      `${_examCurCal.department} · ${_examCurCal.year} · ${_examCurCal.examType}`;
+    switchExamTab('subjects');
+    openModal('examManageModal');
+  }catch(e){showToast(e.message,'error');}
+}
+
+function switchExamTab(tab){
+  _examTab=tab;
+  document.getElementById('emSubjectsTab').style.display=tab==='subjects'?'':'none';
+  document.getElementById('emScheduleTab').style.display=tab==='schedule'?'':'none';
+  document.getElementById('emTab-subjects').style.background=tab==='subjects'?'#0B2E33':'#4F7C82';
+  document.getElementById('emTab-schedule').style.background=tab==='schedule'?'#0B2E33':'#4F7C82';
+  if(tab==='subjects') renderManageSubjects();
+  else renderManageSchedule();
+}
+
+// ── Subjects CRUD ─────────────────────────────────────────────────
+function renderManageSubjects(){
+  const c=_examCurCal;
+  const el=document.getElementById('emSubjectList');
+  if(!c||!c.subjects.length){el.innerHTML='<div style="color:#93B1B5;font-size:12px;">No subjects yet. Add one above.</div>';return;}
+  el.innerHTML=c.subjects.map(s=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#F4FAFB;border:1px solid #B8E3E9;border-radius:8px;padding:9px 12px;">
+      <div>
+        <span style="font-size:12px;font-weight:700;color:#0B2E33;">${s.name}</span>
+        <span style="font-size:11px;color:#4F7C82;margin-left:8px;">(${s.code})</span>
+      </div>
+      <div style="display:flex;gap:5px;">
+        <button class="btn-p" style="font-size:10px;padding:4px 9px;" onclick="editSubject('${s._id}','${s.name.replace(/'/g,"\\'")}','${s.code}')">Edit</button>
+        <button onclick="deleteSubject('${s._id}')" style="font-size:10px;padding:4px 9px;background:#E24B4A;color:#fff;border:none;border-radius:5px;cursor:pointer;">Del</button>
+      </div>
+    </div>`).join('');
+}
+
+function editSubject(id,name,code){
+  document.getElementById('emSubName').value=name;
+  document.getElementById('emSubCode').value=code;
+  document.getElementById('emSubEditId').value=id;
+}
+
+async function saveSubject(){
+  const name=document.getElementById('emSubName').value.trim();
+  const code=document.getElementById('emSubCode').value.trim();
+  const editId=document.getElementById('emSubEditId').value;
+  if(!name||!code){showToast('Name and code required','error');return;}
+  try{
+    let data;
+    if(editId){
+      data=await apiFetch(`/exam-calendar/${_examCurId}/subjects/${editId}`,{method:'PUT',body:JSON.stringify({name,code})});
+      showToast('Subject updated!','success');
+    }else{
+      data=await apiFetch(`/exam-calendar/${_examCurId}/subjects`,{method:'POST',body:JSON.stringify({name,code})});
+      showToast('Subject added!','success');
+    }
+    _examCurCal=data.calendar;
+    document.getElementById('emSubName').value='';
+    document.getElementById('emSubCode').value='';
+    document.getElementById('emSubEditId').value='';
+    renderManageSubjects();
+    // update local list
+    const idx=_examCals.findIndex(x=>x._id===_examCurId);
+    if(idx!==-1)_examCals[idx]=data.calendar;
+    renderExamList();
+  }catch(e){showToast(e.message,'error');}
+}
+
+async function deleteSubject(subId){
+  if(!confirm('Delete this subject?'))return;
+  try{
+    const data=await apiFetch(`/exam-calendar/${_examCurId}/subjects/${subId}`,{method:'DELETE'});
+    _examCurCal=data.calendar;
+    renderManageSubjects();
+    const idx=_examCals.findIndex(x=>x._id===_examCurId);
+    if(idx!==-1)_examCals[idx]=data.calendar;
+    renderExamList();
+    showToast('Deleted','success');
+  }catch(e){showToast(e.message,'error');}
+}
+
+// ── Schedule CRUD ─────────────────────────────────────────────────
+function renderManageSchedule(){
+  const c=_examCurCal;
+  // populate subject dropdown
+  const subSel=document.getElementById('emSchSubject');
+  subSel.innerHTML='<option value="">-- Select Subject --</option>'+(c.subjects||[]).map(s=>`<option value="${s._id}">${s.name} (${s.code})</option>`).join('');
+
+  const el=document.getElementById('emScheduleList');
+  const sorted=[...(c.schedule||[])].sort((a,b)=>a.date<b.date?-1:1);
+  if(!sorted.length){el.innerHTML='<div style="color:#93B1B5;font-size:12px;">No schedule entries yet.</div>';return;}
+  el.innerHTML=sorted.map(s=>{
+    const dateStr=s.date?new Date(s.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'—';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;background:#F4FAFB;border:1px solid #B8E3E9;border-radius:8px;padding:9px 12px;flex-wrap:wrap;gap:6px;">
+      <div>
+        <span style="font-size:12px;font-weight:700;color:#0B2E33;">${s.subjectName||'(no subject)'}</span>
+        <span style="font-size:10px;color:#4F7C82;margin-left:6px;">${s.subjectCode||''}</span><br/>
+        <span style="font-size:11px;color:#4F7C82;">📅 ${dateStr} &nbsp;⏰ ${s.time} &nbsp;🏫 ${s.room||'—'}</span>
+      </div>
+      <div style="display:flex;gap:5px;">
+        <button class="btn-p" style="font-size:10px;padding:4px 9px;" onclick="editScheduleEntry('${s._id}','${s.subjectId||''}','${s.date}','${s.time.replace(/'/g,"\\'")}','${(s.room||'').replace(/'/g,"\\'")}')">Edit</button>
+        <button onclick="deleteScheduleEntry('${s._id}')" style="font-size:10px;padding:4px 9px;background:#E24B4A;color:#fff;border:none;border-radius:5px;cursor:pointer;">Del</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function editScheduleEntry(id,subjectId,date,time,room){
+  document.getElementById('emSchEditId').value=id;
+  document.getElementById('emSchSubject').value=subjectId;
+  document.getElementById('emSchDate').value=date;
+  document.getElementById('emSchTime').value=time;
+  document.getElementById('emSchRoom').value=room;
+}
+
+async function saveScheduleEntry(){
+  const editId   = document.getElementById('emSchEditId').value;
+  const subjectId= document.getElementById('emSchSubject').value;
+  const date     = document.getElementById('emSchDate').value;
+  const time     = document.getElementById('emSchTime').value.trim();
+  const room     = document.getElementById('emSchRoom').value.trim();
+  if(!date||!time){showToast('Date and time required','error');return;}
+  try{
+    let data;
+    if(editId){
+      data=await apiFetch(`/exam-calendar/${_examCurId}/schedule/${editId}`,{method:'PUT',body:JSON.stringify({subjectId,date,time,room})});
+      showToast('Updated!','success');
+    }else{
+      data=await apiFetch(`/exam-calendar/${_examCurId}/schedule`,{method:'POST',body:JSON.stringify({subjectId,date,time,room})});
+      showToast('Added!','success');
+    }
+    _examCurCal=data.calendar;
+    document.getElementById('emSchEditId').value='';
+    document.getElementById('emSchSubject').value='';
+    document.getElementById('emSchDate').value='';
+    document.getElementById('emSchTime').value='';
+    document.getElementById('emSchRoom').value='';
+    renderManageSchedule();
+    const idx=_examCals.findIndex(x=>x._id===_examCurId);
+    if(idx!==-1)_examCals[idx]=data.calendar;
+    renderExamList();
+  }catch(e){showToast(e.message,'error');}
+}
+
+async function deleteScheduleEntry(schId){
+  if(!confirm('Remove this exam slot?'))return;
+  try{
+    const data=await apiFetch(`/exam-calendar/${_examCurId}/schedule/${schId}`,{method:'DELETE'});
+    _examCurCal=data.calendar;
+    renderManageSchedule();
+    const idx=_examCals.findIndex(x=>x._id===_examCurId);
+    if(idx!==-1)_examCals[idx]=data.calendar;
+    renderExamList();
+    showToast('Deleted','success');
+  }catch(e){showToast(e.message,'error');}
+}
+</script>
 <!-- ============================================== -->
 
 <script>

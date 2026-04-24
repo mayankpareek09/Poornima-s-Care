@@ -22,6 +22,7 @@
   <div class="asb-link" id="nl-complaints" onclick="show('complaints',this)"><span class="asb-ic">📋</span> Complaints</div>
   <div class="asb-link" id="nl-laundry" onclick="show('laundry',this)"><span class="asb-ic">👕</span> Laundry</div>
   <div class="asb-link" id="nl-timetable" onclick="show('timetable',this)"><span class="asb-ic">📅</span> Timetable</div>
+  <div class="asb-link" id="nl-exam" onclick="show('exam',this)"><span class="asb-ic">📝</span> Exam Calendar</div>
   <div class="asb-link" id="nl-materials" onclick="show('materials',this)"><span class="asb-ic">📚</span> Materials</div>
   <div class="asb-sec">Campus</div>
   <div class="asb-link" id="nl-events" onclick="show('events',this)"><span class="asb-ic">🎉</span> Events</div>
@@ -346,6 +347,22 @@
     </div>
   </div>
 </div>
+</div>
+
+<!-- EXAM CALENDAR -->
+<div class="sec" id="s-exam">
+  <div style="font-size:22px;font-weight:800;color:#0B2E33;margin-bottom:3px;letter-spacing:-0.3px;">📝 Exam Calendar</div>
+  <div style="font-size:11px;color:#4F7C82;margin-bottom:16px;">View upcoming exam schedules for your department and year.</div>
+
+  <!-- Filters -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+    <select class="fsel" id="stuExamDept" style="margin-bottom:0;width:auto;" onchange="loadStudentExam()"><option value="">All Departments</option></select>
+    <select class="fsel" id="stuExamYear" style="margin-bottom:0;width:auto;" onchange="loadStudentExam()"><option value="">All Years</option></select>
+    <select class="fsel" id="stuExamType" style="margin-bottom:0;width:auto;" onchange="loadStudentExam()"><option value="">All Exam Types</option></select>
+  </div>
+
+  <div id="stuExamContent"><div style="color:#93B1B5;font-size:12px;">Loading exam schedules…</div></div>
+</div>
 
 </div><!-- /page-body -->
 </div><!-- /admin-main -->
@@ -404,7 +421,7 @@ function show(id, btn){
   document.getElementById('s-'+id).classList.add('active');
   document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
   if(btn) btn.classList.add('active');
-  const loaders={complaints:loadComplaints,laundry:loadLaundry,timetable:loadTT,events:loadEvents,clubs:loadClubs,materials:loadMaterials,bus:loadBus};
+  const loaders={complaints:loadComplaints,laundry:loadLaundry,timetable:loadTT,events:loadEvents,clubs:loadClubs,materials:loadMaterials,bus:loadBus,exam:loadStudentExam};
   if(loaders[id]) loaders[id]();
 }
 function openModal(id){document.getElementById(id).classList.add('open');}
@@ -654,6 +671,75 @@ async function sendChat(){
 
 
 
+
+<!-- ══ EXAM CALENDAR JS (STUDENT VIEW) ══════════════════════════ -->
+<script>
+async function loadStudentExam(){
+  const dept = document.getElementById('stuExamDept').value;
+  const year = document.getElementById('stuExamYear').value;
+  const type = document.getElementById('stuExamType').value;
+  let qs='';
+  if(dept) qs+=`&department=${encodeURIComponent(dept)}`;
+  if(year) qs+=`&year=${encodeURIComponent(year)}`;
+  if(type) qs+=`&examType=${encodeURIComponent(type)}`;
+  const el=document.getElementById('stuExamContent');
+  el.innerHTML='<div style="color:#93B1B5;font-size:12px;">Loading…</div>';
+  try{
+    const [cData,meta]=await Promise.all([
+      apiFetch('/exam-calendar?'+qs.replace(/^&/,'')),
+      apiFetch('/exam-calendar/meta')
+    ]);
+    const cals=cData.calendars||[];
+
+    // populate filters
+    const fillSel=(id,arr,label)=>{
+      const sel=document.getElementById(id);
+      const cur=sel.value;
+      sel.innerHTML=`<option value="">${label}</option>`+arr.map(v=>`<option value="${v}"${v===cur?'selected':''}>${v}</option>`).join('');
+    };
+    fillSel('stuExamDept',meta.departments,'All Departments');
+    fillSel('stuExamYear',meta.years,'All Years');
+    fillSel('stuExamType',meta.examTypes,'All Exam Types');
+
+    if(!cals.length){
+      el.innerHTML='<div style="color:#93B1B5;font-size:12px;">No exam schedules found for the selected filters.</div>';
+      return;
+    }
+
+    el.innerHTML=cals.map(c=>{
+      const sorted=[...(c.schedule||[])].sort((a,b)=>a.date<b.date?-1:1);
+      const today=new Date().toISOString().split('T')[0];
+      const upcoming=sorted.filter(s=>s.date>=today);
+      const past=sorted.filter(s=>s.date<today);
+      const rows=s=>`<div style="display:grid;grid-template-columns:100px 1fr 1fr 80px;gap:6px;padding:7px 0;border-bottom:1px solid #E8F7F9;font-size:11px;">
+        <span style="color:#0B2E33;font-weight:700;">${new Date(s.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</span>
+        <span style="font-weight:600;color:#0B2E33;">${s.subjectName||'—'}</span>
+        <span style="color:#4F7C82;">${s.time}</span>
+        <span style="color:#4F7C82;">${s.room||'—'}</span>
+      </div>`;
+
+      return `<div style="background:#fff;border:1.5px solid #B8E3E9;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#0B2E33;">${c.department} · ${c.year}</div>
+            <span style="background:#E8F7F9;color:#0B2E33;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;">${c.examType}</span>
+          </div>
+          <div style="font-size:11px;color:#93B1B5;">${c.subjects.length} subjects · ${c.schedule.length} slots</div>
+        </div>
+        ${!sorted.length?'<div style="font-size:11px;color:#93B1B5;">No schedule entries yet.</div>':`
+          <div style="display:grid;grid-template-columns:100px 1fr 1fr 80px;gap:6px;padding:5px 0;font-size:10px;font-weight:700;color:#93B1B5;text-transform:uppercase;border-bottom:2px solid #B8E3E9;">
+            <span>Date</span><span>Subject</span><span>Time</span><span>Room</span>
+          </div>
+          ${upcoming.length?upcoming.map(rows).join(''):''}
+          ${past.length?`<div style="margin-top:8px;font-size:10px;color:#93B1B5;font-weight:700;text-transform:uppercase;letter-spacing:.5px;">Past Exams</div>${past.map(s=>`<div style="opacity:.55;">${rows(s)}</div>`).join('')}`:''}
+        `}
+      </div>`;
+    }).join('');
+  }catch(e){
+    el.innerHTML=`<div style="color:#E24B4A;font-size:12px;">${e.message}</div>`;
+  }
+}
+</script>
 
 <!-- STEP 2: Add this JavaScript before </body> tag -->
 <!-- ============================================== -->

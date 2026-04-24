@@ -51,6 +51,7 @@ app.use('/api/clubs',      require('./routes/clubs'));
 app.use('/api/bus',        require('./routes/bus'));
 app.use('/api/materials',  require('./routes/materials'));
 app.use('/api/analytics',  require('./routes/analytics'));
+app.use('/api/exam-calendar', require('./routes/exam-calendar'));
 
 // Serve login page for root
 app.get('/', (req, res) => res.sendFile(path.join(frontendPath, 'index.html')));

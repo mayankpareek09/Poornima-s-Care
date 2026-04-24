@@ -170,6 +170,11 @@ function selectAdmin(r, el){
   document.querySelectorAll('#adminSub .csub').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
 }
+function selectCouncil(r, activeId){
+  role = r;
+  document.querySelectorAll('#councilSub .csub').forEach(t=>t.classList.remove('active'));
+  document.getElementById(activeId).classList.add('active');
+}
 async function doLogin(){
   const id=document.getElementById('loginId').value.trim();
   const pwd=document.getElementById('loginPwd').value.trim();

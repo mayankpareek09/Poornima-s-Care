@@ -1,21 +1,29 @@
-// ═══════════════════════════════════════════════════════════════
-// POORNIMA'S CARE — FEATURES.JS
-// All new features: Notifications, SOS, ORION AI, Status Timeline,
-// Upvote, Auto-category, Event Registration, Escalation, etc.
+/// ═══════════════════════════════════════════════════════════════
+// POORNIMA'S CARE — FEATURES.JS  v2 (production-safe)
 // ═══════════════════════════════════════════════════════════════
 
-const API = window.API_BASE || 'https://poornima-s-care.onrender.com';
+// ─── Safe API base (does NOT conflict with api.js) ───────────────
+const FEAT_API = (function() {
+  if (window.PC_API_URL) return window.PC_API_URL.replace(/\/$/, '');
+  const meta = document.querySelector('meta[name="api-base"]');
+  if (meta && meta.content) return meta.content.replace(/\/$/, '');
+  return 'https://poornima-s-care.onrender.com';
+})();
 
-// ─── TOKEN HELPER ────────────────────────────────────────────────
-function getToken() { return localStorage.getItem('pc_token'); }
-function getUser() {
-  try { return JSON.parse(localStorage.getItem('pc_user')); } catch { return null; }
+// ─── Safe wrappers (use api.js functions if loaded, else fallback) ─
+function _getToken() { return (typeof getToken==='function') ? getToken() : localStorage.getItem('pc_token'); }
+function _getUser()  { if(typeof getUser==='function') return getUser(); try{return JSON.parse(localStorage.getItem('pc_user'));}catch{return null;} }
+function _showToast(msg,type){ if(typeof showToast==='function') return showToast(msg,type); console.log(`[${type||'info'}] ${msg}`); }
+function _authHeaders(extra={}){ return {'Content-Type':'application/json','Authorization':`Bearer ${_getToken()}`,...extra}; }
+
+function _showToast(msg, type) {
+  if (typeof showToast === 'function') return _showToast(msg, type);
+  console.log(`[${type}] ${msg}`);
+}
+function _authHeaders(extra = {}) {
+  return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_getToken()}`, ...extra };
 }
 
-// ─── AUTH HEADERS ────────────────────────────────────────────────
-function authHeaders(extra = {}) {
-  return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}`, ...extra };
-}
 
 // ═══════════════════════════════════════════════════════════════
 // FEATURE 4: NOTIFICATION BELL SYSTEM
@@ -23,7 +31,7 @@ function authHeaders(extra = {}) {
 let notifPollInterval = null;
 
 function initNotifications() {
-  const user = getUser();
+  const user = _getUser();
   if (!user) return;
 
   // Inject bell HTML into header if not present
@@ -47,10 +55,13 @@ function initNotifications() {
       </div>`;
 
     // Find header area
-    const header = document.querySelector('.header-actions') ||
+const header = document.querySelector('.header-actions') ||
                    document.querySelector('.nav-right') ||
-                   document.querySelector('header') ||
-                   document.querySelector('.topbar');
+                   document.querySelector('.top-bar-right') ||
+                   document.querySelector('.header-right') ||
+                   document.querySelector('.user-info-pill')?.parentElement ||
+                   document.querySelector('.topbar') ||
+                   document.querySelector('header');
     if (header) {
       const wrapper = document.createElement('div');
       wrapper.style.cssText = 'position:relative;display:inline-block;';
@@ -65,7 +76,7 @@ function initNotifications() {
 
 async function fetchNotifications() {
   try {
-    const r = await fetch(`${API}/api/notifications`, { headers: authHeaders() });
+    const r = await fetch(`${FEAT_API}/api/notifications`, { headers: _authHeaders() });
     const data = await r.json();
     if (!data.success) return;
 
@@ -120,14 +131,14 @@ function toggleNotifDropdown() {
 
 async function markNotifRead(id) {
   try {
-    await fetch(`${API}/api/notifications/${id}/read`, { method: 'PATCH', headers: authHeaders() });
+    await fetch(`${FEAT_API}/api/notifications/${id}/read`, { method: 'PATCH', headers: _authHeaders() });
     fetchNotifications();
   } catch (e) {}
 }
 
 async function markAllNotifRead() {
   try {
-    await fetch(`${API}/api/notifications/read-all`, { method: 'PATCH', headers: authHeaders() });
+    await fetch(`${FEAT_API}/api/notifications/read-all`, { method: 'PATCH', headers: _authHeaders() });
     fetchNotifications();
   } catch (e) {}
 }
@@ -145,7 +156,7 @@ document.addEventListener('click', (e) => {
 // FEATURE 2: SOS EMERGENCY BUTTON
 // ═══════════════════════════════════════════════════════════════
 function initSOS() {
-  const user = getUser();
+  const user = _getUser();
   if (!user || user.role !== 'student') return;
   if (document.getElementById('pc-sos-btn')) return;
 
@@ -213,11 +224,11 @@ async function sendSOS() {
   const desc = document.getElementById('sos-desc')?.value?.trim();
   if (!desc) { alert('Please describe your emergency first.'); return; }
 
-  const user = getUser();
+  const user = _getUser();
   try {
-    const r = await fetch(`${API}/api/complaints`, {
+    const r = await fetch(`${FEAT_API}/api/complaints`, {
       method: 'POST',
-      headers: authHeaders(),
+      headers: _authHeaders(),
       body: JSON.stringify({
         title: `🚨 SOS EMERGENCY - ${user?.name || 'Student'}`,
         category: 'Security',
@@ -229,7 +240,7 @@ async function sendSOS() {
     const data = await r.json();
     if (data.success) {
       document.getElementById('pc-sos-modal-overlay').classList.remove('show');
-      showToast('🚨 SOS Alert Sent! Help is on the way.', 'error');
+      _showToast('🚨 SOS Alert Sent! Help is on the way.', 'error');
       // Show confirmation
       setTimeout(() => {
         const btn = document.getElementById('pc-sos-btn');
@@ -252,14 +263,18 @@ async function sendSOS() {
 // FEATURE 3: ORION AI COMMAND SYSTEM
 // ═══════════════════════════════════════════════════════════════
 function initOrionAI() {
-  const user = getUser();
+  const user = _getUser();
   if (!user || user.role !== 'student') return;
 
   // Inject Orion panel — find dashboard content area
   const container = document.querySelector('.dashboard-content') ||
                     document.querySelector('.main-content') ||
                     document.querySelector('.content-area') ||
-                    document.querySelector('#main-content');
+                    document.querySelector('#main-content') ||
+                    document.querySelector('.page-content') ||
+                    document.querySelector('.content') ||
+                    document.querySelector('main') ||
+                    document.querySelector('.cards-grid')?.parentElement;
   if (!container || document.getElementById('orion-panel')) return;
 
   const panel = document.createElement('div');
@@ -303,7 +318,7 @@ async function runOrion() {
 
   try {
     if (query.includes('complaint')) {
-      const r = await fetch(`${API}/api/complaints`, { headers: authHeaders() });
+      const r = await fetch(`${FEAT_API}/api/complaints`, { headers: _authHeaders() });
       const data = await r.json();
       if (!data.success) throw new Error(data.message);
       const list = data.complaints || [];
@@ -321,7 +336,7 @@ async function runOrion() {
             ${c.isEscalated?'<span style="font-size:10px;color:#f39c12;">⚠️ Escalated to L'+c.escalationLevel+'</span>':''}
           </div>`).join('')}`;
     } else if (query.includes('laundry')) {
-      const r = await fetch(`${API}/api/laundry/my`, { headers: authHeaders() });
+      const r = await fetch(`${FEAT_API}/api/laundry/my`, { headers: _authHeaders() });
       const data = await r.json();
       if (!data.success) throw new Error(data.message);
       const l = data.laundry;
@@ -345,7 +360,7 @@ async function runOrion() {
           </div>
         </div>`;
     } else if (query.includes('event')) {
-      const r = await fetch(`${API}/api/events`, { headers: authHeaders() });
+      const r = await fetch(`${FEAT_API}/api/events`, { headers: _authHeaders() });
       const data = await r.json();
       if (!data.success) throw new Error(data.message);
       const upcoming = (data.events || []).filter(e => new Date(e.date) >= new Date()).slice(0,4);
@@ -359,8 +374,8 @@ async function runOrion() {
           </div>`).join('')}`;
     } else if (query.includes('pending') || query.includes('todo') || query.includes('summary')) {
       const [compR, laundR] = await Promise.all([
-        fetch(`${API}/api/complaints`, { headers: authHeaders() }),
-        fetch(`${API}/api/laundry/my`, { headers: authHeaders() })
+        fetch(`${FEAT_API}/api/complaints`, { headers: _authHeaders() }),
+        fetch(`${FEAT_API}/api/laundry/my`, { headers: _authHeaders() })
       ]);
       const compData = await compR.json();
       const laundData = await laundR.json();
@@ -504,7 +519,7 @@ function applyAutoCategory(cat) {
   if (catSelect) {
     catSelect.value = cat;
     catSelect.dispatchEvent(new Event('change'));
-    showToast(`Category set to: ${cat}`, 'success');
+    _showToast(`Category set to: ${cat}`, 'success');
   }
 }
 
@@ -512,7 +527,7 @@ function applyAutoCategory(cat) {
 // FEATURE 9: DASHBOARD PERSONALIZATION
 // ═══════════════════════════════════════════════════════════════
 function personalizeWidgets() {
-  const user = getUser();
+  const user = _getUser();
   if (!user || user.role !== 'student') return;
 
   const isHosteler = user.hostel && user.hostel.trim() !== '';
@@ -540,7 +555,7 @@ function personalizeWidgets() {
 // FEATURE 11: PREDICTIVE INSIGHTS
 // ═══════════════════════════════════════════════════════════════
 async function initPredictiveInsights() {
-  const user = getUser();
+  const user = _getUser();
   if (!user || user.role !== 'student') return;
 
   const container = document.querySelector('.dashboard-content') ||
@@ -558,7 +573,7 @@ async function initPredictiveInsights() {
     // Check laundry
     if (user.hostel) {
       try {
-        const r = await fetch(`${API}/api/laundry/my`, { headers: authHeaders() });
+        const r = await fetch(`${FEAT_API}/api/laundry/my`, { headers: _authHeaders() });
         const d = await r.json();
         if (d.success && d.laundry) {
           const used = d.laundry.usedWashes || 0;
@@ -572,7 +587,7 @@ async function initPredictiveInsights() {
 
     // Check complaints
     try {
-      const r = await fetch(`${API}/api/complaints`, { headers: authHeaders() });
+      const r = await fetch(`${FEAT_API}/api/complaints`, { headers: _authHeaders() });
       const d = await r.json();
       if (d.success) {
         const open = (d.complaints||[]).filter(c=>c.status!=='resolved');
@@ -584,7 +599,7 @@ async function initPredictiveInsights() {
 
     // Check events today
     try {
-      const r = await fetch(`${API}/api/events`, { headers: authHeaders() });
+      const r = await fetch(`${FEAT_API}/api/events`, { headers: _authHeaders() });
       const d = await r.json();
       if (d.success) {
         const today = new Date().toDateString();
@@ -667,7 +682,7 @@ function handleImgDrop(e) {
 }
 
 function processImageFile(file) {
-  if (file.size > 5 * 1024 * 1024) { showToast('Image must be under 5MB', 'error'); return; }
+  if (file.size > 5 * 1024 * 1024) { _showToast('Image must be under 5MB', 'error'); return; }
   const reader = new FileReader();
   reader.onload = (e) => {
     const b64 = e.target.result;
@@ -696,13 +711,13 @@ function initRealtimeUpdates() {
   if (realtimePollInterval) return;
   realtimePollInterval = setInterval(async () => {
     try {
-      const r = await fetch(`${API}/api/complaints`, { headers: authHeaders() });
+      const r = await fetch(`${FEAT_API}/api/complaints`, { headers: _authHeaders() });
       const data = await r.json();
       if (!data.success) return;
       (data.complaints||[]).forEach(c => {
         const prev = lastKnownStatuses[c._id];
         if (prev && prev !== c.status) {
-          showToast(`📝 Complaint "${c.title}" is now: ${c.status}`, 'info');
+          _showToast(`📝 Complaint "${c.title}" is now: ${c.status}`, 'info');
           fetchNotifications(); // refresh notification bell
         }
         lastKnownStatuses[c._id] = c.status;
@@ -715,11 +730,11 @@ function initRealtimeUpdates() {
 // FEATURE 12: COMPLAINT CLUSTERING
 // ═══════════════════════════════════════════════════════════════
 async function renderComplaintClusters() {
-  const user = getUser();
+  const user = _getUser();
   if (!user || !ADMIN_ROLES_CLIENT.includes(user.role)) return;
 
   try {
-    const r = await fetch(`${API}/api/complaints`, { headers: authHeaders() });
+    const r = await fetch(`${FEAT_API}/api/complaints`, { headers: _authHeaders() });
     const data = await r.json();
     if (!data.success) return;
 
@@ -769,10 +784,10 @@ function initOfflineCache() {
 
   // Cache timetable and materials locally
   window.addEventListener('online', async () => {
-    showToast('✅ Back online! Syncing...', 'success');
+    _showToast('✅ Back online! Syncing...', 'success');
   });
   window.addEventListener('offline', () => {
-    showToast('📶 You are offline. Some features may not work.', 'error');
+    _showToast('📶 You are offline. Some features may not work.', 'error');
     // Show cached data if available
     const cachedTT = localStorage.getItem('pc_cache_timetable');
     if (cachedTT) {
@@ -784,7 +799,7 @@ function initOfflineCache() {
 // ═══════════════════════════════════════════════════════════════
 // TOAST NOTIFICATIONS (shared utility)
 // ═══════════════════════════════════════════════════════════════
-function showToast(msg, type = 'info') {
+function _showToast(msg, type = 'info') {
   // Remove existing
   const existing = document.getElementById('pc-toast');
   if (existing) existing.remove();
@@ -815,8 +830,8 @@ function showToast(msg, type = 'info') {
 // MAIN INIT — auto-runs on page load
 // ═══════════════════════════════════════════════════════════════
 function initAllFeatures() {
-  const user = getUser();
-  if (!user || !getToken()) return;
+  const user = _getUser();
+  if (!user || !_getToken()) return;
 
   initNotifications();
   initSOS();

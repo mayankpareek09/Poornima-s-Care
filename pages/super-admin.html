@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Super Admin — Poornima's Care</title>
+<link rel="stylesheet" href="../css/main.css"/>
+<script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<style>
+.sa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:28px;}
+.sa-card{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:14px;padding:18px;text-align:center;cursor:pointer;transition:border-color .2s;}
+.sa-card:hover{border-color:#1A7A82;}
+.sa-card.warn{border-color:rgba(231,76,60,.3);}
+.sa-n{font-size:30px;font-weight:900;margin-bottom:4px;}
+.sa-l{color:#93B1B5;font-size:11px;font-weight:600;}
+.sa-section{margin-bottom:32px;}
+.sa-section-title{color:#1A7A82;font-size:12px;font-weight:700;letter-spacing:.5px;margin-bottom:12px;text-transform:uppercase;}
+.u-row{display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px;align-items:center;background:#112D32;border:1px solid rgba(184,227,233,.1);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+.role-badge{padding:3px 9px;border-radius:5px;font-size:10px;font-weight:700;background:rgba(26,122,130,.2);color:#1A7A82;border:1px solid rgba(26,122,130,.3);}
+.role-badge.student{background:rgba(39,174,96,.15);color:#27AE60;border-color:rgba(39,174,96,.3);}
+.role-badge.super_admin{background:rgba(142,68,173,.2);color:#9B59B6;border-color:rgba(142,68,173,.3);}
+.role-badge.campus_admin{background:rgba(41,128,185,.2);color:#3498DB;border-color:rgba(41,128,185,.3);}
+.role-badge.escalated{background:rgba(231,76,60,.15);color:#e74c3c;border-color:rgba(231,76,60,.3);}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.filter-bar select,.filter-bar input{background:#1A3A40;border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:7px 10px;border-radius:8px;font-size:12px;}
+.dept-bar{height:8px;border-radius:4px;background:#1A7A82;margin-top:4px;}
+</style>
+</head>
+<body>
+<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="admin-wrap">
+
+<div class="admin-sb">
+  <div class="asb-top">
+    <div class="asb-logo">Poornima's <span>Care</span></div>
+    <div class="asb-av" id="tnAv" style="background:linear-gradient(135deg,#8E44AD,#3498DB);">SA</div>
+    <div class="asb-nm" id="sbNm">—</div>
+    <div class="asb-id" style="color:#9B59B6;font-size:10px;font-weight:700;">👑 SUPER ADMIN</div>
+  </div>
+  <div class="asb-sec">Master Control</div>
+  <div class="asb-link active" id="nl-dash"       onclick="showView('dash',this)"><span class="asb-ic">⚡</span> Dashboard</div>
+  <div class="asb-link"        id="nl-users"      onclick="showView('users',this)"><span class="asb-ic">👥</span> All Users</div>
+  <div class="asb-link"        id="nl-complaints" onclick="showView('complaints',this)"><span class="asb-ic">📋</span> All Complaints</div>
+  <div class="asb-sec">Quick Links</div>
+  <div class="asb-link" onclick="window.open('canteen-admin.html')"><span class="asb-ic">🍽️</span> Canteen Admin</div>
+  <div class="asb-link" onclick="window.open('mess-admin.html')"><span class="asb-ic">🍛</span> Mess Admin</div>
+  <div class="asb-link" onclick="window.open('laundry-admin.html')"><span class="asb-ic">👕</span> Laundry Admin</div>
+  <div class="asb-link" onclick="window.open('academic-admin.html')"><span class="asb-ic">🎓</span> Academic Admin</div>
+  <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
+    <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<div class="admin-main">
+<div class="page-body">
+
+<!-- DASHBOARD -->
+<div id="v-dash" class="sec active">
+  <div style="background:linear-gradient(135deg,#1A0A2E,#0B2E33);border:1px solid rgba(142,68,173,.3);border-radius:16px;padding:24px 28px;margin-bottom:24px;">
+    <div style="color:#9B59B6;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;">👑 SUPER ADMIN — MASTER DASHBOARD</div>
+    <div style="color:#D0EEF2;font-size:20px;font-weight:700;">Poornima S-Care Control Center</div>
+    <div style="color:#93B1B5;font-size:12px;margin-top:4px;">Full visibility across every department and feature</div>
+  </div>
+
+  <!-- Users -->
+  <div class="sa-section">
+    <div class="sa-section-title">👥 Users</div>
+    <div class="sa-grid">
+      <div class="sa-card" onclick="showView('users',document.getElementById('nl-users'))">
+        <div class="sa-n" id="dTotalUsers" style="color:#D0EEF2;">—</div>
+        <div class="sa-l">Total Users</div>
+      </div>
+      <div class="sa-card" onclick="filterUsers('student')">
+        <div class="sa-n" id="dStudents" style="color:#27AE60;">—</div>
+        <div class="sa-l">Students</div>
+      </div>
+      <div class="sa-card" onclick="filterUsers('academic_admin')">
+        <div class="sa-n" id="dAdmins" style="color:#2980B9;">—</div>
+        <div class="sa-l">All Admins</div>
+      </div>
+    </div>
+    <!-- Role breakdown bar chart -->
+    <div id="roleBreakdown" style="display:grid;gap:8px;"></div>
+  </div>
+
+  <!-- Complaints -->
+  <div class="sa-section">
+    <div class="sa-section-title">📋 Complaints</div>
+    <div class="sa-grid">
+      <div class="sa-card warn" onclick="showView('complaints',document.getElementById('nl-complaints'))">
+        <div class="sa-n" id="dOpenComp" style="color:#e74c3c;">—</div>
+        <div class="sa-l">Open / In-Progress</div>
+      </div>
+      <div class="sa-card warn">
+        <div class="sa-n" id="dEscComp" style="color:#e67e22;">—</div>
+        <div class="sa-l">Escalated</div>
+      </div>
+    </div>
+    <!-- By dept -->
+    <div id="compByDept" style="display:grid;gap:8px;"></div>
+  </div>
+
+  <!-- Services -->
+  <div class="sa-section">
+    <div class="sa-section-title">🍽️ Today's Services</div>
+    <div class="sa-grid">
+      <div class="sa-card" onclick="window.open('canteen-admin.html')">
+        <div class="sa-n" id="dCanteenOrders" style="color:#e67e22;">—</div>
+        <div class="sa-l">Canteen Orders</div>
+      </div>
+      <div class="sa-card" onclick="window.open('canteen-admin.html')">
+        <div class="sa-n" id="dCanteenRev" style="color:#27AE60;">—</div>
+        <div class="sa-l">Canteen Revenue ₹</div>
+      </div>
+      <div class="sa-card" onclick="window.open('mess-admin.html')">
+        <div class="sa-n" id="dMessTokens" style="color:#8E44AD;">—</div>
+        <div class="sa-l">Mess Tokens</div>
+      </div>
+      <div class="sa-card" onclick="window.open('mess-admin.html')">
+        <div class="sa-n" id="dMessRev" style="color:#27AE60;">—</div>
+        <div class="sa-l">Mess Revenue ₹</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Campus -->
+  <div class="sa-section">
+    <div class="sa-section-title">🏫 Campus</div>
+    <div class="sa-grid">
+      <div class="sa-card"><div class="sa-n" id="dEvents" style="color:#2980B9;">—</div><div class="sa-l">Events</div></div>
+      <div class="sa-card"><div class="sa-n" id="dClubs" style="color:#27AE60;">—</div><div class="sa-l">Clubs</div></div>
+      <div class="sa-card"><div class="sa-n" id="dLaundry" style="color:#e67e22;">—</div><div class="sa-l">Laundry Pending</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ALL USERS -->
+<div id="v-users" class="sec">
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">👥 All Users</div>
+  </div>
+  <div class="filter-bar">
+    <input id="userSearch" placeholder="Search name or ID…" oninput="loadUsers()" style="flex:1;min-width:160px;"/>
+    <select id="userRoleFilter" onchange="loadUsers()">
+      <option value="">All Roles</option>
+      <option value="student">student</option>
+      <option value="academic_admin">academic_admin</option>
+      <option value="hostel_admin">hostel_admin</option>
+      <option value="campus_admin">campus_admin</option>
+      <option value="laundry_admin">laundry_admin</option>
+      <option value="canteen_admin">canteen_admin</option>
+      <option value="mess_admin">mess_admin</option>
+      <option value="store_admin">store_admin</option>
+      <option value="guard">guard</option>
+      <option value="faculty">faculty</option>
+      <option value="council_admin">council_admin</option>
+      <option value="super_admin">super_admin</option>
+    </select>
+    <button class="btn-p" style="font-size:11px;padding:7px 14px;" onclick="loadUsers()">↻</button>
+  </div>
+  <div id="usersList"><div style="color:#93B1B5;font-size:13px;">Loading…</div></div>
+</div>
+
+<!-- ALL COMPLAINTS -->
+<div id="v-complaints" class="sec">
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">📋 All Complaints</div>
+  </div>
+  <div class="filter-bar">
+    <select id="cStatusFilter" onchange="loadAllComplaints()">
+      <option value="">All Status</option>
+      <option value="open">Open</option>
+      <option value="inprogress">In Progress</option>
+      <option value="resolved">Resolved</option>
+    </select>
+    <select id="cDeptFilter" onchange="loadAllComplaints()">
+      <option value="">All Depts</option>
+      <option value="academic_admin">Academic</option>
+      <option value="hostel_admin">Hostel</option>
+      <option value="campus_admin">Campus</option>
+    </select>
+    <button class="btn-p" style="font-size:11px;padding:7px 14px;" onclick="loadAllComplaints()">↻</button>
+  </div>
+  <div id="allComplaintsList"><div style="color:#93B1B5;font-size:13px;">Loading…</div></div>
+</div>
+
+</div></div></div>
+
+<!-- CHANGE ROLE MODAL -->
+<div id="roleModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#0B2E33;border:1px solid rgba(184,227,233,.15);border-radius:16px;padding:28px;max-width:380px;width:100%;">
+    <h3 style="color:#D0EEF2;margin:0 0 6px;" id="roleModalName">Change Role</h3>
+    <p style="color:#93B1B5;font-size:12px;margin:0 0 18px;" id="roleModalId">—</p>
+    <select id="roleModalSelect" style="width:100%;background:#1A3A40;border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:16px;">
+      <option value="student">student</option>
+      <option value="academic_admin">academic_admin</option>
+      <option value="hostel_admin">hostel_admin</option>
+      <option value="campus_admin">campus_admin</option>
+      <option value="laundry_admin">laundry_admin</option>
+      <option value="canteen_admin">canteen_admin</option>
+      <option value="mess_admin">mess_admin</option>
+      <option value="store_admin">store_admin</option>
+      <option value="guard">guard</option>
+      <option value="faculty">faculty</option>
+      <option value="council_admin">council_admin</option>
+      <option value="super_admin">super_admin</option>
+    </select>
+    <input type="hidden" id="roleModalUserId"/>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeRoleModal()" style="flex:1;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#93B1B5;font-size:13px;cursor:pointer;">Cancel</button>
+      <button onclick="saveRole()" class="btn-p" style="flex:2;padding:10px;">Update Role</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script>
+const user = requireAuth(['super_admin']);
+if (!user) throw new Error('not auth');
+
+document.getElementById('tnAv').textContent = user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+document.getElementById('sbNm').textContent = user.name;
+
+function showView(id, el) {
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('v-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='users')      loadUsers();
+  if(id==='complaints') loadAllComplaints();
+}
+
+function toggleSidebar() {
+  document.querySelector('.admin-sb').classList.toggle('open');
+  document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+// ── Dashboard stats ─────────────────────────────
+async function loadDash() {
+  try {
+    const data = await apiFetch('/super/stats');
+    const s = data.stats;
+
+    // Users
+    document.getElementById('dTotalUsers').textContent = s.users.total;
+    document.getElementById('dStudents').textContent   = s.users.students;
+    document.getElementById('dAdmins').textContent     = s.users.admins;
+
+    // Role breakdown
+    const roleColors = {
+      student:'#27AE60', academic_admin:'#2980B9', hostel_admin:'#e67e22',
+      campus_admin:'#3498DB', laundry_admin:'#e74c3c', canteen_admin:'#f39c12',
+      mess_admin:'#8E44AD', super_admin:'#9B59B6', council_admin:'#1ABC9C',
+      club_captain:'#27AE60', vice_captain:'#16A085', guard:'#95A5A6', faculty:'#D35400',
+    };
+    const maxRoleCount = Math.max(...s.roleBreakdown.map(r=>r.count), 1);
+    document.getElementById('roleBreakdown').innerHTML = s.roleBreakdown.map(r=>`
+      <div style="background:#112D32;border:1px solid rgba(184,227,233,.08);border-radius:8px;padding:10px 14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="color:#D0EEF2;font-size:12px;">${r._id}</span>
+          <span style="color:${roleColors[r._id]||'#93B1B5'};font-weight:700;font-size:13px;">${r.count}</span>
+        </div>
+        <div class="dept-bar" style="width:${Math.round(r.count/maxRoleCount*100)}%;background:${roleColors[r._id]||'#1A7A82'};"></div>
+      </div>`).join('');
+
+    // Complaints
+    document.getElementById('dOpenComp').textContent = s.complaints.open;
+    document.getElementById('dEscComp').textContent  = s.complaints.escalated;
+
+    const deptNames = { academic_admin:'Academic', hostel_admin:'Hostel', campus_admin:'Campus' };
+    const deptColors= { academic_admin:'#2980B9', hostel_admin:'#e67e22', campus_admin:'#27AE60' };
+    document.getElementById('compByDept').innerHTML = (s.complaintsByDept||[]).map(d=>`
+      <div style="background:#112D32;border:1px solid rgba(184,227,233,.08);border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <span style="color:#D0EEF2;font-size:12px;">${deptNames[d._id]||d._id}</span>
+        <div style="display:flex;gap:12px;">
+          <span style="color:#e74c3c;font-size:12px;font-weight:700;">${d.open} open</span>
+          <span style="color:#27AE60;font-size:12px;font-weight:700;">${d.resolved} resolved</span>
+        </div>
+      </div>`).join('');
+
+    // Services
+    if (s.canteen && !s.canteen.error) {
+      document.getElementById('dCanteenOrders').textContent = s.canteen.todayOrders;
+      document.getElementById('dCanteenRev').textContent    = s.canteen.todayRevenue;
+    } else {
+      document.getElementById('dCanteenOrders').textContent = 'N/A';
+      document.getElementById('dCanteenRev').textContent    = 'N/A';
+    }
+    if (s.mess && !s.mess.error) {
+      document.getElementById('dMessTokens').textContent = s.mess.tokensToday;
+      document.getElementById('dMessRev').textContent    = s.mess.revenue;
+    } else {
+      document.getElementById('dMessTokens').textContent = 'N/A';
+      document.getElementById('dMessRev').textContent    = 'N/A';
+    }
+
+    // Campus
+    document.getElementById('dEvents').textContent  = s.events;
+    document.getElementById('dClubs').textContent   = s.clubs;
+    document.getElementById('dLaundry').textContent = s.laundry.pending;
+  } catch(e) { showToast('Stats failed: '+e.message,'error'); }
+}
+
+// ── Users ───────────────────────────────────────
+function filterUsers(role) {
+  document.getElementById('userRoleFilter').value = role;
+  showView('users', document.getElementById('nl-users'));
+}
+
+async function loadUsers() {
+  const el   = document.getElementById('usersList');
+  const q    = document.getElementById('userSearch').value.trim();
+  const role = document.getElementById('userRoleFilter').value;
+  el.innerHTML = '<div style="color:#93B1B5;font-size:13px;">Loading…</div>';
+  try {
+    let url = '/super/users?';
+    if (q)    url += 'q='+encodeURIComponent(q)+'&';
+    if (role) url += 'role='+role;
+    const data = await apiFetch(url);
+    const users = data.users || [];
+    if (!users.length) { el.innerHTML='<div style="color:#93B1B5;text-align:center;padding:30px;">No users found.</div>'; return; }
+
+    const roleColors={student:'student',campus_admin:'campus_admin',super_admin:'super_admin'};
+    el.innerHTML = users.map(u=>`
+      <div class="u-row">
+        <div>
+          <div style="color:#D0EEF2;font-weight:600;font-size:13px;">${u.name}</div>
+          <div style="color:#93B1B5;font-size:11px;">${u.email||''}</div>
+        </div>
+        <div style="color:#93B1B5;font-size:12px;">${u.userId}</div>
+        <span class="role-badge ${roleColors[u.role]||''}">${u.role}</span>
+        <div style="display:flex;gap:6px;">
+          <button onclick='openRoleModal(${JSON.stringify({_id:u._id,name:u.name,userId:u.userId,role:u.role})})' style="background:rgba(26,122,130,.15);border:1px solid rgba(26,122,130,.3);color:#1A7A82;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;">Role</button>
+          <button onclick="deleteUser('${u._id}','${u.name.replace(/'/g,"\\'")}')" style="background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.25);color:#e74c3c;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;">Del</button>
+        </div>
+      </div>`).join('');
+  } catch(e) { el.innerHTML=`<div style="color:#e74c3c;">${e.message}</div>`; }
+}
+
+function openRoleModal(u) {
+  document.getElementById('roleModalName').textContent  = u.name;
+  document.getElementById('roleModalId').textContent    = u.userId + ' · current: ' + u.role;
+  document.getElementById('roleModalSelect').value      = u.role;
+  document.getElementById('roleModalUserId').value      = u._id;
+  document.getElementById('roleModal').style.display   = 'flex';
+}
+function closeRoleModal() { document.getElementById('roleModal').style.display='none'; }
+
+async function saveRole() {
+  const id   = document.getElementById('roleModalUserId').value;
+  const role = document.getElementById('roleModalSelect').value;
+  try {
+    await apiFetch('/super/users/'+id+'/role', { method:'PATCH', body: JSON.stringify({role}) });
+    closeRoleModal();
+    loadUsers();
+    showToast('Role updated to '+role,'success');
+  } catch(e) { showToast(e.message,'error'); }
+}
+
+async function deleteUser(id, name) {
+  if (!confirm(`Delete user "${name}"? This cannot be undone.`)) return;
+  try {
+    await apiFetch('/super/users/'+id, { method:'DELETE' });
+    loadUsers();
+    showToast('User deleted','success');
+  } catch(e) { showToast(e.message,'error'); }
+}
+
+// ── All Complaints ──────────────────────────────
+async function loadAllComplaints() {
+  const el     = document.getElementById('allComplaintsList');
+  const status = document.getElementById('cStatusFilter').value;
+  const dept   = document.getElementById('cDeptFilter').value;
+  el.innerHTML = '<div style="color:#93B1B5;font-size:13px;">Loading…</div>';
+  try {
+    let url = '/super/complaints?';
+    if (status) url += 'status='+status+'&';
+    if (dept)   url += 'dept='+dept;
+    const data = await apiFetch(url);
+    const cs   = data.complaints || [];
+    if (!cs.length) { el.innerHTML='<div style="color:#93B1B5;text-align:center;padding:30px;">No complaints found.</div>'; return; }
+
+    const stColor={open:'#e74c3c',inprogress:'#e67e22',resolved:'#27AE60'};
+    const deptLabel={academic_admin:'Academic',hostel_admin:'Hostel',campus_admin:'Campus'};
+
+    el.innerHTML = cs.map(c=>`
+      <div style="background:#112D32;border:1px solid rgba(184,227,233,.1);${c.isEscalated&&c.status!=='resolved'?'border-left:3px solid #e67e22;':''};border-radius:10px;padding:14px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+          <div>
+            <div style="color:#D0EEF2;font-weight:700;font-size:13px;">${c.title}${c.isEscalated&&c.status!=='resolved'?' <span style="color:#e67e22;font-size:10px;font-weight:700;">⚠️ ESCALATED</span>':''}</div>
+            <div style="color:#93B1B5;font-size:11px;">${c.studentUserId} · ${c.category} · ${deptLabel[c.routedTo]||c.routedTo}</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+            <span style="background:${stColor[c.status]}22;color:${stColor[c.status]};border:1px solid ${stColor[c.status]}44;border-radius:5px;padding:2px 8px;font-size:10px;font-weight:700;">${c.status.toUpperCase()}</span>
+            <span style="color:#93B1B5;font-size:11px;">${new Date(c.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}</span>
+          </div>
+        </div>
+        <div style="color:#93B1B5;font-size:12px;line-height:1.5;">${c.description?.slice(0,120)||''}${(c.description?.length||0)>120?'…':''}</div>
+        ${c.adminRemarks?`<div style="margin-top:8px;color:#1A7A82;font-size:11px;">Admin: ${c.adminRemarks}</div>`:''}
+      </div>`).join('');
+  } catch(e) { el.innerHTML=`<div style="color:#e74c3c;">${e.message}</div>`; }
+}
+
+// Close role modal on backdrop
+document.getElementById('roleModal').addEventListener('click', function(e){ if(e.target===this) closeRoleModal(); });
+
+// Init
+loadDash();
+</script>
+</body></html>

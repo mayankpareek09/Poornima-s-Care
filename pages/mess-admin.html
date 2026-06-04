@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Mess Admin — Poornima's Care</title>
+<link rel="stylesheet" href="../css/main.css"/>
+<script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<style>
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:24px;}
+.stat-c{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:12px;padding:16px;text-align:center;}
+.stat-n{font-size:26px;font-weight:900;margin-bottom:4px;}
+.stat-l{color:#93B1B5;font-size:11px;}
+.meal-form{display:grid;gap:14px;}
+.meal-row{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:12px;padding:16px;}
+.meal-row label{color:#1A7A82;font-size:12px;font-weight:700;display:block;margin-bottom:6px;}
+.meal-row input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:9px 12px;border-radius:8px;font-size:12px;}
+.verify-box{background:#0D2A2E;border:2px solid #8E44AD;border-radius:16px;padding:24px;max-width:420px;}
+.verify-result{margin-top:16px;border-radius:10px;padding:14px;font-size:13px;font-weight:600;}
+.v-ok{background:#27AE6015;border:1px solid #27AE6044;color:#27AE60;}
+.v-err{background:#e74c3c15;border:1px solid #e74c3c44;color:#e74c3c;}
+.tok-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+</style>
+</head>
+<body>
+<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="admin-wrap">
+
+<div class="admin-sb">
+  <div class="asb-top">
+    <div class="asb-logo">Poornima's <span>Care</span></div>
+    <div class="asb-av" id="tnAv">—</div>
+    <div class="asb-nm" id="sbNm">—</div>
+    <div class="asb-id" id="sbId">Mess Admin</div>
+  </div>
+  <div class="asb-sec">Mess</div>
+  <div class="asb-link active" id="nl-menu"   onclick="showView('menu',this)"><span class="asb-ic">📋</span> Post Menu</div>
+  <div class="asb-link" id="nl-verify" onclick="showView('verify',this)"><span class="asb-ic">🎫</span> Verify Token</div>
+  <div class="asb-link" id="nl-tokens" onclick="showView('tokens',this)"><span class="asb-ic">📊</span> Token Report</div>
+  <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
+    <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<div class="admin-main">
+<div class="page-body">
+
+<!-- POST MENU -->
+<div id="v-menu" class="sec active">
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">📋 Post Today's Menu</div>
+    <input type="date" id="menuDate" style="background:#1A3A40;border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:6px 10px;border-radius:8px;font-size:12px;"/>
+  </div>
+
+  <div style="background:#0D2A2E;border:1px solid rgba(184,227,233,.15);border-radius:14px;padding:20px;margin-bottom:20px;">
+    <p style="color:#93B1B5;font-size:12px;margin:0 0 6px;">Enter items separated by commas: <em style="color:#D0EEF2;">Paratha, Aloo Sabzi, Curd, Chai</em></p>
+    <p style="color:#93B1B5;font-size:12px;margin:0;">Once posted, students will see it immediately on the PU Mess page.</p>
+  </div>
+
+  <div class="meal-form">
+    <div class="meal-row">
+      <label>🥞 Breakfast</label>
+      <input id="mBreakfast" placeholder="e.g. Paratha, Aloo Sabzi, Curd, Chai"/>
+      <input id="mBreakfastTime" placeholder="Timing e.g. 7:30 AM – 9:00 AM" style="margin-top:8px;"/>
+    </div>
+    <div class="meal-row">
+      <label>🍛 Lunch</label>
+      <input id="mLunch" placeholder="e.g. Dal Tadka, Rice, Sabzi, Roti, Salad, Buttermilk"/>
+      <input id="mLunchTime" placeholder="Timing e.g. 12:30 PM – 2:00 PM" style="margin-top:8px;"/>
+    </div>
+    <div class="meal-row">
+      <label>🍪 Snacks</label>
+      <input id="mSnacks" placeholder="e.g. Chai, Biscuits, Samosa"/>
+      <input id="mSnacksTime" placeholder="Timing e.g. 5:00 PM – 6:00 PM" style="margin-top:8px;"/>
+    </div>
+    <div class="meal-row">
+      <label>🍚 Dinner</label>
+      <input id="mDinner" placeholder="e.g. Paneer Masala, Dal Makhani, Rice, Roti, Kheer"/>
+      <input id="mDinnerTime" placeholder="Timing e.g. 7:30 PM – 9:00 PM" style="margin-top:8px;"/>
+    </div>
+    <div class="meal-row">
+      <label>📢 Special Notice (optional)</label>
+      <input id="mNotice" placeholder="e.g. Special Sunday lunch today!"/>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;">
+    <button class="btn-p" style="flex:1;padding:12px;" onclick="postMenu()">📋 Post Menu</button>
+    <button style="background:rgba(184,227,233,.08);border:1px solid rgba(184,227,233,.2);color:#93B1B5;border-radius:10px;padding:12px 20px;font-size:13px;cursor:pointer;" onclick="loadExistingMenu()">Load Today's Existing</button>
+  </div>
+</div>
+
+<!-- VERIFY TOKEN -->
+<div id="v-verify" class="sec">
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">🎫 Verify Mess Token at Gate</div>
+  </div>
+  <div class="verify-box">
+    <div style="color:#D0EEF2;font-size:14px;font-weight:700;margin-bottom:12px;">Scan or Enter Token Code</div>
+    <div style="display:flex;gap:8px;">
+      <input id="verifyInput" placeholder="e.g. MESS-20260524-L-0001" autofocus
+        style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:11px 14px;border-radius:8px;font-size:13px;font-family:monospace;"
+        onkeydown="if(event.key==='Enter')verifyToken()"/>
+      <button class="btn-p" style="padding:11px 18px;font-size:13px;" onclick="verifyToken()">Verify</button>
+    </div>
+    <div id="verifyResult" style="display:none;" class="verify-result"></div>
+  </div>
+
+  <div style="margin-top:28px;">
+    <div style="color:#93B1B5;font-size:12px;font-weight:600;margin-bottom:10px;">HOW IT WORKS</div>
+    <div style="color:#93B1B5;font-size:12px;line-height:1.8;">
+      1. Student buys a token from the PU Mess page (pays first)<br/>
+      2. Token is valid only for today<br/>
+      3. Student shows token code at the gate<br/>
+      4. Enter the code above → system verifies → green = let in<br/>
+      5. Token automatically marked as "used" — cannot be reused
+    </div>
+  </div>
+</div>
+
+<!-- TOKEN REPORT -->
+<div id="v-tokens" class="sec">
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">📊 Token Report</div>
+    <input type="date" id="tokenDate" onchange="loadTokenReport()" style="background:#1A3A40;border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:6px 10px;border-radius:8px;font-size:12px;"/>
+  </div>
+
+  <div class="stat-row" id="tokenStats">
+    <div class="stat-c"><div class="stat-n" id="tBreakfast" style="color:#e67e22;">—</div><div class="stat-l">Breakfast</div></div>
+    <div class="stat-c"><div class="stat-n" id="tLunch" style="color:#2980B9;">—</div><div class="stat-l">Lunch</div></div>
+    <div class="stat-c"><div class="stat-n" id="tSnacks" style="color:#27AE60;">—</div><div class="stat-l">Snacks</div></div>
+    <div class="stat-c"><div class="stat-n" id="tDinner" style="color:#8E44AD;">—</div><div class="stat-l">Dinner</div></div>
+    <div class="stat-c"><div class="stat-n" id="tRevenue" style="color:#27AE60;">—</div><div class="stat-l">Revenue ₹</div></div>
+  </div>
+
+  <div id="tokenReportList"><div style="color:#93B1B5;font-size:13px;">Select a date above.</div></div>
+</div>
+
+</div></div></div>
+
+<script src="../js/api.js"></script>
+<script>
+const user = requireAuth(['mess_admin','hostel_admin','campus_admin','super_admin']);
+if (!user) throw new Error('not auth');
+
+document.getElementById('tnAv').textContent = user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+document.getElementById('sbNm').textContent = user.name;
+
+// Set date inputs to today
+const today = new Date().toISOString().slice(0,10);
+document.getElementById('menuDate').value  = today;
+document.getElementById('tokenDate').value = today;
+
+function showView(id, el) {
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('v-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='tokens') loadTokenReport();
+}
+
+function toggleSidebar() {
+  document.querySelector('.admin-sb').classList.toggle('open');
+  document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+// ── Post Menu ───────────────────────────────────
+async function postMenu() {
+  const date = document.getElementById('menuDate').value || today;
+  const body = {
+    date,
+    breakfast: { items: document.getElementById('mBreakfast').value, timing: document.getElementById('mBreakfastTime').value || '7:30 AM – 9:00 AM' },
+    lunch:     { items: document.getElementById('mLunch').value,     timing: document.getElementById('mLunchTime').value     || '12:30 PM – 2:00 PM' },
+    snacks:    { items: document.getElementById('mSnacks').value,    timing: document.getElementById('mSnacksTime').value    || '5:00 PM – 6:00 PM' },
+    dinner:    { items: document.getElementById('mDinner').value,    timing: document.getElementById('mDinnerTime').value    || '7:30 PM – 9:00 PM' },
+    notice:    document.getElementById('mNotice').value,
+  };
+  const anyFilled = body.breakfast.items || body.lunch.items || body.snacks.items || body.dinner.items;
+  if (!anyFilled) return showToast('Enter at least one meal', 'warning');
+  try {
+    await apiFetch('/mess/menu', { method:'POST', body: JSON.stringify(body) });
+    showToast('Menu posted for '+date+'!', 'success');
+  } catch(e) { showToast(e.message,'error'); }
+}
+
+async function loadExistingMenu() {
+  const date = document.getElementById('menuDate').value || today;
+  try {
+    const data = await apiFetch('/mess/menu?date='+date);
+    const m = data.menu;
+    document.getElementById('mBreakfast').value     = m.breakfast?.items || '';
+    document.getElementById('mBreakfastTime').value = m.breakfast?.timing || '';
+    document.getElementById('mLunch').value         = m.lunch?.items || '';
+    document.getElementById('mLunchTime').value     = m.lunch?.timing || '';
+    document.getElementById('mSnacks').value        = m.snacks?.items || '';
+    document.getElementById('mSnacksTime').value    = m.snacks?.timing || '';
+    document.getElementById('mDinner').value        = m.dinner?.items || '';
+    document.getElementById('mDinnerTime').value    = m.dinner?.timing || '';
+    document.getElementById('mNotice').value        = m.notice || '';
+    showToast('Loaded existing menu for '+date,'info');
+  } catch(e) { showToast(e.message,'error'); }
+}
+
+// ── Verify Token ────────────────────────────────
+async function verifyToken() {
+  const tokenCode = document.getElementById('verifyInput').value.trim().toUpperCase();
+  if (!tokenCode) return;
+  const resEl = document.getElementById('verifyResult');
+  resEl.style.display='none';
+  try {
+    const data = await apiFetch('/mess/tokens/verify', { method:'PATCH', body: JSON.stringify({token:tokenCode}) });
+    const t = data.token;
+    const meal = t.meal.charAt(0).toUpperCase()+t.meal.slice(1);
+    resEl.className = 'verify-result v-ok';
+    resEl.innerHTML = `✅ Valid Token — Entry Granted<br/>
+      <span style="font-weight:400;font-size:12px;">
+        ${t.userName} (${t.userRegNo})<br/>
+        Meal: <b>${meal}</b> | Paid: <b>₹${t.price}</b>
+      </span>`;
+    resEl.style.display='block';
+    document.getElementById('verifyInput').value='';
+    document.getElementById('verifyInput').focus();
+  } catch(e) {
+    resEl.className = 'verify-result v-err';
+    resEl.innerHTML = `❌ ${e.message}`;
+    resEl.style.display='block';
+  }
+}
+
+// ── Token Report ────────────────────────────────
+async function loadTokenReport() {
+  const date = document.getElementById('tokenDate').value || today;
+  try {
+    const data = await apiFetch('/mess/tokens?date='+date);
+    const s = data.summary || {};
+    document.getElementById('tBreakfast').textContent = s.breakfast || 0;
+    document.getElementById('tLunch').textContent     = s.lunch || 0;
+    document.getElementById('tSnacks').textContent    = s.snacks || 0;
+    document.getElementById('tDinner').textContent    = s.dinner || 0;
+    document.getElementById('tRevenue').textContent   = s.totalRevenue || 0;
+
+    const tokens = data.tokens || [];
+    const el = document.getElementById('tokenReportList');
+    if (!tokens.length) { el.innerHTML='<div style="color:#93B1B5;text-align:center;padding:30px;">No tokens for this date.</div>'; return; }
+
+    const stColors={active:'#27AE60',used:'#93B1B5',expired:'#e74c3c'};
+    const stLabel={active:'Active',used:'Used',expired:'Expired'};
+    const mealEmoji={breakfast:'🥞',lunch:'🍛',snacks:'🍪',dinner:'🍚'};
+    el.innerHTML = tokens.map(t=>`
+      <div class="tok-row">
+        <div style="color:#8E44AD;font-weight:900;font-size:13px;letter-spacing:1px;min-width:180px;">${t.token}</div>
+        <span style="font-size:18px;">${mealEmoji[t.meal]||'🍛'}</span>
+        <div style="flex:1;">
+          <div style="color:#D0EEF2;font-size:13px;font-weight:600;">${t.userName} <span style="color:#93B1B5;font-weight:400;">(${t.userRegNo})</span></div>
+          <div style="color:#93B1B5;font-size:11px;">${t.userType.replace('_',' ')} · ${t.meal}</div>
+        </div>
+        <span style="background:${stColors[t.status]}22;color:${stColors[t.status]};border:1px solid ${stColors[t.status]}44;border-radius:5px;padding:2px 8px;font-size:10px;font-weight:700;">${stLabel[t.status]}</span>
+        <span style="color:#27AE60;font-weight:700;">₹${t.price}</span>
+      </div>`).join('');
+  } catch(e) { showToast(e.message,'error'); }
+}
+</script>
+</body></html>

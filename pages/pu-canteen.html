@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PU Canteen — Poornima's Care</title>
+<link rel="stylesheet" href="../css/main.css"/>
+<script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<style>
+.ct-header{background:linear-gradient(135deg,#0B2E33,#1A4A30);padding:28px 32px;border-radius:16px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.ct-header h1{color:#fff;font-size:22px;margin:0;}
+.ct-header p{color:#93B1B5;font-size:12px;margin:4px 0 0;}
+.ct-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.ct-tab{padding:8px 18px;border-radius:20px;border:1px solid rgba(184,227,233,.2);background:transparent;color:#93B1B5;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
+.ct-tab.active{background:#1A7A82;color:#fff;border-color:#1A7A82;}
+.ct-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.ct-card{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s;}
+.ct-card:hover{border-color:#1A7A82;}
+.ct-emoji{font-size:36px;text-align:center;}
+.ct-name{color:#D0EEF2;font-weight:700;font-size:13px;}
+.ct-desc{color:#93B1B5;font-size:11px;line-height:1.4;}
+.ct-row{display:flex;align-items:center;justify-content:space-between;}
+.ct-price{color:#27AE60;font-weight:800;font-size:15px;}
+.ct-qty{display:flex;align-items:center;gap:6px;}
+.ct-qty button{width:26px;height:26px;border-radius:50%;border:1px solid rgba(184,227,233,.3);background:rgba(184,227,233,.08);color:#D0EEF2;font-size:14px;font-weight:700;cursor:pointer;}
+.ct-qty span{color:#D0EEF2;font-size:13px;font-weight:700;min-width:20px;text-align:center;}
+.cart-fab{position:fixed;bottom:28px;right:28px;z-index:999;background:#1A7A82;color:#fff;border:none;border-radius:50px;padding:14px 24px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 24px rgba(26,122,130,.4);display:flex;align-items:center;gap:10px;}
+.cart-badge{background:#e74c3c;color:#fff;border-radius:50%;width:20px;height:20px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.cart-drawer{position:fixed;bottom:0;right:0;width:380px;max-width:100vw;max-height:80vh;background:#0B2E33;border-top-left-radius:20px;border-top-right-radius:20px;border:1px solid rgba(184,227,233,.15);z-index:1000;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;padding:0 0 24px;}
+.cart-drawer.open{transform:translateY(0);}
+.cart-drw-hdr{position:sticky;top:0;background:#0B2E33;padding:18px 20px 12px;border-bottom:1px solid rgba(184,227,233,.1);display:flex;align-items:center;justify-content:space-between;}
+.cart-item{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid rgba(184,227,233,.06);}
+.ticket{background:#0D2A2E;border:2px dashed #1A7A82;border-radius:16px;padding:24px;max-width:360px;margin:0 auto;text-align:center;}
+.ticket-token{font-size:26px;font-weight:900;color:#1A7A82;letter-spacing:3px;margin:10px 0;}
+.ticket-row{display:flex;justify-content:space-between;font-size:12px;color:#93B1B5;padding:4px 0;}
+.ticket-row b{color:#D0EEF2;}
+.ord-card{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:12px;padding:16px;margin-bottom:12px;}
+.unavail{opacity:.4;pointer-events:none;}
+</style>
+</head>
+<body>
+<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="admin-wrap">
+<div class="admin-sb">
+  <div class="asb-top">
+    <div class="asb-logo">Poornima's <span>Care</span></div>
+    <div class="asb-av" id="tnAv">—</div>
+    <div class="asb-nm" id="sbNm">—</div>
+    <div class="asb-id" id="sbId">—</div>
+  </div>
+  <div class="asb-sec">Canteen</div>
+  <div class="asb-link active" id="nl-order" onclick="showView('order',this)"><span class="asb-ic">🍽️</span> Order Food</div>
+  <div class="asb-link" id="nl-myorders" onclick="showView('myorders',this)"><span class="asb-ic">📋</span> My Orders</div>
+  <div class="asb-sec">Navigate</div>
+  <div class="asb-link" onclick="window.location.href='student.html'"><span class="asb-ic">🏠</span> Back to Portal</div>
+  <div class="asb-link" onclick="window.location.href='pu-mess.html'"><span class="asb-ic">🍛</span> PU Mess</div>
+  <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
+    <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+<div class="admin-main">
+<div class="page-body">
+
+<div id="v-order" class="sec active">
+  <div class="ct-header">
+    <div>
+      <h1>🍽️ PU Canteen</h1>
+      <p>Order ahead — skip the queue. Pay now, collect with your token.</p>
+    </div>
+    <div style="text-align:right;">
+      <div style="color:#27AE60;font-size:12px;font-weight:700;">✅ All items are VEG</div>
+      <div style="color:#93B1B5;font-size:11px;margin-top:4px;">Pickup ~10 mins after order</div>
+    </div>
+  </div>
+  <div class="ct-tabs">
+    <button class="ct-tab active" onclick="filterCat('All',this)">All</button>
+    <button class="ct-tab" onclick="filterCat('Snacks',this)">🥟 Snacks</button>
+    <button class="ct-tab" onclick="filterCat('Drinks',this)">☕ Drinks</button>
+    <button class="ct-tab" onclick="filterCat('Meals',this)">🍜 Meals</button>
+    <button class="ct-tab" onclick="filterCat('Combos',this)">🍱 Combos</button>
+  </div>
+  <div id="menuGrid" class="ct-grid">
+    <div style="color:#93B1B5;font-size:13px;padding:20px;">Loading menu…</div>
+  </div>
+</div>
+
+<div id="v-myorders" class="sec">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+    <h2 style="color:#D0EEF2;margin:0;">My Orders</h2>
+    <button class="btn-p" style="font-size:11px;padding:7px 14px;" onclick="loadMyOrders()">↻ Refresh</button>
+  </div>
+  <div id="myOrdersList"><div style="color:#93B1B5;font-size:13px;">Loading…</div></div>
+</div>
+
+</div></div></div>
+
+<button class="cart-fab" id="cartFab" onclick="toggleCart()" style="display:none;">
+  🛒 Cart <span class="cart-badge" id="cartCount">0</span>
+  <span id="cartTotal" style="font-size:12px;opacity:.85;">₹0</span>
+</button>
+
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-drw-hdr">
+    <div style="color:#D0EEF2;font-weight:700;font-size:15px;">🛒 Your Cart</div>
+    <button onclick="toggleCart()" style="background:none;border:none;color:#93B1B5;font-size:20px;cursor:pointer;">✕</button>
+  </div>
+  <div id="cartItemsList" style="min-height:80px;"></div>
+  <div style="padding:16px 20px;border-top:1px solid rgba(184,227,233,.1);margin-top:8px;">
+    <div style="display:flex;justify-content:space-between;color:#D0EEF2;font-weight:700;margin-bottom:16px;">
+      <span>Total</span><span id="cartTotalBig">₹0</span>
+    </div>
+    <button class="btn-p" style="width:100%;padding:12px;font-size:14px;" onclick="placeOrder()">Pay &amp; Place Order →</button>
+    <p style="color:#93B1B5;font-size:11px;text-align:center;margin:10px 0 0;">Payment is simulated — no real charge</p>
+  </div>
+</div>
+
+<div id="successModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#0B2E33;border:1px solid rgba(184,227,233,.15);border-radius:20px;padding:28px;max-width:400px;width:100%;text-align:center;">
+    <div style="font-size:48px;margin-bottom:12px;">✅</div>
+    <h2 style="color:#27AE60;margin:0 0 8px;">Order Placed!</h2>
+    <p style="color:#93B1B5;font-size:13px;margin:0 0 24px;">Show this token at the canteen counter.</p>
+    <div class="ticket" id="orderTicket"></div>
+    <button class="btn-p" style="width:100%;margin-top:20px;" onclick="document.getElementById('successModal').style.display='none'">Done</button>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script>
+const user = requireAuth(['student','academic_admin','hostel_admin','campus_admin','laundry_admin','canteen_admin','mess_admin','super_admin','faculty','guard']);
+if(!user) throw new Error('not auth');
+
+let allItems=[], cart={}, currentCat='All';
+
+function showView(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('v-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='myorders') loadMyOrders();
+}
+function toggleSidebar(){
+  document.querySelector('.admin-sb').classList.toggle('open');
+  document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+document.getElementById('tnAv').textContent=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+document.getElementById('sbNm').textContent=user.name;
+document.getElementById('sbId').textContent=user.userId;
+
+async function loadMenu(){
+  try{
+    const data=await apiFetch('/canteen/items');
+    allItems=data.items||[];
+    renderMenu(allItems.filter(i=>currentCat==='All'||i.category===currentCat));
+  }catch(e){ document.getElementById('menuGrid').innerHTML=`<div style="color:#e74c3c;">${e.message}</div>`; }
+}
+
+function filterCat(cat,btn){
+  currentCat=cat;
+  document.querySelectorAll('.ct-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu(allItems.filter(i=>cat==='All'||i.category===cat));
+}
+
+function renderMenu(items){
+  if(!items.length){ document.getElementById('menuGrid').innerHTML='<div style="color:#93B1B5;padding:20px;">No items.</div>'; return; }
+  document.getElementById('menuGrid').innerHTML=items.map(item=>{
+    const inCart=cart[item._id]?.qty||0;
+    const unavail=!item.isAvailable;
+    return `<div class="ct-card${unavail?' unavail':''}">
+      <div class="ct-emoji">${item.imageEmoji||'🍽️'}</div>
+      <div>
+        <div class="ct-name">${item.name}</div>
+        ${item.description?`<div class="ct-desc">${item.description}</div>`:''}
+      </div>
+      <div class="ct-row">
+        <span class="ct-price">₹${item.price}</span>
+        <span style="background:#27AE6022;color:#27AE60;border:1px solid #27AE6044;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:600;">🟢 VEG</span>
+      </div>
+      ${unavail?'<div style="color:#e74c3c;font-size:11px;font-weight:600;">Not available today</div>':
+        inCart===0
+          ?`<button class="btn-p" style="width:100%;padding:8px;font-size:12px;" onclick="addToCart('${item._id}')">+ Add</button>`
+          :`<div class="ct-qty">
+              <button onclick="changeQty('${item._id}',-1)">−</button>
+              <span>${inCart}</span>
+              <button onclick="changeQty('${item._id}',1)">+</button>
+            </div>`
+      }
+    </div>`;
+  }).join('');
+}
+
+function addToCart(id){
+  const item=allItems.find(i=>i._id===id);
+  if(!item||!item.isAvailable) return;
+  cart[id]={item,qty:1};
+  updateCart();
+  renderMenu(allItems.filter(i=>currentCat==='All'||i.category===currentCat));
+}
+
+function changeQty(id,delta){
+  if(!cart[id]) return;
+  cart[id].qty+=delta;
+  if(cart[id].qty<=0) delete cart[id];
+  updateCart();
+  renderMenu(allItems.filter(i=>currentCat==='All'||i.category===currentCat));
+}
+
+function updateCart(){
+  const entries=Object.values(cart);
+  const count=entries.reduce((s,e)=>s+e.qty,0);
+  const total=entries.reduce((s,e)=>s+e.item.price*e.qty,0);
+  document.getElementById('cartCount').textContent=count;
+  document.getElementById('cartTotal').textContent='₹'+total;
+  document.getElementById('cartTotalBig').textContent='₹'+total;
+  document.getElementById('cartFab').style.display=count>0?'flex':'none';
+  const listEl=document.getElementById('cartItemsList');
+  if(!entries.length){ listEl.innerHTML='<div style="color:#93B1B5;font-size:13px;text-align:center;padding:20px;">Cart is empty</div>'; return; }
+  listEl.innerHTML=entries.map(({item,qty})=>`
+    <div class="cart-item">
+      <div>
+        <div style="color:#D0EEF2;font-size:13px;font-weight:600;">${item.imageEmoji} ${item.name}</div>
+        <div style="color:#93B1B5;font-size:11px;">₹${item.price} × ${qty}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="color:#27AE60;font-weight:700;">₹${item.price*qty}</span>
+        <div class="ct-qty">
+          <button onclick="changeQty('${item._id}',-1)">−</button>
+          <span>${qty}</span>
+          <button onclick="changeQty('${item._id}',1)">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleCart(){ document.getElementById('cartDrawer').classList.toggle('open'); }
+
+async function placeOrder(){
+  const entries=Object.entries(cart);
+  if(!entries.length) return showToast('Cart is empty!','warning');
+  try{
+    const items=entries.map(([itemId,{qty}])=>({itemId,qty}));
+    const data=await apiFetch('/canteen/orders',{method:'POST',body:JSON.stringify({items})});
+    cart={};
+    updateCart();
+    document.getElementById('cartDrawer').classList.remove('open');
+    const o=data.order;
+    const itemLines=o.items.map(i=>`<div class="ticket-row"><span>${i.name} × ${i.qty}</span><b>₹${i.subtotal}</b></div>`).join('');
+    document.getElementById('orderTicket').innerHTML=`
+      <div style="color:#93B1B5;font-size:12px;">YOUR ORDER TOKEN</div>
+      <div class="ticket-token">${o.token}</div>
+      <div style="color:#93B1B5;font-size:11px;margin-bottom:16px;">Show this at the counter</div>
+      <div class="ticket-row"><span>Name</span><b>${o.studentName}</b></div>
+      <div class="ticket-row"><span>Reg No</span><b>${o.studentUserId}</b></div>
+      <div style="border-top:1px dashed #1A7A82;margin:12px 0;"></div>
+      ${itemLines}
+      <div style="border-top:1px dashed #1A7A82;margin:12px 0;"></div>
+      <div class="ticket-row" style="font-size:14px;"><b>Total Paid</b><b style="color:#27AE60;">₹${o.total}</b></div>`;
+    document.getElementById('successModal').style.display='flex';
+  }catch(e){ showToast(e.message||'Order failed','error'); }
+}
+
+async function loadMyOrders(){
+  const el=document.getElementById('myOrdersList');
+  el.innerHTML='<div style="color:#93B1B5;font-size:13px;">Loading…</div>';
+  try{
+    const data=await apiFetch('/canteen/orders/my');
+    const orders=data.orders||[];
+    if(!orders.length){ el.innerHTML='<div style="color:#93B1B5;text-align:center;padding:40px;">No orders yet.</div>'; return; }
+    const stLabel={paid:'💳 Paid',preparing:'👨‍🍳 Preparing',ready:'✅ Ready to Collect!',collected:'📦 Collected',cancelled:'❌ Cancelled'};
+    const stColor={paid:'#2980B9',preparing:'#e67e22',ready:'#27AE60',collected:'#93B1B5',cancelled:'#e74c3c'};
+    el.innerHTML=orders.map(o=>`
+      <div class="ord-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="color:#1A7A82;font-weight:900;font-size:15px;letter-spacing:1px;">${o.token}</div>
+            <div style="color:#93B1B5;font-size:11px;">${new Date(o.createdAt).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+          </div>
+          <span style="background:${stColor[o.status]}22;color:${stColor[o.status]};border:1px solid ${stColor[o.status]}44;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;">${stLabel[o.status]||o.status}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+          ${o.items.map(i=>`<span style="background:rgba(184,227,233,.08);border:1px solid rgba(184,227,233,.12);border-radius:6px;padding:3px 8px;font-size:11px;color:#D0EEF2;">${i.name} ×${i.qty}</span>`).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:#93B1B5;font-size:12px;">${o.items.length} item${o.items.length!==1?'s':''}</span>
+          <span style="color:#27AE60;font-weight:700;">₹${o.total}</span>
+        </div>
+        ${o.status==='ready'?'<div style="background:#27AE6015;border:1px solid #27AE6044;border-radius:8px;padding:8px;margin-top:10px;color:#27AE60;font-size:12px;font-weight:600;text-align:center;">🔔 Your order is ready! Go collect it now.</div>':''}
+      </div>`).join('');
+  }catch(e){ el.innerHTML=`<div style="color:#e74c3c;">${e.message}</div>`; }
+}
+
+loadMenu();
+setInterval(()=>{ if(document.getElementById('v-myorders').classList.contains('active')) loadMyOrders(); },60000);
+document.addEventListener('click',e=>{
+  const drawer=document.getElementById('cartDrawer'),fab=document.getElementById('cartFab');
+  if(drawer.classList.contains('open')&&!drawer.contains(e.target)&&!fab.contains(e.target)) drawer.classList.remove('open');
+});
+</script>
+</body></html>

@@ -105,23 +105,28 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
 <script>
 let role = 'student';
 
-// ── Secret: click the green logo square 5 times to reveal Super Admin tab ──
-let logoClickCount = 0, logoClickTimer;
-document.getElementById('logoSq').addEventListener('click', function(){
-  logoClickCount++;
-  clearTimeout(logoClickTimer);
-  logoClickTimer = setTimeout(function(){ logoClickCount = 0; }, 3000);
-  if(logoClickCount >= 5){
-    logoClickCount = 0;
-    const tab = document.getElementById('pt-super');
-    if(tab.style.display === 'none'){
-      tab.style.display = 'flex';
-      tab.style.alignItems = 'center';
-      tab.style.justifyContent = 'center';
-      tab.style.flexDirection = 'column';
-    } else {
-      tab.style.display = 'none';
-    }
+// ── Secret super admin access ──
+// Method 1: Visit index.html?sa=1  (only you know this)
+// Method 2: Click the SESSION text 3 times
+function revealSuperAdmin(){
+  const tab = document.getElementById('pt-super');
+  tab.style.display = tab.style.display === 'none' ? 'block' : 'none';
+}
+// URL param method
+if(window.location.search.includes('sa=1')){
+  document.getElementById('pt-super').style.display = 'block';
+  selectPortal('super');
+}
+// Click "Session 2026-27" text 3 times method
+let saClicks = 0, saTimer;
+document.querySelector('.hero-sub').style.cursor = 'default';
+document.querySelector('.hero-sub').addEventListener('click', function(){
+  saClicks++;
+  clearTimeout(saTimer);
+  saTimer = setTimeout(function(){ saClicks = 0; }, 4000);
+  if(saClicks >= 3){
+    saClicks = 0;
+    revealSuperAdmin();
   }
 });
 

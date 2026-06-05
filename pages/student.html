@@ -391,7 +391,7 @@
 
 <script src="../js/api.js"></script>
 <script>
-const user = requireAuth(['student']);
+const user = requireAuth(['student','super_admin']);
 if(user){
   // Nav initials
   const ini = user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();

@@ -151,13 +151,18 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
 <script src="js/api.js"></script>
 <script>
 let role='student';
-// Secret key: Ctrl + Shift + S reveals Super Admin tab
-document.addEventListener('keydown', function(e){
-  if(e.ctrlKey && e.shiftKey && e.key === 'S'){
+// Click logo 5 times quickly to reveal Super Admin tab
+let logoClicks = 0, logoTimer;
+document.querySelector('.logo-text').style.cursor = 'pointer';
+document.querySelector('.logo-text').addEventListener('click', function(){
+  logoClicks++;
+  clearTimeout(logoTimer);
+  logoTimer = setTimeout(() => { logoClicks = 0; }, 2000);
+  if(logoClicks >= 5){
+    logoClicks = 0;
     const tab = document.getElementById('pt-super');
     if(tab.style.display === 'none'){
       tab.style.display = 'block';
-      tab.style.animation = 'fadeIn .3s ease';
     } else {
       tab.style.display = 'none';
     }

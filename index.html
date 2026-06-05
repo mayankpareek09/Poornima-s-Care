@@ -125,6 +125,7 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
 </div>
         <div class="ptab" id="pt-laundry_admin" onclick="selectPortal('laundry_admin')"><span class="ptab-ic">👕</span><span class="ptab-lb">Laundry</span></div>
         <div class="ptab" id="pt-council" onclick="selectPortal('council')"><span class="ptab-ic">👑</span><span class="ptab-lb">Council</span></div>
+        <div class="ptab" id="pt-super" onclick="selectPortal('super')" style="display:none;"><span class="ptab-ic">⚡</span><span class="ptab-lb">Super Admin</span></div>
       </div>
       <div class="admin-sub" id="adminSub" style="display:none;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;">
   <div class="csub active" onclick="selectAdmin('academic_admin', this)">🎓 Academic Admin</div>
@@ -150,6 +151,18 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
 <script src="js/api.js"></script>
 <script>
 let role='student';
+// Secret key: Ctrl + Shift + S reveals Super Admin tab
+document.addEventListener('keydown', function(e){
+  if(e.ctrlKey && e.shiftKey && e.key === 'S'){
+    const tab = document.getElementById('pt-super');
+    if(tab.style.display === 'none'){
+      tab.style.display = 'block';
+      tab.style.animation = 'fadeIn .3s ease';
+    } else {
+      tab.style.display = 'none';
+    }
+  }
+});
 function selectPortal(p){
   document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
   document.getElementById('pt-'+p).classList.add('active');
@@ -159,7 +172,11 @@ function selectPortal(p){
     document.getElementById('adminSub').style.display = 'grid';
   } else {
     document.getElementById('adminSub').style.display = 'none';
-    role = p==='council' ? 'council_admin' : p;
+    if(p === 'council') role = 'council_admin';
+    else if(p === 'super') role = 'super_admin';
+    else if(p === 'canteen') role = 'canteen_admin';
+    else if(p === 'mess') role = 'mess_admin';
+    else role = p;
   }
 
   document.getElementById('councilSub').classList.toggle('show',p==='council');
@@ -206,7 +223,7 @@ let wakeMsg = setTimeout(() => {
 }
     localStorage.setItem('pc_token',data.token);
     localStorage.setItem('pc_user',JSON.stringify(data.user));
-const dest={student:'pages/student.html',academic_admin:'pages/academic-admin.html',hostel_admin:'pages/academic-admin.html',campus_admin:'pages/academic-admin.html',laundry_admin:'pages/laundry-admin.html',council_admin:'pages/council-portal.html',club_captain:'pages/council-portal.html',vice_captain:'pages/council-portal.html'};
+const dest={student:'pages/student.html',academic_admin:'pages/academic-admin.html',hostel_admin:'pages/academic-admin.html',campus_admin:'pages/academic-admin.html',laundry_admin:'pages/laundry-admin.html',council_admin:'pages/council-portal.html',club_captain:'pages/council-portal.html',vice_captain:'pages/council-portal.html',super_admin:'pages/super-admin.html',canteen_admin:'pages/canteen-admin.html',mess_admin:'pages/mess-admin.html'};
     window.location.href=dest[data.user.role]||'pages/student.html';
   }catch(e){err.textContent='Cannot connect to server. Check backend is running.';}
   finally{

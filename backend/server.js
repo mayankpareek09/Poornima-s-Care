@@ -75,6 +75,9 @@ app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/canteen',       require('./routes/canteen'));
 app.use('/api/mess',          require('./routes/mess'));
 app.use('/api/super',         require('./routes/superadmin'));
+app.use('/api/store',         require('./routes/store'));
+app.use('/api/feedback',      require('./routes/feedback'));
+app.use('/api/suggestions',   require('./routes/suggestions'));
 
 // Serve login page for root
 app.get('/', (req, res) => res.sendFile(path.join(frontendPath, 'index.html')));

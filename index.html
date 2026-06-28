@@ -86,6 +86,7 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
         <div class="csub" onclick="selectAdmin('campus_admin',this)">🏛️ Campus Admin</div>
         <div class="csub" onclick="selectAdmin('canteen_admin',this)">🍽️ Canteen Admin</div>
         <div class="csub" onclick="selectAdmin('mess_admin',this)">🍛 Mess Admin</div>
+        <div class="csub" onclick="selectAdmin('store_admin',this)">🛍️ Store Admin</div>
       </div>
       <div class="council-sub" id="councilSub">
         <div class="csub active" id="cs-chair" onclick="selectCouncil('council_admin','cs-chair')">👑 Chair / Co-Chair</div>
@@ -203,6 +204,7 @@ async function doLogin(){
       super_admin:    'pages/super-admin.html',
       canteen_admin:  'pages/canteen-admin.html',
       mess_admin:     'pages/mess-admin.html',
+      store_admin:    'pages/store-admin.html',
     };
     window.location.href = dest[data.user.role] || 'pages/student.html';
   } catch(e){

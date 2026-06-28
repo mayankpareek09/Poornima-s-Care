@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Feedback — Poornima's Care</title>
+<link rel="stylesheet" href="../css/main.css"/>
+<script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<style>
+.fb-header{background:linear-gradient(135deg,#0B2E33,#3A2A1A);padding:28px 32px;border-radius:16px;margin-bottom:24px;}
+.fb-header h1{color:#fff;font-size:22px;margin:0;}
+.fb-header p{color:#93B1B5;font-size:12px;margin:4px 0 0;}
+.cat-row{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:12px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.cat-name{color:#D0EEF2;font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px;}
+.stars{display:flex;gap:4px;}
+.star{font-size:24px;cursor:pointer;color:#3A4A4D;transition:color .15s;}
+.star.filled{color:#F39C12;}
+.already-submitted{background:#27AE6015;border:1px solid #27AE6044;border-radius:10px;padding:14px;margin-bottom:20px;color:#27AE60;font-size:13px;}
+.analytics-card{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:12px;padding:16px;margin-bottom:10px;}
+.bar-bg{background:rgba(184,227,233,.08);border-radius:6px;height:8px;overflow:hidden;margin-top:6px;}
+.bar-fill{height:100%;border-radius:6px;background:#F39C12;}
+</style>
+</head>
+<body>
+<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="admin-wrap">
+<div class="admin-sb">
+  <div class="asb-top">
+    <div class="asb-logo">Poornima's <span>Care</span></div>
+    <div class="asb-av" id="tnAv">—</div>
+    <div class="asb-nm" id="sbNm">—</div>
+    <div class="asb-id" id="sbId">—</div>
+  </div>
+  <div class="asb-sec">Feedback</div>
+  <div class="asb-link active" id="nl-submit" onclick="showView('submit',this)"><span class="asb-ic">⭐</span> Give Feedback</div>
+  <div class="asb-link" id="nl-analytics" onclick="showView('analytics',this)" style="display:none;"><span class="asb-ic">📊</span> Analytics</div>
+  <div class="asb-sec">Navigate</div>
+  <div class="asb-link" onclick="window.location.href='student.html'"><span class="asb-ic">🏠</span> Back to Portal</div>
+  <div class="asb-link" onclick="window.location.href='suggestions.html'"><span class="asb-ic">💡</span> Suggestions</div>
+  <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
+    <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+<div class="admin-main">
+<div class="page-body">
+
+<div id="v-submit" class="sec active">
+  <div class="fb-header">
+    <h1>⭐ Monthly Feedback</h1>
+    <p>Rate your experience this month — you can update it anytime before the month ends</p>
+  </div>
+  <div id="alreadyBanner" style="display:none;" class="already-submitted">
+    ✅ You've already submitted feedback this month. You can update your ratings below.
+  </div>
+  <div id="ratingForm"></div>
+  <div style="margin-top:16px;">
+    <label style="color:#93B1B5;font-size:12px;display:block;margin-bottom:8px;">Anything else you'd like to share? (optional)</label>
+    <textarea id="fbComment" placeholder="Your comments help us improve..." style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:12px;border-radius:10px;font-size:13px;min-height:80px;resize:vertical;"></textarea>
+  </div>
+  <button class="btn-p" style="width:100%;padding:13px;margin-top:16px;font-size:14px;" onclick="submitFeedback()">Submit Feedback</button>
+</div>
+
+<div id="v-analytics" class="sec">
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">📊 Feedback Analytics</div>
+    <input type="month" id="analyticsMonth" style="background:#1A3A40;border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:6px 10px;border-radius:8px;font-size:12px;"/>
+  </div>
+  <div id="analyticsContent"><div style="color:#93B1B5;font-size:13px;">Select a month above.</div></div>
+</div>
+
+</div></div></div>
+
+<script src="../js/api.js"></script>
+<script>
+const user = requireAuth(['student','academic_admin','hostel_admin','campus_admin','laundry_admin','canteen_admin','mess_admin','store_admin','super_admin','faculty','guard']);
+if(!user) throw new Error('not auth');
+
+const ADMIN_ROLES = ['academic_admin','hostel_admin','campus_admin','super_admin'];
+const isAdmin = ADMIN_ROLES.includes(user.role);
+
+document.getElementById('tnAv').textContent=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+document.getElementById('sbNm').textContent=user.name;
+
+const CATEGORIES = [
+  {key:'hostel',label:'Hostel',emoji:'🏠'},
+  {key:'mess',label:'Mess Food',emoji:'🍛'},
+  {key:'academic',label:'Academic Teaching',emoji:'🎓'},
+  {key:'canteen',label:'Canteen',emoji:'🍽️'},
+  {key:'bus',label:'Bus Service',emoji:'🚌'},
+  {key:'cleanliness',label:'Campus Cleanliness',emoji:'🧹'},
+  {key:'library',label:'Library',emoji:'📚'},
+  {key:'sports',label:'Sports Facilities',emoji:'⚽'},
+  {key:'internet',label:'Internet / WiFi',emoji:'📶'},
+  {key:'security',label:'Security',emoji:'🛡️'},
+  {key:'administration',label:'Administration',emoji:'🏛️'},
+  {key:'events',label:'Events & Clubs',emoji:'🎉'},
+];
+
+let ratings = {};
+
+if(isAdmin){
+  document.getElementById('nl-analytics').style.display='block';
+}
+
+function showView(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('v-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='analytics'){
+    const month = new Date().toISOString().slice(0,7);
+    document.getElementById('analyticsMonth').value = month;
+    loadAnalytics();
+  }
+}
+function toggleSidebar(){
+  document.querySelector('.admin-sb').classList.toggle('open');
+  document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+function renderForm(){
+  document.getElementById('ratingForm').innerHTML = CATEGORIES.map(c=>`
+    <div class="cat-row">
+      <div class="cat-name">${c.emoji} ${c.label}</div>
+      <div class="stars" id="stars-${c.key}">
+        ${[1,2,3,4,5].map(n=>`<span class="star ${ratings[c.key]>=n?'filled':''}" onclick="setRating('${c.key}',${n})">★</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function setRating(key, val){
+  ratings[key] = val;
+  document.querySelectorAll(`#stars-${key} .star`).forEach((s,i)=>{
+    s.classList.toggle('filled', i < val);
+  });
+}
+
+async function loadMyFeedback(){
+  try{
+    const data = await apiFetch('/feedback/my');
+    if(data.feedback){
+      ratings = {...data.feedback.ratings};
+      document.getElementById('fbComment').value = data.feedback.comment || '';
+      document.getElementById('alreadyBanner').style.display='block';
+    }
+    renderForm();
+  }catch(e){ renderForm(); }
+}
+
+async function submitFeedback(){
+  if(Object.keys(ratings).length === 0) return showToast('Please rate at least one category','warning');
+  try{
+    await apiFetch('/feedback', { method:'POST', body: JSON.stringify({ ratings, comment: document.getElementById('fbComment').value }) });
+    showToast('Thank you for your feedback! 🙏','success');
+    document.getElementById('alreadyBanner').style.display='block';
+  }catch(e){ showToast(e.message,'error'); }
+}
+
+async function loadAnalytics(){
+  const month = document.getElementById('analyticsMonth').value;
+  const el = document.getElementById('analyticsContent');
+  el.innerHTML = '<div style="color:#93B1B5;font-size:13px;">Loading…</div>';
+  try{
+    const data = await apiFetch('/feedback/analytics?month='+month);
+    let html = `<div style="color:#93B1B5;font-size:13px;margin-bottom:16px;">${data.totalResponses} response${data.totalResponses!==1?'s':''} for ${month}</div>`;
+    html += CATEGORIES.map(c=>{
+      const avg = data.averages[c.key];
+      const pct = avg ? (avg/5*100) : 0;
+      return `<div class="analytics-card">
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:#D0EEF2;font-size:13px;">${c.emoji} ${c.label}</span>
+          <span style="color:#F39C12;font-weight:700;">${avg ? avg+' / 5' : 'No data'}</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;"></div></div>
+      </div>`;
+    }).join('');
+
+    if(data.comments && data.comments.length){
+      html += '<div style="color:#93B1B5;font-size:12px;font-weight:700;margin:20px 0 10px;">💬 COMMENTS</div>';
+      html += data.comments.map(c=>`
+        <div style="background:#112D32;border:1px solid rgba(184,227,233,.1);border-radius:10px;padding:12px;margin-bottom:8px;">
+          <div style="color:#D0EEF2;font-size:12px;">${c.comment}</div>
+          <div style="color:#93B1B5;font-size:10px;margin-top:6px;">— ${c.studentName}</div>
+        </div>`).join('');
+    }
+    el.innerHTML = html;
+  }catch(e){ el.innerHTML = `<div style="color:#e74c3c;">${e.message}</div>`; }
+}
+
+loadMyFeedback();
+</script>
+</body></html>

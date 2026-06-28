@@ -1,4 +1,4 @@
-const CACHE = 'pc-v1';
+const CACHE = 'pc-v2';
 const OFFLINE_ASSETS = [
   '/',
   '/index.html',
@@ -22,14 +22,29 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  // API calls — always go to network, never cache
   if (e.request.url.includes('/api/')) {
-    // Network first for API calls
     e.respondWith(
       fetch(e.request).catch(() => new Response(JSON.stringify({success:false,offline:true}), {headers:{'Content-Type':'application/json'}}))
     );
     return;
   }
-  // Cache first for static assets
+
+  // HTML pages — always fetch fresh from network first, fall back to cache only if offline
+  if (e.request.mode === 'navigate' || e.request.url.endsWith('.html') || e.request.url.endsWith('/')) {
+    e.respondWith(
+      fetch(e.request).then(resp => {
+        if (resp && resp.status === 200) {
+          const clone = resp.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+        }
+        return resp;
+      }).catch(() => caches.match(e.request).then(cached => cached || caches.match('/index.html')))
+    );
+    return;
+  }
+
+  // CSS/JS/images — cache first for speed, since these change less often
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request).then(resp => {
       if (resp && resp.status === 200) {
@@ -37,6 +52,6 @@ self.addEventListener('fetch', e => {
         caches.open(CACHE).then(c => c.put(e.request, clone));
       }
       return resp;
-    })).catch(() => caches.match('/index.html'))
+    }))
   );
 });

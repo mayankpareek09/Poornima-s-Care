@@ -157,7 +157,7 @@ router.post('/register-admin', async (req, res) => {
     if (providedKey !== ADMIN_SECRET)
       return res.status(403).json({ success: false, message: 'Invalid admin secret key.' });
 
-    const ALLOWED = ['academic_admin','hostel_admin','campus_admin','laundry_admin','council_admin','club_captain','vice_captain'];
+    const ALLOWED = ['academic_admin','hostel_admin','campus_admin','laundry_admin','council_admin','club_captain','vice_captain','canteen_admin','mess_admin','store_admin','guard','faculty'];
     if (!ALLOWED.includes(role)) return res.status(400).json({ success: false, message: 'Invalid admin role.' });
     if (!name || !userId || !password) return res.status(400).json({ success: false, message: 'All fields are required.' });
     if (password.length < 8) return res.status(400).json({ success: false, message: 'Password must be at least 8 characters.' });

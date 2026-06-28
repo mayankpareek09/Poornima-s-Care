@@ -276,7 +276,7 @@
 
 <script src="../js/api.js"></script>
 <script>
-const user=requireAuth(['academic_admin','hostel_admin','campus_admin']);
+const user=requireAuth(['academic_admin','hostel_admin','campus_admin','super_admin']);
 if(user){
   const ini=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   document.getElementById('sbAv').textContent=ini;

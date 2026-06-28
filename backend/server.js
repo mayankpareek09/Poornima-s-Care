@@ -34,7 +34,15 @@ app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 // Serve static frontend files
 const frontendPath = path.join(__dirname, '../');
-app.use(express.static(frontendPath));
+app.use(express.static(frontendPath, {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
 
 // DB connect
 mongoose.connect(process.env.MONGO_URI)

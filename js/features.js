@@ -13,16 +13,8 @@ const FEAT_API = (function() {
 // ─── Safe wrappers (use api.js functions if loaded, else fallback) ─
 function _getToken() { return (typeof getToken==='function') ? getToken() : localStorage.getItem('pc_token'); }
 function _getUser()  { if(typeof getUser==='function') return getUser(); try{return JSON.parse(localStorage.getItem('pc_user'));}catch{return null;} }
-function _showToast(msg,type){ if(typeof showToast==='function') return showToast(msg,type); console.log(`[${type||'info'}] ${msg}`); }
 function _authHeaders(extra={}){ return {'Content-Type':'application/json','Authorization':`Bearer ${_getToken()}`,...extra}; }
-
-function _showToast(msg, type) {
-  if (typeof showToast === 'function') return _showToast(msg, type);
-  console.log(`[${type}] ${msg}`);
-}
-function _authHeaders(extra = {}) {
-  return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_getToken()}`, ...extra };
-}
+// _showToast is defined once, further down, in the TOAST NOTIFICATIONS section.
 
 
 // ═══════════════════════════════════════════════════════════════

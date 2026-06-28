@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 
@@ -17,12 +18,12 @@ const allowedOrigins = [
 
 app.use(cors({ 
   origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow requests with no origin (like mobile apps, curl, or same-origin page loads)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
       callback(null, true);
     } else {
-      callback(null, true); // Allow all in production for now (you can tighten this later)
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
@@ -49,8 +50,18 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB connected'))
   .catch(err => { console.error('❌ MongoDB error:', err.message); process.exit(1); });
 
+// Rate limiter — protects login/register from brute-force and spam
+// 20 requests per 15 minutes per IP on auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many attempts from this device. Please wait 15 minutes and try again.' },
+});
+
 // API routes
-app.use('/api/auth',       require('./routes/auth'));
+app.use('/api/auth',       authLimiter, require('./routes/auth'));
 app.use('/api/complaints', require('./routes/complaints'));
 app.use('/api/laundry',    require('./routes/laundry'));
 app.use('/api/timetable',  require('./routes/timetable'));

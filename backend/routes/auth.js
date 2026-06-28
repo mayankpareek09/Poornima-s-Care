@@ -28,13 +28,33 @@ function isPoornimaEmail(email) {
   return /^[a-zA-Z0-9._%+\-]+@poornima\.edu\.in$/.test(email.toLowerCase());
 }
 
-// Optional: send OTP via SMS (MSG91 / Fast2SMS)
-// Uncomment and fill credentials to enable live OTP
+// Send OTP via SMS (Fast2SMS) — falls back to console log if FAST2SMS_API_KEY is not set,
+// so registration never breaks even before you've configured an SMS provider.
 async function sendSmsOtp(phone, otp) {
-  // Example with Fast2SMS (https://fast2sms.com):
-  // const url = `https://www.fast2sms.com/dev/bulkV2?authorization=YOUR_KEY&variables_values=${otp}&route=otp&numbers=${phone}`;
-  // await fetch(url);
-  console.log(`\n📱 OTP for ${phone}: ════════ ${otp} ════════\n`);
+  const apiKey = process.env.FAST2SMS_API_KEY;
+  const cleanPhone = (phone || '').replace(/\D/g, '').slice(-10);
+
+  if (!apiKey || !cleanPhone || cleanPhone.length !== 10) {
+    console.log(`\n📱 OTP for ${phone}: ════════ ${otp} ════════\n`);
+    return { delivered: false, reason: !apiKey ? 'No FAST2SMS_API_KEY configured' : 'Invalid phone number' };
+  }
+
+  try {
+    const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&variables_values=${otp}&route=otp&numbers=${cleanPhone}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.return === true) {
+      console.log(`✅ OTP SMS sent to ${cleanPhone}`);
+      return { delivered: true };
+    }
+    console.log(`⚠️ Fast2SMS rejected request: ${JSON.stringify(data)}`);
+    console.log(`\n📱 Fallback — OTP for ${phone}: ════════ ${otp} ════════\n`);
+    return { delivered: false, reason: 'Fast2SMS API error' };
+  } catch (err) {
+    console.log(`⚠️ SMS send failed: ${err.message}`);
+    console.log(`\n📱 Fallback — OTP for ${phone}: ════════ ${otp} ════════\n`);
+    return { delivered: false, reason: err.message };
+  }
 }
 
 // POST /api/auth/login

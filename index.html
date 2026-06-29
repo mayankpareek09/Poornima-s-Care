@@ -17,7 +17,7 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
 .hero-title{font-size:28px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px;position:relative;z-index:1;}
 .hero-sub{font-size:13px;color:#93B1B5;position:relative;z-index:1;}
 .login-body{padding:32px 40px 36px;}
-.portal-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:24px;}
+.portal-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:24px;}
 .ptab{padding:14px 6px;border-radius:12px;border:2px solid #B8E3E9;text-align:center;cursor:pointer;background:#f0fafb;transition:all .2s;}
 .ptab:hover{border-color:#4F7C82;background:#e8f6f8;}
 .ptab.active{background:#0B2E33;border-color:#0B2E33;box-shadow:0 4px 12px rgba(11,46,51,0.2);}
@@ -77,6 +77,8 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
         <div class="ptab" id="pt-admin" onclick="selectPortal('admin')"><span class="ptab-ic">🔐</span><span class="ptab-lb">Admin</span></div>
         <div class="ptab" id="pt-laundry_admin" onclick="selectPortal('laundry_admin')"><span class="ptab-ic">👕</span><span class="ptab-lb">Laundry</span></div>
         <div class="ptab" id="pt-council" onclick="selectPortal('council')"><span class="ptab-ic">👑</span><span class="ptab-lb">Council</span></div>
+        <div class="ptab" id="pt-guard" onclick="selectPortal('guard')"><span class="ptab-ic">🛂</span><span class="ptab-lb">Guard</span></div>
+        <div class="ptab" id="pt-faculty" onclick="selectPortal('faculty')"><span class="ptab-ic">🧑‍🏫</span><span class="ptab-lb">Faculty</span></div>
         <!-- Hidden super admin tab — revealed by clicking logo square 5 times -->
         <div class="ptab" id="pt-super" onclick="selectPortal('super')" style="display:none;grid-column:1/-1;background:#1A0A2E;border-color:#8E44AD;"><span class="ptab-ic">⚡</span><span class="ptab-lb" style="color:#9B59B6;">Super Admin</span></div>
       </div>
@@ -205,6 +207,8 @@ async function doLogin(){
       canteen_admin:  'pages/canteen-admin.html',
       mess_admin:     'pages/mess-admin.html',
       store_admin:    'pages/store-admin.html',
+      guard:          'pages/guard-portal.html',
+      faculty:        'pages/faculty-portal.html',
     };
     window.location.href = dest[data.user.role] || 'pages/student.html';
   } catch(e){

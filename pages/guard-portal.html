@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Guard Portal — Poornima's Care</title>
+<link rel="stylesheet" href="../css/main.css"/>
+<script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<style>
+.gd-header{background:linear-gradient(135deg,#0B2E33,#3A1A1A);padding:24px 28px;border-radius:16px;margin-bottom:24px;}
+.gd-header h1{color:#fff;font-size:20px;margin:0;}
+.gd-header p{color:#93B1B5;font-size:12px;margin:4px 0 0;}
+.gd-form{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:14px;padding:20px;margin-bottom:24px;}
+.gd-input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:11px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;}
+.gd-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.otp-box{background:#3A1A1A15;border:1px solid #e74c3c44;border-radius:10px;padding:16px;margin-top:14px;}
+.log-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:10px;padding:14px;margin-bottom:8px;}
+.st-pending_otp{background:#e67e2222;color:#e67e22;}
+.st-verified{background:#27AE6022;color:#27AE60;}
+.st-checked_out{background:#93B1B522;color:#93B1B5;}
+.status-pill{padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;}
+</style>
+</head>
+<body>
+<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="admin-wrap">
+<div class="admin-sb">
+  <div class="asb-top">
+    <div class="asb-logo">Poornima's <span>Care</span></div>
+    <div class="asb-av" id="tnAv">—</div>
+    <div class="asb-nm" id="sbNm">—</div>
+    <div class="asb-id" id="sbId">Gate Guard</div>
+  </div>
+  <div class="asb-sec">Gate Log</div>
+  <div class="asb-link active" id="nl-newvisitor" onclick="showView('newvisitor',this)"><span class="asb-ic">➕</span> New Visitor</div>
+  <div class="asb-link" id="nl-log" onclick="showView('log',this)"><span class="asb-ic">📋</span> Today's Log</div>
+  <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
+    <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+<div class="admin-main">
+<div class="page-body">
+
+<!-- NEW VISITOR -->
+<div id="v-newvisitor" class="sec active">
+  <div class="gd-header">
+    <h1>🛂 Register New Visitor</h1>
+    <p>Enter visitor details — an OTP will be sent to their phone for verification</p>
+  </div>
+
+  <div class="gd-form" id="visitorFormBox">
+    <input class="gd-input" id="vName" placeholder="Visitor's full name*"/>
+    <div class="gd-row2">
+      <input class="gd-input" id="vMobile" placeholder="Mobile number*" maxlength="10"/>
+      <input class="gd-input" id="vVehicle" placeholder="Vehicle no. (optional)"/>
+    </div>
+    <input class="gd-input" id="vWhom" placeholder="Whom are they meeting?*"/>
+    <input class="gd-input" id="vReason" placeholder="Reason for visit*"/>
+    <button class="btn-p" style="width:100%;padding:12px;" onclick="registerVisitor()">📲 Send OTP &amp; Register</button>
+  </div>
+
+  <div class="otp-box" id="otpBox" style="display:none;">
+    <div style="color:#D0EEF2;font-weight:700;margin-bottom:10px;">🔐 Enter OTP read by visitor</div>
+    <div style="display:flex;gap:8px;">
+      <input class="gd-input" id="otpInput" placeholder="6-digit OTP" maxlength="6" style="margin-bottom:0;flex:1;font-family:monospace;font-size:18px;letter-spacing:4px;text-align:center;"/>
+      <button class="btn-p" style="padding:11px 18px;" onclick="verifyOtp()">Verify</button>
+    </div>
+    <div id="otpResult" style="margin-top:10px;font-size:13px;"></div>
+    <button onclick="resetForm()" style="margin-top:10px;background:none;border:none;color:#93B1B5;font-size:12px;cursor:pointer;text-decoration:underline;">+ Register another visitor</button>
+  </div>
+</div>
+
+<!-- LOG -->
+<div id="v-log" class="sec">
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">📋 Visitor Log</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <input id="logSearch" placeholder="Search name/mobile…" oninput="loadLog()" style="background:#1A3A40;border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:7px 10px;border-radius:8px;font-size:12px;"/>
+      <input type="date" id="logDate" onchange="loadLog()" style="background:#1A3A40;border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:6px 10px;border-radius:8px;font-size:12px;"/>
+      <button class="btn-p" style="font-size:11px;padding:7px 14px;" onclick="exportCsv()">⬇ Export CSV</button>
+    </div>
+  </div>
+  <div id="logList"><div style="color:#93B1B5;font-size:13px;">Loading…</div></div>
+</div>
+
+</div></div></div>
+
+<script src="../js/api.js"></script>
+<script>
+const user = requireAuth(['guard','campus_admin','super_admin']);
+if(!user) throw new Error('not auth');
+
+document.getElementById('tnAv').textContent=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+document.getElementById('sbNm').textContent=user.name;
+
+let currentVisitorId = null;
+document.getElementById('logDate').value = new Date().toISOString().slice(0,10);
+
+function showView(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('v-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='log') loadLog();
+}
+function toggleSidebar(){
+  document.querySelector('.admin-sb').classList.toggle('open');
+  document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+async function registerVisitor(){
+  const visitorName = document.getElementById('vName').value.trim();
+  const mobile = document.getElementById('vMobile').value.trim();
+  const whomToMeet = document.getElementById('vWhom').value.trim();
+  const reason = document.getElementById('vReason').value.trim();
+  const vehicleNo = document.getElementById('vVehicle').value.trim();
+  if(!visitorName || !mobile || !whomToMeet || !reason) return showToast('Please fill all required fields','warning');
+  if(mobile.length !== 10) return showToast('Mobile number must be 10 digits','warning');
+
+  try{
+    const data = await apiFetch('/visitors',{method:'POST',body:JSON.stringify({visitorName,mobile,reason,whomToMeet,vehicleNo})});
+    currentVisitorId = data.visitor._id;
+    document.getElementById('visitorFormBox').style.display='none';
+    document.getElementById('otpBox').style.display='block';
+    document.getElementById('otpResult').innerHTML='';
+    showToast(data.message,'success');
+  }catch(e){ showToast(e.message,'error'); }
+}
+
+async function verifyOtp(){
+  const otp = document.getElementById('otpInput').value.trim();
+  if(!otp) return;
+  const resEl = document.getElementById('otpResult');
+  try{
+    const data = await apiFetch('/visitors/'+currentVisitorId+'/verify',{method:'PATCH',body:JSON.stringify({otp})});
+    resEl.innerHTML = `<span style="color:#27AE60;font-weight:700;">${data.message}</span>`;
+  }catch(e){
+    resEl.innerHTML = `<span style="color:#e74c3c;font-weight:700;">${e.message}</span>`;
+  }
+}
+
+function resetForm(){
+  document.getElementById('vName').value='';
+  document.getElementById('vMobile').value='';
+  document.getElementById('vWhom').value='';
+  document.getElementById('vReason').value='';
+  document.getElementById('vVehicle').value='';
+  document.getElementById('otpInput').value='';
+  document.getElementById('visitorFormBox').style.display='block';
+  document.getElementById('otpBox').style.display='none';
+}
+
+async function loadLog(){
+  const el = document.getElementById('logList');
+  el.innerHTML='<div style="color:#93B1B5;font-size:13px;">Loading…</div>';
+  try{
+    const date = document.getElementById('logDate').value;
+    const q = document.getElementById('logSearch').value.trim();
+    let url = '/visitors?date='+date;
+    if(q) url += '&q='+encodeURIComponent(q);
+    const data = await apiFetch(url);
+    const visitors = data.visitors||[];
+    if(!visitors.length){ el.innerHTML='<div style="color:#93B1B5;text-align:center;padding:30px;">No visitors logged for this date.</div>'; return; }
+
+    const stLabel={pending_otp:'⏳ Pending OTP',verified:'✅ Inside',checked_out:'🚪 Checked Out'};
+    el.innerHTML = visitors.map(v=>`
+      <div class="log-row">
+        <div style="min-width:140px;">
+          <div style="color:#D0EEF2;font-weight:700;font-size:13px;">${v.visitorName}</div>
+          <div style="color:#93B1B5;font-size:11px;">${v.mobile}</div>
+        </div>
+        <div style="flex:1;min-width:160px;">
+          <div style="color:#93B1B5;font-size:12px;">Meeting: <span style="color:#D0EEF2;">${v.whomToMeet}</span></div>
+          <div style="color:#93B1B5;font-size:11px;">${v.reason}${v.vehicleNo?' · 🚗 '+v.vehicleNo:''}</div>
+        </div>
+        <span class="status-pill st-${v.status}">${stLabel[v.status]}</span>
+        <div style="color:#93B1B5;font-size:11px;">
+          ${v.checkInTime?'In: '+new Date(v.checkInTime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):''}
+          ${v.checkOutTime?' · Out: '+new Date(v.checkOutTime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):''}
+        </div>
+        ${v.status==='verified'?`<button onclick="checkout('${v._id}')" style="background:#8E44AD;border:none;color:#fff;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;">Check Out</button>`:''}
+      </div>`).join('');
+  }catch(e){ el.innerHTML=`<div style="color:#e74c3c;">${e.message}</div>`; }
+}
+
+async function checkout(id){
+  try{ await apiFetch('/visitors/'+id+'/checkout',{method:'PATCH'}); loadLog(); showToast('Visitor checked out','success'); }
+  catch(e){ showToast(e.message,'error'); }
+}
+
+function exportCsv(){
+  const date = document.getElementById('logDate').value;
+  const token = localStorage.getItem('pc_token');
+  fetch((window.PC_API_URL||'')+'/api/visitors/export?date='+date, { headers: { 'Authorization': 'Bearer '+token } })
+    .then(res=>res.blob())
+    .then(blob=>{
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'visitors-'+date+'.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+    })
+    .catch(()=>showToast('Export failed','error'));
+}
+</script>
+</body></html>

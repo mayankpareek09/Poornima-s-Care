@@ -78,6 +78,8 @@ app.use('/api/super',         require('./routes/superadmin'));
 app.use('/api/store',         require('./routes/store'));
 app.use('/api/feedback',      require('./routes/feedback'));
 app.use('/api/suggestions',   require('./routes/suggestions'));
+app.use('/api/visitors',      require('./routes/visitors'));
+app.use('/api/appointments',  require('./routes/appointments'));
 
 // Serve login page for root
 app.get('/', (req, res) => res.sendFile(path.join(frontendPath, 'index.html')));

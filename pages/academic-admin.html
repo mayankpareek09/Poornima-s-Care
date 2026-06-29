@@ -35,9 +35,10 @@
 
   <!-- DASHBOARD -->
   <div class="sec active" id="s-dash">
-    <div class="admin-hdr"><div class="admin-hdr-t">⚡ Dashboard</div><button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="signOut()">Sign Out</button></div>
+    <div class="admin-hdr"><div class="admin-hdr-t">⚡ Dashboard</div><div style="display:flex;align-items:center;gap:8px;"><button id="sosAlertBtn" onclick="showSOSPanel()" style="display:none;background:#e74c3c;border:none;border-radius:8px;color:white;font-size:11px;font-weight:700;padding:7px 13px;cursor:pointer;">🚨 SOS <span id="sosBadgeCount">0</span> ACTIVE</button><button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="signOut()">Sign Out</button></div></div>
     <div class="admin-body">
       <div class="g4 mb-4">
+        <div class="sc" style="cursor:pointer;" onclick="showSOSPanel()"><div class="sc-ic">🚨</div><div class="sc-n" id="dSOS" style="color:#e74c3c;">—</div><div class="sc-l">Active SOS</div></div>
         <div class="sc"><div class="sc-ic">🔴</div><div class="sc-n" id="dOpen" style="color:#E24B4A;">—</div><div class="sc-l">Open Complaints</div></div>
         <div class="sc"><div class="sc-ic">🟡</div><div class="sc-n" id="dProg" style="color:#854F0B;">—</div><div class="sc-l">In Progress</div></div>
         <div class="sc"><div class="sc-ic">🟢</div><div class="sc-n" id="dRes" style="color:#085041;">—</div><div class="sc-l">Resolved</div></div>
@@ -1017,4 +1018,70 @@ For council-portal.html:
    Add BEFORE it: The JavaScript from STEP 2
 -->
 <script src="/js/features.js"></script>
+
+<!-- ═══ SOS PANEL MODAL ═══ -->
+<div id="sosPanelModal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);align-items:flex-start;justify-content:center;padding-top:40px;">
+  <div style="background:#1a1a2e;border:2px solid #e74c3c;border-radius:18px;padding:28px;max-width:640px;width:95%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(231,76,60,.4);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <h2 style="color:#e74c3c;margin:0;font-size:20px;">🚨 SOS Emergency Alerts</h2>
+      <button onclick="closeSOSPanel()" style="background:rgba(255,255,255,.1);border:none;border-radius:8px;color:#93B1B5;padding:6px 12px;cursor:pointer;font-size:13px;">✕ Close</button>
+    </div>
+    <div id="sosPanelList"><div style="color:#93B1B5;font-size:12px;">Loading SOS alerts…</div></div>
+  </div>
+</div>
+
+<script>
+async function loadSOSAlerts() {
+  try {
+    const data = await apiFetch('/sos');
+    const alerts = data.alerts || [];
+    const active = alerts.filter(a => a.status === 'active');
+    const dSOS = document.getElementById('dSOS');
+    if (dSOS) dSOS.textContent = active.length;
+    const btn = document.getElementById('sosAlertBtn');
+    if (active.length > 0) { btn.style.display = 'block'; document.getElementById('sosBadgeCount').textContent = active.length; }
+    else { btn.style.display = 'none'; }
+    return alerts;
+  } catch(e) { return []; }
+}
+function showSOSPanel() { document.getElementById('sosPanelModal').style.display = 'flex'; renderSOSPanel(); }
+function closeSOSPanel() { document.getElementById('sosPanelModal').style.display = 'none'; }
+async function renderSOSPanel() {
+  const el = document.getElementById('sosPanelList');
+  el.innerHTML = '<div style="color:#93B1B5;font-size:12px;">Loading…</div>';
+  try {
+    const data = await apiFetch('/sos');
+    const alerts = data.alerts || [];
+    if (!alerts.length) { el.innerHTML = '<div style="color:#27ae60;text-align:center;padding:20px;">✅ No SOS alerts</div>'; return; }
+    el.innerHTML = alerts.map(a => {
+      const ts = new Date(a.createdAt);
+      const ago = Math.floor((Date.now() - ts)/60000);
+      const agoStr = ago < 60 ? ago+'m ago' : Math.floor(ago/60)+'h ago';
+      const statusColor = a.status==='active'?'#e74c3c':a.status==='acknowledged'?'#e67e22':'#27ae60';
+      return `<div style="background:rgba(255,255,255,.05);border:1px solid ${statusColor}33;border-left:4px solid ${statusColor};border-radius:10px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+          <div>
+            <div style="color:white;font-weight:700;font-size:14px;">👤 ${a.studentName} <span style="color:#93B1B5;font-weight:400;font-size:12px;">(${a.studentUserId})</span></div>
+            <div style="color:#d0eef2;font-size:12px;margin-top:4px;">📞 ${a.phone} &nbsp;|&nbsp; 🏠 ${a.hostel}, Room ${a.room}</div>
+            <div style="color:#93B1B5;font-size:11px;margin-top:3px;">🕐 ${ts.toLocaleString()} (${agoStr})</div>
+          </div>
+          <span style="background:${statusColor}22;color:${statusColor};border:1px solid ${statusColor}55;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;white-space:nowrap;">${a.status.toUpperCase()}</span>
+        </div>
+        ${a.message && a.message !== 'Emergency! Immediate assistance needed.' ? `<div style="background:rgba(231,76,60,.1);border-radius:6px;padding:8px;color:#e8b4b8;font-size:12px;margin-bottom:10px;">"${a.message}"</div>` : ''}
+        ${a.status !== 'resolved' ? `<div style="display:flex;gap:8px;">
+          ${a.status === 'active' ? `<button onclick="updateSOS('${a._id}','acknowledged')" style="flex:1;padding:7px;background:#e67e22;border:none;border-radius:6px;color:white;font-size:12px;font-weight:600;cursor:pointer;">✋ Acknowledge</button>` : ''}
+          <button onclick="updateSOS('${a._id}','resolved')" style="flex:1;padding:7px;background:#27ae60;border:none;border-radius:6px;color:white;font-size:12px;font-weight:600;cursor:pointer;">✅ Mark Resolved</button>
+        </div>` : `<div style="color:#27ae60;font-size:11px;">Resolved by: ${a.acknowledgedBy||'Admin'}</div>`}
+      </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML = '<div style="color:#e74c3c;font-size:12px;">Failed to load SOS alerts.</div>'; }
+}
+async function updateSOS(id, status) {
+  try { await apiFetch('/sos/'+id, { method:'PATCH', body: JSON.stringify({status}) }); renderSOSPanel(); loadSOSAlerts(); showToast('SOS '+status+'!', status==='resolved'?'success':'warning'); }
+  catch(e) { showToast(e.message,'error'); }
+}
+loadSOSAlerts();
+setInterval(loadSOSAlerts, 60000);
+document.getElementById('sosPanelModal').addEventListener('click', function(e){ if(e.target===this) closeSOSPanel(); });
+</script>
 </body></html>

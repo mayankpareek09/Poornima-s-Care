@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const slotSchema = new mongoose.Schema({
   day:       { type: String, enum: ['Mon','Tue','Wed','Thu','Fri','Sat'], required: true },
-  startTime: { type: String, required: true }, // e.g. "10:00 AM"
-  endTime:   { type: String, required: true }, // e.g. "12:00 PM"
+  startTime: { type: String, required: true },
+  endTime:   { type: String, required: true },
 }, { _id: false });
 
 const facultyProfileSchema = new mongoose.Schema({
@@ -11,7 +11,7 @@ const facultyProfileSchema = new mongoose.Schema({
   facultyName:    { type: String, required: true },
   department:     { type: String, default: 'General' },
   designation:    { type: String, default: 'Faculty' },
-  availableSlots: { type: [slotSchema], default: [] }, // weekly recurring slots
+  availableSlots: { type: [slotSchema], default: [] },
   isAcceptingAppointments: { type: Boolean, default: true },
 }, { timestamps: true });
 

@@ -27,7 +27,7 @@ const escalationSchema = new mongoose.Schema({
 }, { _id: false });
 
 const complaintSchema = new mongoose.Schema({
-  studentId:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  studentId:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
   studentName:    { type: String, required: true },
   studentUserId:  { type: String, required: true },
   title:          { type: String, required: true, trim: true },
@@ -53,5 +53,9 @@ const complaintSchema = new mongoose.Schema({
 
 complaintSchema.statics.CATEGORY_ROUTING = CATEGORY_ROUTING;
 complaintSchema.statics.ESCALATION_ROLES = ESCALATION_ROLES;
+
+// Speeds up admin dashboards filtering by department + status, sorted by escalation/recency
+complaintSchema.index({ routedTo: 1, status: 1, createdAt: -1 });
+complaintSchema.index({ isEscalated: 1, status: 1 });
 
 module.exports = mongoose.model('Complaint', complaintSchema);

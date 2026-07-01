@@ -20,7 +20,7 @@ router.post('/', protect, async (req, res) => {
       category: category || 'Other',
     });
     res.status(201).json({ success:true, message:'Suggestion posted!', suggestion });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/suggestions?sort=top|recent&category=&status=
@@ -45,7 +45,7 @@ router.get('/', protect, async (req, res) => {
     else suggestions.sort((a,b)=>b.score-a.score || new Date(b.createdAt)-new Date(a.createdAt));
 
     res.json({ success:true, suggestions });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // PATCH /api/suggestions/:id/vote — like or dislike
@@ -72,7 +72,7 @@ router.patch('/:id/vote', protect, async (req, res) => {
       dislikeCount: suggestion.dislikes.length,
       userVote: vote === 'remove' ? null : vote,
     });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // PATCH /api/suggestions/:id/status — admin moderation
@@ -87,7 +87,7 @@ router.patch('/:id/status', protect, requireRole(ADMIN_ROLES), async (req, res) 
     );
     if (!suggestion) return res.status(404).json({ success:false, message:'Suggestion not found' });
     res.json({ success:true, message:`Marked as ${status.replace('_',' ')}`, suggestion });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // DELETE /api/suggestions/:id — author or admin can delete
@@ -100,7 +100,7 @@ router.delete('/:id', protect, async (req, res) => {
     if (!isAuthor && !isAdmin) return res.status(403).json({ success:false, message:'Not allowed' });
     await Suggestion.findByIdAndDelete(req.params.id);
     res.json({ success:true, message:'Suggestion deleted' });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 module.exports = router;

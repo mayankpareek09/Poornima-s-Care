@@ -12,7 +12,7 @@ router.patch('/read-all', protect, async (req, res) => {
     await Notification.updateMany({ userId: req.user._id, isRead: false }, { isRead: true });
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -25,7 +25,7 @@ router.get('/', protect, async (req, res) => {
     const unreadCount = await Notification.countDocuments({ userId: req.user._id, isRead: false });
     res.json({ success: true, notifications, unreadCount });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -38,7 +38,7 @@ router.patch('/:id/read', protect, async (req, res) => {
     );
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -48,7 +48,7 @@ router.delete('/:id', protect, async (req, res) => {
     await Notification.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 

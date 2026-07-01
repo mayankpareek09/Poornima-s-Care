@@ -22,7 +22,7 @@ router.get('/my', protect, requireRole('student'), async (req, res) => {
   try {
     const record = await getOrCreate(req.user);
     res.json({ success: true, record });
-  } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+  } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
 });
 
 // POST /api/laundry/submit
@@ -47,7 +47,7 @@ router.post('/submit', protect, requireRole('student'), async (req, res) => {
     rec.currentWashEntryId = rec.washHistory[rec.washHistory.length - 1]._id;
     await rec.save();
     res.json({ success: true, message: 'Bag submitted! Wash #' + washNo, record: rec });
-  } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+  } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
 });
 
 // GET /api/laundry/all
@@ -55,7 +55,7 @@ router.get('/all', protect, requireRole('laundry_admin'), async (req, res) => {
   try {
     const records = await Laundry.find().sort({ updatedAt: -1 });
     res.json({ success: true, records });
-  } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+  } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
 });
 
 // PATCH /api/laundry/:id — admin updates status
@@ -94,7 +94,7 @@ router.patch('/:id', protect, requireRole('laundry_admin'), async (req, res) => 
 
     await rec.save();
     res.json({ success: true, message: 'Updated!', record: rec });
-  } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+  } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
 });
 
 module.exports = router;

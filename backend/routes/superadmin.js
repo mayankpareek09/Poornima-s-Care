@@ -2,6 +2,7 @@ const express = require('express');
 const router  = express.Router();
 const { protect, requireRole } = require('../middleware/auth');
 const getModel = (name) => require(`../models/${name}`);
+const { escapeRegex } = require('../utils/sanitize');
 
 // GET /api/super/stats
 router.get('/stats', protect, requireRole('super_admin'), async (req, res) => {
@@ -66,7 +67,7 @@ router.get('/users', protect, requireRole('super_admin'), async (req, res) => {
     const {role,q}=req.query;
     const filter={};
     if(role) filter.role=role;
-    if(q) filter.$or=[{name:{$regex:q,$options:'i'}},{userId:{$regex:q,$options:'i'}}];
+    if(q) { const safeQ = escapeRegex(q); filter.$or=[{name:{$regex:safeQ,$options:'i'}},{userId:{$regex:safeQ,$options:'i'}}]; }
     const users=await User.find(filter).select('-password -otp -otpExpires').sort({createdAt:-1}).limit(200);
     res.json({success:true,users});
   } catch(e){ res.status(500).json({success:false,message:e.message}); }

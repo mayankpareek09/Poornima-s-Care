@@ -144,5 +144,46 @@ function signOut() {
 const _s = document.createElement('style');
 _s.textContent = `
   @keyframes slideIn { from { transform:translateX(60px);opacity:0; } to { transform:none;opacity:1; } }
+  html { opacity: 0; }
+  html.pc-ready { opacity: 1; transition: opacity .12s ease; }
 `;
 document.head.appendChild(_s);
+requestAnimationFrame(() => document.documentElement.classList.add('pc-ready'));
+
+// ── Instant navigation: prefetch sidebar/menu link targets on hover/touch ──
+// This app uses full page navigation between portals (not a single-page app).
+// Prefetching the destination HTML the moment the user hovers/touches a link
+// means the next page is already in the browser cache by the time they click,
+// so the sidebar reload feels instant instead of a visible flash/reload.
+(function() {
+  const prefetched = new Set();
+  function prefetch(url) {
+    if (!url || prefetched.has(url)) return;
+    prefetched.add(url);
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.href = url;
+    document.head.appendChild(link);
+  }
+  function extractUrl(el) {
+    const onclick = el.getAttribute('onclick') || '';
+    const match = onclick.match(/(?:window\.location\.href\s*=\s*|window\.open\()['"]([^'"]+\.html)['"]/);
+    return match ? match[1] : null;
+  }
+  document.addEventListener('mouseover', e => {
+    const el = e.target.closest('.asb-link, a[href$=".html"]');
+    if (!el) return;
+    const href = el.getAttribute('href');
+    if (href && href.endsWith('.html')) return prefetch(href);
+    const url = extractUrl(el);
+    if (url) prefetch(url);
+  }, { passive: true });
+  document.addEventListener('touchstart', e => {
+    const el = e.target.closest('.asb-link, a[href$=".html"]');
+    if (!el) return;
+    const href = el.getAttribute('href');
+    if (href && href.endsWith('.html')) return prefetch(href);
+    const url = extractUrl(el);
+    if (url) prefetch(url);
+  }, { passive: true });
+})();

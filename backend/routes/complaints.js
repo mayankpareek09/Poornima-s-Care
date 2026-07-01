@@ -79,7 +79,7 @@ router.get('/', protect, async (req, res) => {
     const complaints = await Complaint.find(query).sort({ isSOS: -1, upvotes: -1, createdAt: -1 });
     res.json({ success: true, complaints });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -132,7 +132,7 @@ router.post('/', protect, requireRole('student'), async (req, res) => {
 
     res.status(201).json({ success: true, message: `Complaint submitted.`, complaint });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -157,7 +157,7 @@ router.post('/:id/upvote', protect, requireRole('student'), async (req, res) => 
     await complaint.save();
     res.json({ success: true, upvotes: complaint.upvotes, voted: !alreadyVoted });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -189,7 +189,7 @@ router.patch('/:id', protect, async (req, res) => {
 
     res.json({ success: true, message: 'Complaint updated!', complaint: updated });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 

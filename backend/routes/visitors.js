@@ -1,6 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const Visitor = require('../models/Visitor');
+const { escapeRegex } = require('../utils/sanitize');
 const { protect, requireRole } = require('../middleware/auth');
 
 const GUARD_ROLES = ['guard','campus_admin','super_admin'];
@@ -49,7 +50,7 @@ router.post('/', protect, requireRole(GUARD_ROLES), async (req, res) => {
       message: sms.delivered ? 'OTP sent to visitor\'s phone.' : 'OTP generated (check server logs — SMS not configured).',
       visitor: { _id: visitor._id, visitorName: visitor.visitorName, mobile: visitor.mobile, status: visitor.status }
     });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // PATCH /api/visitors/:id/verify — guard enters the OTP the visitor read out
@@ -69,7 +70,7 @@ router.patch('/:id/verify', protect, requireRole(GUARD_ROLES), async (req, res) 
     visitor.checkInTime = new Date();
     await visitor.save();
     res.json({ success:true, message:`✅ Verified! ${visitor.visitorName} may enter.`, visitor });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // PATCH /api/visitors/:id/checkout — mark visitor as exited
@@ -84,7 +85,7 @@ router.patch('/:id/checkout', protect, requireRole(GUARD_ROLES), async (req, res
     visitor.checkOutTime = new Date();
     await visitor.save();
     res.json({ success:true, message:`${visitor.visitorName} checked out.`, visitor });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/visitors?date=YYYY-MM-DD&q=search — guard's daily log
@@ -99,13 +100,16 @@ router.get('/', protect, requireRole(GUARD_ROLES), async (req, res) => {
       const today = new Date(); today.setHours(0,0,0,0);
       filter.createdAt = { $gte: today };
     }
-    if (q) filter.$or = [
-      { visitorName: { $regex: q, $options:'i' } },
-      { mobile: { $regex: q, $options:'i' } },
-    ];
+    if (q) {
+      const safeQ = escapeRegex(q);
+      filter.$or = [
+        { visitorName: { $regex: safeQ, $options:'i' } },
+        { mobile: { $regex: safeQ, $options:'i' } },
+      ];
+    }
     const visitors = await Visitor.find(filter).sort({ createdAt:-1 }).limit(200);
     res.json({ success:true, visitors });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/visitors/export?date=YYYY-MM-DD — CSV export
@@ -127,7 +131,7 @@ router.get('/export', protect, requireRole(GUARD_ROLES), async (req, res) => {
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', `attachment; filename="visitors-${date||'today'}.csv"`);
     res.send(csv);
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 module.exports = router;

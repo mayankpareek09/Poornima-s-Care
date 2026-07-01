@@ -55,7 +55,7 @@ router.get('/', protect, async (req, res) => {
       categoryBreakdown: catAgg,
       trend,
     });
-  } catch(err) { res.status(500).json({ success: false, message: err.message }); }
+  } catch(err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
 });
 
 module.exports = router;

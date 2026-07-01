@@ -16,7 +16,7 @@ router.get('/products', async (req, res) => {
     const type = req.query.type === 'stationery' ? 'stationery' : 'store';
     const products = await StoreProduct.find({ type }).sort({ category:1, sortOrder:1, name:1 });
     res.json({ success: true, products });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // POST /api/store/products
@@ -32,7 +32,7 @@ router.post('/products', protect, requireRole(ADMIN_ROLES), async (req, res) => 
       stock: stock ?? 999, imageEmoji, sortOrder
     });
     res.status(201).json({ success:true, product });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // PATCH /api/store/products/:id
@@ -41,7 +41,7 @@ router.patch('/products/:id', protect, requireRole(ADMIN_ROLES), async (req, res
     const product = await StoreProduct.findByIdAndUpdate(req.params.id, req.body, { new:true });
     if (!product) return res.status(404).json({ success:false, message:'Product not found' });
     res.json({ success:true, product });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // DELETE /api/store/products/:id
@@ -49,7 +49,7 @@ router.delete('/products/:id', protect, requireRole(ADMIN_ROLES), async (req, re
   try {
     await StoreProduct.findByIdAndDelete(req.params.id);
     res.json({ success:true, message:'Product removed' });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // POST /api/store/products/seed?type=store|stationery
@@ -80,7 +80,7 @@ router.post('/products/seed', protect, requireRole(ADMIN_ROLES), async (req, res
     const seedData = type === 'stationery' ? stationeryItems : storeItems;
     await StoreProduct.insertMany(seedData);
     res.json({ success:true, message:`Seeded ${seedData.length} ${type} items` });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // ────────────────────────────────────────────────
@@ -120,7 +120,7 @@ router.post('/orders', protect, async (req, res) => {
     });
 
     res.status(201).json({ success:true, message:`Order placed! Order ID: ${order.orderId}`, order });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/store/orders/my?type=store|stationery
@@ -129,7 +129,7 @@ router.get('/orders/my', protect, async (req, res) => {
     const type = req.query.type === 'stationery' ? 'stationery' : 'store';
     const orders = await StoreOrder.find({ studentId: req.user._id, type }).sort({ createdAt:-1 }).limit(20);
     res.json({ success:true, orders });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/store/orders?type=store|stationery&status=
@@ -142,7 +142,7 @@ router.get('/orders', protect, requireRole(ADMIN_ROLES), async (req, res) => {
     const orders = await StoreOrder.find(query).sort({ createdAt:-1 }).limit(300);
     const revenue = orders.reduce((s,o)=>o.status!=='cancelled'?s+o.total:s,0);
     res.json({ success:true, orders, revenue });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // PATCH /api/store/orders/:id
@@ -156,7 +156,7 @@ router.patch('/orders/:id', protect, requireRole(ADMIN_ROLES), async (req, res) 
     const order = await StoreOrder.findByIdAndUpdate(req.params.id, update, { new:true });
     if (!order) return res.status(404).json({ success:false, message:'Order not found' });
     res.json({ success:true, order });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/store/stats?type=store|stationery
@@ -176,7 +176,7 @@ router.get('/stats', protect, requireRole(ADMIN_ROLES), async (req, res) => {
       { $group:{ _id:null, total:{$sum:'$total'} } }
     ]);
     res.json({ success:true, stats:{ total,paid,processing,ready,collected,cancelled, revenue: rev[0]?.total||0 } });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 module.exports = router;

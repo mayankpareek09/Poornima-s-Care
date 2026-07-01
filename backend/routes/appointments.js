@@ -15,7 +15,7 @@ router.get('/faculty-list', protect, async (req, res) => {
     const profiles = await FacultyProfile.find({ isAcceptingAppointments: true })
       .populate('userId', 'name userId');
     res.json({ success:true, faculty: profiles });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // POST /api/appointments/faculty/profile — faculty creates/updates own profile
@@ -35,7 +35,7 @@ router.post('/faculty/profile', protect, requireRole('faculty'), async (req, res
       { upsert: true, new: true }
     );
     res.json({ success:true, message:'Profile updated!', profile });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/appointments/faculty/profile/my — faculty views own profile
@@ -43,7 +43,7 @@ router.get('/faculty/profile/my', protect, requireRole('faculty'), async (req, r
   try {
     const profile = await FacultyProfile.findOne({ userId: req.user._id });
     res.json({ success:true, profile: profile || null });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/appointments/faculty/:id/availability?date=YYYY-MM-DD — slots + which are booked
@@ -71,7 +71,7 @@ router.get('/faculty/:id/availability', protect, async (req, res) => {
     }));
 
     res.json({ success:true, day: requestedDay, slots });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // ────────────────────────────────────────────────
@@ -102,7 +102,7 @@ router.post('/', protect, requireRole('student'), async (req, res) => {
       date, day, timeSlot, reason,
     });
     res.status(201).json({ success:true, message:'Appointment requested! Waiting for faculty approval.', appointment });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/appointments/my — student's own appointments
@@ -110,7 +110,7 @@ router.get('/my', protect, requireRole('student'), async (req, res) => {
   try {
     const appointments = await Appointment.find({ studentId: req.user._id }).sort({ createdAt:-1 }).limit(50);
     res.json({ success:true, appointments });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // PATCH /api/appointments/:id/cancel — student cancels before response
@@ -123,7 +123,7 @@ router.patch('/:id/cancel', protect, requireRole('student'), async (req, res) =>
     appt.status = 'cancelled';
     await appt.save();
     res.json({ success:true, message:'Appointment cancelled.', appointment: appt });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/appointments/requests — faculty sees requests for them
@@ -134,7 +134,7 @@ router.get('/requests', protect, requireRole('faculty'), async (req, res) => {
     if (status) filter.status = status;
     const appointments = await Appointment.find(filter).sort({ status:1, date:1 }).limit(100);
     res.json({ success:true, appointments });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // PATCH /api/appointments/:id — faculty accepts/rejects
@@ -154,7 +154,7 @@ router.patch('/:id', protect, requireRole('faculty'), async (req, res) => {
     appt.respondedAt = new Date();
     await appt.save();
     res.json({ success:true, message:`Appointment ${status}.`, appointment: appt });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 module.exports = router;

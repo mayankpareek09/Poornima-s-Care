@@ -41,7 +41,7 @@ router.post('/', protect, requireRole('student'), async (req, res) => {
       sos
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -58,7 +58,7 @@ router.get('/', protect, async (req, res) => {
     const alerts = await SOS.find({}).sort({ status: 1, createdAt: -1 }).limit(100);
     res.json({ success: true, alerts });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -69,7 +69,7 @@ router.get('/active-count', protect, async (req, res) => {
     const count = await SOS.countDocuments({ status: 'active' });
     res.json({ success: true, count });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -92,7 +92,7 @@ router.patch('/:id', protect, async (req, res) => {
 
     res.json({ success: true, message: `SOS marked as ${status}.`, sos });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 

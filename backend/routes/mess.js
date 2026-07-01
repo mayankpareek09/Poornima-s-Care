@@ -21,7 +21,7 @@ router.get('/menu', async (req, res) => {
       notice: '',
     };
     res.json({ success:true, menu, prices: MEAL_PRICES });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // POST /api/mess/menu
@@ -35,7 +35,7 @@ router.post('/menu', protect, requireRole(ADMIN_ROLES), async (req, res) => {
       { upsert:true, new:true }
     );
     res.json({ success:true, message:'Menu updated!', menu });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // POST /api/mess/tokens
@@ -59,7 +59,7 @@ router.post('/tokens', protect, async (req, res) => {
       price: MEAL_PRICES[meal],
     });
     res.status(201).json({ success:true, message:`Token issued: ${token.token}`, token });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/mess/tokens/my
@@ -67,7 +67,7 @@ router.get('/tokens/my', protect, async (req, res) => {
   try {
     const tokens = await MessToken.find({ userId:req.user._id }).sort({ createdAt:-1 }).limit(30);
     res.json({ success:true, tokens });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/mess/tokens
@@ -78,7 +78,7 @@ router.get('/tokens', protect, requireRole(ADMIN_ROLES), async (req, res) => {
     const summary = { breakfast:0, lunch:0, snacks:0, dinner:0, totalRevenue:0 };
     tokens.forEach(t => { if(t.status!=='expired'){ summary[t.meal]=(summary[t.meal]||0)+1; summary.totalRevenue+=t.price; } });
     res.json({ success:true, tokens, summary });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // PATCH /api/mess/tokens/verify
@@ -95,7 +95,7 @@ router.patch('/tokens/verify', protect, requireRole(ADMIN_ROLES), async (req, re
     t.status='used'; t.verifiedBy=req.user.name; t.verifiedAt=new Date();
     await t.save();
     res.json({ success:true, message:`✅ Valid! Entry granted for ${t.userName} — ${t.meal}`, token:t });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 module.exports = router;

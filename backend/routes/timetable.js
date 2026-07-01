@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     const timetables = await Timetable.find(query).sort({ course: 1, semester: 1 });
     res.json({ success: true, timetables });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -27,7 +27,7 @@ router.post('/', protect, requireRole('academic_admin'), async (req, res) => {
     const timetable = await Timetable.create({ course, semester, section: section || 'A', slots: slots || [], updatedBy: req.user.name });
     res.status(201).json({ success: true, message: 'Timetable created!', timetable });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -40,7 +40,7 @@ router.put('/:id', protect, requireRole('academic_admin'), async (req, res) => {
     if (!timetable) return res.status(404).json({ success: false, message: 'Timetable not found.' });
     res.json({ success: true, message: 'Timetable updated!', timetable });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -50,7 +50,7 @@ router.delete('/:id', protect, requireRole('academic_admin'), async (req, res) =
     await Timetable.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: 'Timetable deleted.' });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 

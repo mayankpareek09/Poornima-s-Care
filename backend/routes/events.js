@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     const events = await Event.find(query).sort({ date: 1 });
     res.json({ success: true, events });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -28,7 +28,7 @@ router.post('/', protect, requireRole('academic_admin','council_admin','club_cap
     const event = await Event.create({ title, description, date, time, venue, type: type||'club', clubName: finalClubName, isOngoing: isOngoing||false, createdBy: req.user.name, createdByRole: req.user.role, createdById: req.user._id });
     res.status(201).json({ success: true, message: 'Event created!', event });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -43,7 +43,7 @@ router.put('/:id', protect, requireRole('academic_admin','council_admin','club_c
     const updated = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json({ success: true, message: 'Event updated!', event: updated });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -58,7 +58,7 @@ router.delete('/:id', protect, requireRole('academic_admin','council_admin','clu
     await Event.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: 'Event deleted.' });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 // POST /api/events/:id/register — student registers for event
@@ -79,7 +79,7 @@ router.post('/:id/register', protect, requireRole('student'), async (req, res) =
       return res.json({ success: true, registered: true, count: event.registeredStudents.length });
     }
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 module.exports = router;

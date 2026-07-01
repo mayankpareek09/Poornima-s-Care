@@ -1,12 +1,24 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/login", "destination": "/index.html" },
-    { "source": "/student", "destination": "/pages/student.html" },
-    { "source": "/register", "destination": "/register.html" },
-    { "source": "/laundry-admin", "destination": "/pages/laundry-admin.html" },
-    { "source": "/council-portal", "destination": "/pages/council-portal.html" },
-    { "source": "/academic-admin", "destination": "/pages/academic-admin.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/login",            "destination": "/index.html" },
+    { "source": "/register",         "destination": "/register.html" },
+    { "source": "/student",          "destination": "/pages/student.html" },
+    { "source": "/academic-admin",   "destination": "/pages/academic-admin.html" },
+    { "source": "/laundry-admin",    "destination": "/pages/laundry-admin.html" },
+    { "source": "/council-portal",   "destination": "/pages/council-portal.html" },
+    { "source": "/canteen-admin",    "destination": "/pages/canteen-admin.html" },
+    { "source": "/mess-admin",       "destination": "/pages/mess-admin.html" },
+    { "source": "/store-admin",      "destination": "/pages/store-admin.html" },
+    { "source": "/super-admin",      "destination": "/pages/super-admin.html" },
+    { "source": "/guard-portal",     "destination": "/pages/guard-portal.html" },
+    { "source": "/faculty-portal",   "destination": "/pages/faculty-portal.html" },
+    { "source": "/pu-canteen",       "destination": "/pages/pu-canteen.html" },
+    { "source": "/pu-mess",          "destination": "/pages/pu-mess.html" },
+    { "source": "/pu-store",         "destination": "/pages/pu-store.html" },
+    { "source": "/pu-stationery",    "destination": "/pages/pu-stationery.html" },
+    { "source": "/feedback",         "destination": "/pages/feedback.html" },
+    { "source": "/suggestions",      "destination": "/pages/suggestions.html" },
+    { "source": "/appointments",     "destination": "/pages/appointments.html" }
   ]
 }

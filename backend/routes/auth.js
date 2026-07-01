@@ -3,6 +3,7 @@ const router  = express.Router();
 const jwt     = require('jsonwebtoken');
 const User    = require('../models/User');
 const { protect } = require('../middleware/auth');
+const { sanitizeString } = require('../utils/apiHelpers');
 
 const MAX_ATTEMPTS = 5;
 const LOCK_TIME    = 15 * 60 * 1000;
@@ -92,7 +93,7 @@ router.post('/login', async (req, res) => {
     user.loginAttempts = 0; user.lockUntil = undefined;
     await user.save();
     res.json({ success: true, token: signToken(user._id), user: user.toJSON() });
-  } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+  } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
 });
 
 // POST /api/auth/register
@@ -130,7 +131,7 @@ router.post('/register', async (req, res) => {
     await sendSmsOtp(phone || '', otp);
     console.log(`\n📱 OTP for ${normalizedId}: ════════ ${otp} ════════\n`);
     res.status(201).json({ success: true, requiresOtp: true, userId: normalizedId, message: 'Registration started. OTP printed in server terminal.' });
-  } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+  } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
 });
 
 // POST /api/auth/verify-otp
@@ -146,7 +147,7 @@ router.post('/verify-otp', async (req, res) => {
     user.isVerified = true; user.otp = undefined; user.otpExpires = undefined;
     await user.save();
     res.json({ success: true, message: 'Account verified!', token: signToken(user._id), user: user.toJSON() });
-  } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+  } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
 });
 
 // GET /api/auth/me
@@ -164,7 +165,7 @@ router.patch('/profile', protect, async (req, res) => {
     if (profilePhoto !== undefined) update.profilePhoto = profilePhoto;
     const user = await User.findByIdAndUpdate(req.user._id, update, { new: true });
     res.json({ success: true, message: 'Profile updated!', user: user.toJSON() });
-  } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+  } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
 });
 
 // POST /api/auth/register-admin
@@ -190,7 +191,7 @@ router.post('/register-admin', async (req, res) => {
       clubName: clubName || '', clubId: clubId || undefined, isVerified: true,
     });
     res.status(201).json({ success: true, message: 'Admin account created!', user: user.toJSON() });
-  } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+  } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
 });
 
 module.exports = router;

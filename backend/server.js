@@ -30,8 +30,17 @@ app.use(cors({
   methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS']
 }));
 
-app.use(express.json({ limit: '20mb' }));       // 20mb to allow base64 photo uploads
-app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+app.use(express.json({ limit: '5mb' }));
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
+
+// XSS protection headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
 
 // Serve static frontend files
 const frontendPath = path.join(__dirname, '../');

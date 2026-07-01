@@ -30,7 +30,7 @@ router.post('/', protect, async (req, res) => {
       { upsert: true, new: true }
     );
     res.status(201).json({ success:true, message:'Thanks for your feedback!', feedback });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/feedback/my — this month's feedback if already submitted
@@ -39,7 +39,7 @@ router.get('/my', protect, async (req, res) => {
     const month = currentMonth();
     const feedback = await Feedback.findOne({ studentId: req.user._id, month });
     res.json({ success:true, feedback: feedback || null, month });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/feedback/analytics?month=YYYY-MM — admin sees averages per category
@@ -57,7 +57,7 @@ router.get('/analytics', protect, requireRole(ADMIN_ROLES), async (req, res) => 
     const comments = all.filter(f => f.comment).map(f => ({ studentName: f.studentName, comment: f.comment, createdAt: f.createdAt }));
 
     res.json({ success:true, month, totalResponses: all.length, averages, comments });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/feedback/trend?months=6 — admin sees trend over recent months
@@ -81,7 +81,7 @@ router.get('/trend', protect, requireRole(ADMIN_ROLES), async (req, res) => {
       trend.push({ month, responses: all.length, avgOverall: overallCount ? +(overallSum/overallCount).toFixed(2) : null });
     }
     res.json({ success:true, trend });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 module.exports = router;

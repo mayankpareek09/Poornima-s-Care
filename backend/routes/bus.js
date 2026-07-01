@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
     const routes = await BusRoute.find({ isActive: true }).sort({ routeNo: 1 });
     res.json({ success: true, routes });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -19,7 +19,7 @@ router.post('/', protect, requireRole('academic_admin'), async (req, res) => {
     const route = await BusRoute.create({ ...req.body, updatedBy: req.user.name });
     res.status(201).json({ success: true, message: 'Bus route created!', route });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -30,7 +30,7 @@ router.put('/:id', protect, requireRole('academic_admin'), async (req, res) => {
     if (!route) return res.status(404).json({ success: false, message: 'Route not found.' });
     res.json({ success: true, message: 'Bus route updated!', route });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -40,7 +40,7 @@ router.delete('/:id', protect, requireRole('academic_admin'), async (req, res) =
     await BusRoute.findByIdAndUpdate(req.params.id, { isActive: false });
     res.json({ success: true, message: 'Bus route deactivated.' });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 

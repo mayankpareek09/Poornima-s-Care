@@ -11,7 +11,7 @@ router.get('/items', async (req, res) => {
   try {
     const items = await CanteenItem.find({}).sort({ category:1, sortOrder:1, name:1 });
     res.json({ success: true, items });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // POST /api/canteen/items
@@ -22,7 +22,7 @@ router.post('/items', protect, requireRole(ADMIN_ROLES), async (req, res) => {
       return res.status(400).json({ success:false, message:'name, category, price required' });
     const item = await CanteenItem.create({ name, category, price, description, isVeg, imageEmoji, sortOrder });
     res.status(201).json({ success:true, item });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // PATCH /api/canteen/items/:id
@@ -31,7 +31,7 @@ router.patch('/items/:id', protect, requireRole(ADMIN_ROLES), async (req, res) =
     const item = await CanteenItem.findByIdAndUpdate(req.params.id, req.body, { new:true });
     if (!item) return res.status(404).json({ success:false, message:'Item not found' });
     res.json({ success:true, item });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // DELETE /api/canteen/items/:id
@@ -39,7 +39,7 @@ router.delete('/items/:id', protect, requireRole(ADMIN_ROLES), async (req, res) 
   try {
     await CanteenItem.findByIdAndDelete(req.params.id);
     res.json({ success:true, message:'Item removed' });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // POST /api/canteen/items/seed
@@ -68,7 +68,7 @@ router.post('/items/seed', protect, requireRole(ADMIN_ROLES), async (req, res) =
     ];
     await CanteenItem.insertMany(menu);
     res.json({ success:true, message:`Seeded ${menu.length} items` });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // POST /api/canteen/orders
@@ -106,7 +106,7 @@ router.post('/orders', protect, async (req, res) => {
     });
 
     res.status(201).json({ success:true, message:`Order placed! Token: ${order.token}`, order });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/canteen/orders/my
@@ -114,7 +114,7 @@ router.get('/orders/my', protect, async (req, res) => {
   try {
     const orders = await CanteenOrder.find({ studentId: req.user._id }).sort({ createdAt:-1 }).limit(20);
     res.json({ success:true, orders });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/canteen/orders
@@ -133,7 +133,7 @@ router.get('/orders', protect, requireRole(ADMIN_ROLES), async (req, res) => {
     const orders = await CanteenOrder.find(query).sort({ createdAt:-1 });
     const todayRevenue = orders.reduce((s,o)=>o.status!=='cancelled'?s+o.total:s,0);
     res.json({ success:true, orders, todayRevenue });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // PATCH /api/canteen/orders/:id
@@ -147,7 +147,7 @@ router.patch('/orders/:id', protect, requireRole(ADMIN_ROLES), async (req, res) 
     const order = await CanteenOrder.findByIdAndUpdate(req.params.id, update, { new:true });
     if (!order) return res.status(404).json({ success:false, message:'Order not found' });
     res.json({ success:true, order });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 // GET /api/canteen/stats
@@ -167,7 +167,7 @@ router.get('/stats', protect, requireRole(ADMIN_ROLES), async (req, res) => {
       { $group:{ _id:null, total:{$sum:'$total'} } }
     ]);
     res.json({ success:true, stats:{ total,paid,preparing,ready,collected,cancelled, revenue: rev[0]?.total||0 } });
-  } catch(e) { res.status(500).json({ success:false, message: e.message }); }
+  } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });
 
 module.exports = router;

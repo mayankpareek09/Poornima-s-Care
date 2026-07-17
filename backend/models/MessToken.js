@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
+const { nextSequence } = require('./Counter');
 
 async function generateToken(meal) {
   const mealCode = { breakfast:'B', lunch:'L', snacks:'S', dinner:'D' }[meal] || 'X';
   const today    = new Date().toISOString().slice(0,10).replace(/-/g,'');
-  const count    = await mongoose.model('MessToken').countDocuments({
-    createdAt: { $gte: new Date(new Date().setHours(0,0,0,0)) }
-  });
-  return `MESS-${today}-${mealCode}-${String(count + 1).padStart(4,'0')}`;
+  // Atomic per-day counter (shared across meals, matching prior behavior) —
+  // see Counter.js for why this replaces countDocuments().
+  const seq = await nextSequence(`mess-${today}`);
+  return `MESS-${today}-${mealCode}-${String(seq).padStart(4,'0')}`;
 }
 
 const messTokenSchema = new mongoose.Schema({

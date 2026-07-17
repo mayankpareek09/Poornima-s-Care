@@ -21,7 +21,7 @@ router.get('/meta', async (req, res) => {
     const examTypes   = [...new Set(docs.map(d => d.examType))].sort();
     res.json({ success: true, departments, years, examTypes });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
     const calendars = await ExamCalendar.find(q).sort({ department: 1, year: 1, examType: 1 });
     res.json({ success: true, calendars });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -50,7 +50,7 @@ router.get('/:id', async (req, res) => {
     if (!cal) return res.status(404).json({ success: false, message: 'Not found.' });
     res.json({ success: true, calendar: cal });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -72,7 +72,7 @@ router.post('/', ...adminOnly, async (req, res) => {
     const cal = await ExamCalendar.create({ department, year, examType, subjects: [], schedule: [], updatedBy: req.user.name });
     res.status(201).json({ success: true, message: 'Exam calendar created!', calendar: cal });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -92,7 +92,7 @@ router.put('/:id', ...adminOnly, async (req, res) => {
     if (!cal) return res.status(404).json({ success: false, message: 'Calendar not found.' });
     res.json({ success: true, message: 'Calendar updated!', calendar: cal });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -102,7 +102,7 @@ router.delete('/:id', ...adminOnly, async (req, res) => {
     await ExamCalendar.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: 'Calendar deleted.' });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -122,7 +122,7 @@ router.post('/:id/subjects', ...adminOnly, async (req, res) => {
     await cal.save();
     res.json({ success: true, message: 'Subject added!', calendar: cal });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -147,7 +147,7 @@ router.put('/:id/subjects/:subId', ...adminOnly, async (req, res) => {
     await cal.save();
     res.json({ success: true, message: 'Subject updated!', calendar: cal });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -163,7 +163,7 @@ router.delete('/:id/subjects/:subId', ...adminOnly, async (req, res) => {
     await cal.save();
     res.json({ success: true, message: 'Subject deleted.', calendar: cal });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -188,7 +188,7 @@ router.post('/:id/schedule', ...adminOnly, async (req, res) => {
     await cal.save();
     res.json({ success: true, message: 'Schedule entry added!', calendar: cal });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -213,7 +213,7 @@ router.put('/:id/schedule/:schId', ...adminOnly, async (req, res) => {
     await cal.save();
     res.json({ success: true, message: 'Schedule updated!', calendar: cal });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 
@@ -227,7 +227,7 @@ router.delete('/:id/schedule/:schId', ...adminOnly, async (req, res) => {
     await cal.save();
     res.json({ success: true, message: 'Schedule entry deleted.', calendar: cal });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
   }
 });
 

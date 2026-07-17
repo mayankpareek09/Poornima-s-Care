@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const { protect, requireRole } = require('../middleware/auth');
+const { escapeRegex } = require('../utils/sanitize');
 
 // Inline schema — no separate file needed
 const materialSchema = new mongoose.Schema({
@@ -33,8 +34,11 @@ router.get('/', async (req, res) => {
     if (course)   query.course   = course;
     if (semester) query.semester = semester;
     if (type)     query.type     = type;
-    if (subject)  query.subject  = new RegExp(subject, 'i');
-    if (q)        query.$or = [{ title: new RegExp(q,'i') }, { subject: new RegExp(q,'i') }, { tags: new RegExp(q,'i') }];
+    if (subject)  query.subject  = new RegExp(escapeRegex(subject), 'i');
+    if (q) {
+      const safeQ = escapeRegex(q);
+      query.$or = [{ title: new RegExp(safeQ,'i') }, { subject: new RegExp(safeQ,'i') }, { tags: new RegExp(safeQ,'i') }];
+    }
     const materials = await Material.find(query).sort({ createdAt: -1 }).limit(50);
     res.json({ success: true, materials });
   } catch(err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }

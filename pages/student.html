@@ -25,15 +25,15 @@
   <div class="asb-link" id="nl-exam" onclick="show('exam',this)"><span class="asb-ic">📝</span> Exam Calendar</div>
   <div class="asb-link" id="nl-materials" onclick="show('materials',this)"><span class="asb-ic">📚</span> Materials</div>
   <div class="asb-sec">Food &amp; Services</div>
-  <div class="asb-link" onclick="window.location.href='pu-canteen.html'"><span class="asb-ic">🍽️</span> PU Canteen</div>
-  <div class="asb-link" onclick="window.location.href='pu-mess.html'"><span class="asb-ic">🍛</span> PU Mess</div>
-  <div class="asb-link" onclick="window.location.href='pu-store.html'"><span class="asb-ic">🛍️</span> PU Store</div>
-  <div class="asb-link" onclick="window.location.href='pu-stationery.html'"><span class="asb-ic">📚</span> PU Stationery</div>
+  <div class="asb-link" onclick="showExternal('pu-canteen.html',this)"><span class="asb-ic">🍽️</span> PU Canteen</div>
+  <div class="asb-link" onclick="showExternal('pu-mess.html',this)"><span class="asb-ic">🍛</span> PU Mess</div>
+  <div class="asb-link" onclick="showExternal('pu-store.html',this)"><span class="asb-ic">🛍️</span> PU Store</div>
+  <div class="asb-link" onclick="showExternal('pu-stationery.html',this)"><span class="asb-ic">📚</span> PU Stationery</div>
   <div class="asb-sec">Voice Your Opinion</div>
-  <div class="asb-link" onclick="window.location.href='feedback.html'"><span class="asb-ic">⭐</span> Feedback</div>
-  <div class="asb-link" onclick="window.location.href='suggestions.html'"><span class="asb-ic">💡</span> Suggestions</div>
+  <div class="asb-link" onclick="showExternal('feedback.html',this)"><span class="asb-ic">⭐</span> Feedback</div>
+  <div class="asb-link" onclick="showExternal('suggestions.html',this)"><span class="asb-ic">💡</span> Suggestions</div>
   <div class="asb-sec">Academics</div>
-  <div class="asb-link" onclick="window.location.href='appointments.html'"><span class="asb-ic">📅</span> Book Appointment</div>
+  <div class="asb-link" onclick="showExternal('appointments.html',this)"><span class="asb-ic">📅</span> Book Appointment</div>
   <div class="asb-sec">Campus</div>
   <div class="asb-link" id="nl-events" onclick="show('events',this)"><span class="asb-ic">🎉</span> Events</div>
   <div class="asb-link" id="nl-clubs" onclick="show('clubs',this)"><span class="asb-ic">🏫</span> Clubs</div>
@@ -375,6 +375,13 @@
   <div id="stuExamContent"><div style="color:#93B1B5;font-size:12px;">Loading exam schedules…</div></div>
 </div>
 
+<!-- PERSISTENT SHELL: utility portals (canteen, mess, store, stationery,
+     feedback, suggestions, appointments) load here via iframe so the sidebar,
+     header, and notification bell never disappear during navigation. -->
+<div class="sec" id="s-portal">
+  <iframe id="portalFrame" title="Portal content" src="about:blank"></iframe>
+</div>
+
 </div><!-- /page-body -->
 </div><!-- /admin-main -->
 </div><!-- /admin-wrap -->
@@ -435,6 +442,26 @@ function show(id, btn){
   const loaders={complaints:loadComplaints,laundry:loadLaundry,timetable:loadTT,events:loadEvents,clubs:loadClubs,materials:loadMaterials,bus:loadBus,exam:loadStudentExam};
   if(loaders[id]) loaders[id]();
 }
+
+// Utility portals (canteen/mess/store/stationery/feedback/suggestions/appointments)
+// render inside this persistent iframe instead of a full-page navigation, so the
+// sidebar, header, and notification bell stay mounted the whole time.
+function showExternal(url, btn){
+  const frame = document.getElementById('portalFrame');
+  // Avoid a pointless reload if the same portal is already open
+  if (!frame.src.endsWith(url + '?embedded=1')) frame.src = url + '?embedded=1';
+  show('portal', btn);
+}
+
+// The embedded page's own "Back to Portal" link posts this message instead of
+// navigating, since navigating would just reload the same iframe pointlessly —
+// we already have the dashboard, we just need to switch back to it.
+window.addEventListener('message', (e) => {
+  if (e.origin !== window.location.origin) return;
+  if (e.data && e.data.pcPortalNav === 'dashboard') {
+    show('dash', document.getElementById('nl-dash'));
+  }
+});
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function signOut(){clearSession();window.location.href='../index.html';}

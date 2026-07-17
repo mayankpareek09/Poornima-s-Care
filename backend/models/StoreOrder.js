@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
+const { nextSequence } = require('./Counter');
 
 async function generateOrderId(type) {
   const prefix = type === 'stationery' ? 'STA' : 'STR';
   const today  = new Date().toISOString().slice(0,10).replace(/-/g,'');
-  const count  = await mongoose.model('StoreOrder').countDocuments({
-    type,
-    createdAt: { $gte: new Date(new Date().setHours(0,0,0,0)) }
-  });
-  return `${prefix}-${today}-${String(count + 1).padStart(4,'0')}`;
+  // Atomic per-day, per-type counter — see Counter.js for why this replaces countDocuments().
+  const seq = await nextSequence(`store-${type}-${today}`);
+  return `${prefix}-${today}-${String(seq).padStart(4,'0')}`;
 }
 
 const orderItemSchema = new mongoose.Schema({
@@ -22,7 +21,7 @@ const orderItemSchema = new mongoose.Schema({
 const storeOrderSchema = new mongoose.Schema({
   type:          { type: String, required: true, enum: ['store','stationery'], default: 'store' },
   orderId:       { type: String, unique: true },
-  studentId:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  studentId:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
   studentName:   { type: String, required: true },
   studentUserId: { type: String, required: true },
   items:         [orderItemSchema],

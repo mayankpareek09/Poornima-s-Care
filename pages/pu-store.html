@@ -4,6 +4,7 @@
 <title>PU Store — Poornima's Care</title>
 <link rel="stylesheet" href="../css/main.css"/>
 <script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<script src="../js/embed-helper.js"></script>
 <style>
 .st-header{background:linear-gradient(135deg,#0B2E33,#2C1A3A);padding:28px 32px;border-radius:16px;margin-bottom:24px;}
 .st-header h1{color:#fff;font-size:22px;margin:0;}
@@ -45,8 +46,8 @@
   <div class="asb-link active" id="nl-shop" onclick="showView('shop',this)"><span class="asb-ic">🛍️</span> Shop</div>
   <div class="asb-link" id="nl-myorders" onclick="showView('myorders',this)"><span class="asb-ic">📋</span> My Orders</div>
   <div class="asb-sec">Navigate</div>
-  <div class="asb-link" onclick="window.location.href='student.html'"><span class="asb-ic">🏠</span> Back to Portal</div>
-  <div class="asb-link" onclick="window.location.href='pu-stationery.html'"><span class="asb-ic">📚</span> PU Stationery</div>
+  <div class="asb-link" onclick="pcGoToPortalHome()"><span class="asb-ic">🏠</span> Back to Portal</div>
+  <div class="asb-link" onclick="pcNavigate('pu-stationery.html')"><span class="asb-ic">📚</span> PU Stationery</div>
   <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
     <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
   </div>

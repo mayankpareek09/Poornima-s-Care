@@ -69,27 +69,42 @@ const authLimiter = rateLimit({
   message: { success: false, message: 'Too many attempts from this device. Please wait 15 minutes and try again.' },
 });
 
+// General API rate limiter — every other route was previously unprotected.
+// Threshold is intentionally generous: a lot of campus WiFi routes NAT many
+// students through one shared public IP, so a strict per-IP limit here would
+// throttle everyone behind that gateway together, not just an abusive client.
+// This is sized to stop scraping/DoS-style abuse, not to police normal use —
+// the notification bell alone polls every 30s (~30 req/15min per user), so a
+// few dozen concurrent students on one gateway is still well under this.
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 1000,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many requests from this network. Please wait a few minutes and try again.' },
+});
+
 // API routes
 app.use('/api/auth',       authLimiter, require('./routes/auth'));
-app.use('/api/complaints', require('./routes/complaints'));
-app.use('/api/laundry',    require('./routes/laundry'));
-app.use('/api/timetable',  require('./routes/timetable'));
-app.use('/api/events',     require('./routes/events'));
-app.use('/api/clubs',      require('./routes/clubs'));
-app.use('/api/bus',        require('./routes/bus'));
-app.use('/api/materials',  require('./routes/materials'));
-app.use('/api/analytics',  require('./routes/analytics'));
-app.use('/api/exam-calendar', require('./routes/exam-calendar'));
-app.use('/api/notifications', require('./routes/notifications'));
-app.use('/api/sos',           require('./routes/sos'));
-app.use('/api/canteen',       require('./routes/canteen'));
-app.use('/api/mess',          require('./routes/mess'));
-app.use('/api/super',         require('./routes/superadmin'));
-app.use('/api/store',         require('./routes/store'));
-app.use('/api/feedback',      require('./routes/feedback'));
-app.use('/api/suggestions',   require('./routes/suggestions'));
-app.use('/api/visitors',      require('./routes/visitors'));
-app.use('/api/appointments',  require('./routes/appointments'));
+app.use('/api/complaints', apiLimiter, require('./routes/complaints'));
+app.use('/api/laundry',    apiLimiter, require('./routes/laundry'));
+app.use('/api/timetable',  apiLimiter, require('./routes/timetable'));
+app.use('/api/events',     apiLimiter, require('./routes/events'));
+app.use('/api/clubs',      apiLimiter, require('./routes/clubs'));
+app.use('/api/bus',        apiLimiter, require('./routes/bus'));
+app.use('/api/materials',  apiLimiter, require('./routes/materials'));
+app.use('/api/analytics',  apiLimiter, require('./routes/analytics'));
+app.use('/api/exam-calendar', apiLimiter, require('./routes/exam-calendar'));
+app.use('/api/notifications', apiLimiter, require('./routes/notifications'));
+app.use('/api/sos',           apiLimiter, require('./routes/sos'));
+app.use('/api/canteen',       apiLimiter, require('./routes/canteen'));
+app.use('/api/mess',          apiLimiter, require('./routes/mess'));
+app.use('/api/super',         apiLimiter, require('./routes/superadmin'));
+app.use('/api/store',         apiLimiter, require('./routes/store'));
+app.use('/api/feedback',      apiLimiter, require('./routes/feedback'));
+app.use('/api/suggestions',   apiLimiter, require('./routes/suggestions'));
+app.use('/api/visitors',      apiLimiter, require('./routes/visitors'));
+app.use('/api/appointments',  apiLimiter, require('./routes/appointments'));
 
 // Serve login page for root
 app.get('/', (req, res) => res.sendFile(path.join(frontendPath, 'index.html')));
@@ -125,8 +140,10 @@ app.listen(PORT, '0.0.0.0', () => {
     }
   }
   // ✅ FIXED: Only show admin key hint in development, not the actual key
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`\n🔑 Admin secret key for registration: ${process.env.ADMIN_SECRET || 'PC_ADMIN_2026'}`);
+  if (!process.env.ADMIN_SECRET) {
+    console.warn(`\n⚠️  ADMIN_SECRET is not set — admin registration is disabled until it is configured.`);
+  } else if (process.env.NODE_ENV === 'development') {
+    console.log(`\n🔑 Admin secret key for registration: ${process.env.ADMIN_SECRET}`);
   } else {
     console.log(`\n🔑 Admin secret key configured (hidden in production)`);
   }

@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
+const { nextSequence } = require('./Counter');
 
 async function generateToken() {
   const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
-  const count = await mongoose.model('CanteenOrder').countDocuments({
-    createdAt: { $gte: new Date(new Date().setHours(0,0,0,0)) }
-  });
-  return `CAN-${today}-${String(count + 1).padStart(4,'0')}`;
+  // Atomic per-day counter — safe under concurrent checkouts, unlike the previous
+  // countDocuments() snapshot which could hand two simultaneous orders the same token.
+  const seq = await nextSequence(`canteen-${today}`);
+  return `CAN-${today}-${String(seq).padStart(4,'0')}`;
 }
 
 const orderItemSchema = new mongoose.Schema({
@@ -18,7 +19,7 @@ const orderItemSchema = new mongoose.Schema({
 
 const canteenOrderSchema = new mongoose.Schema({
   token:         { type: String, unique: true },
-  studentId:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  studentId:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
   studentName:   { type: String, required: true },
   studentUserId: { type: String, required: true },
   items:         [orderItemSchema],

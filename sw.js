@@ -1,11 +1,11 @@
-const CACHE = 'pc-v2';
+const CACHE = 'pc-v3';
 const OFFLINE_ASSETS = [
   '/',
   '/index.html',
-  '/css/style.css',
   '/css/main.css',
   '/js/api.js',
   '/js/features.js',
+  '/js/embed-helper.js',
   '/pages/student.html',
 ];
 

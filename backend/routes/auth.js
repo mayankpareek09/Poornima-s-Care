@@ -4,6 +4,7 @@ const jwt     = require('jsonwebtoken');
 const User    = require('../models/User');
 const { protect } = require('../middleware/auth');
 const { sanitizeString } = require('../utils/apiHelpers');
+const cloudinaryUtil = require('../utils/cloudinary');
 
 const MAX_ATTEMPTS = 5;
 const LOCK_TIME    = 15 * 60 * 1000;
@@ -162,7 +163,24 @@ router.patch('/profile', protect, async (req, res) => {
     const update = {};
     if (dob !== undefined) update.dob = dob;
     if (phone !== undefined) update.phone = phone;
-    if (profilePhoto !== undefined) update.profilePhoto = profilePhoto;
+    if (profilePhoto !== undefined) {
+      // A raw data URI means the client sent a fresh base64 photo. If
+      // Cloudinary is configured, move it out of Mongo and store the URL
+      // instead; otherwise keep the previous behavior so nothing breaks for
+      // deployments that haven't set up Cloudinary credentials yet. A value
+      // that's already a URL (or empty, to clear the photo) passes through
+      // unchanged either way.
+      if (profilePhoto.startsWith('data:image') && cloudinaryUtil.isConfigured) {
+        try {
+          update.profilePhoto = await cloudinaryUtil.uploadProfilePhoto(profilePhoto, req.user._id);
+        } catch (uploadErr) {
+          console.error('Cloudinary upload failed, falling back to base64:', uploadErr.message);
+          update.profilePhoto = profilePhoto;
+        }
+      } else {
+        update.profilePhoto = profilePhoto;
+      }
+    }
     const user = await User.findByIdAndUpdate(req.user._id, update, { new: true });
     res.json({ success: true, message: 'Profile updated!', user: user.toJSON() });
   } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
@@ -174,7 +192,11 @@ router.post('/register-admin', async (req, res) => {
     const { name, userId, password, role, department, clubName, clubId, adminKey } = req.body;
     const headerKey = req.headers['x-admin-key'];
     const providedKey = adminKey || headerKey;
-    const ADMIN_SECRET = process.env.ADMIN_SECRET || 'PC_ADMIN_2026';
+    // No fallback: if ADMIN_SECRET isn't configured on this deployment, admin
+    // registration must be refused outright rather than accepting a known default.
+    const ADMIN_SECRET = process.env.ADMIN_SECRET;
+    if (!ADMIN_SECRET)
+      return res.status(503).json({ success: false, message: 'Admin registration is not configured on this server.' });
     if (providedKey !== ADMIN_SECRET)
       return res.status(403).json({ success: false, message: 'Invalid admin secret key.' });
 
@@ -183,11 +205,12 @@ router.post('/register-admin', async (req, res) => {
     if (!name || !userId || !password) return res.status(400).json({ success: false, message: 'All fields are required.' });
     if (password.length < 8) return res.status(400).json({ success: false, message: 'Password must be at least 8 characters.' });
 
-    const exists = await User.findOne({ userId });
+    const normalizedId = normalizeRegNo(userId);
+    const exists = await User.findOne({ userId: normalizedId });
     if (exists) return res.status(400).json({ success: false, message: 'User ID already taken.' });
 
     const user = await User.create({
-      name, userId, password, role, department: department || '',
+      name, userId: normalizedId, password, role, department: department || '',
       clubName: clubName || '', clubId: clubId || undefined, isVerified: true,
     });
     res.status(201).json({ success: true, message: 'Admin account created!', user: user.toJSON() });

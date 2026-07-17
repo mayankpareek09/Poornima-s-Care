@@ -4,6 +4,7 @@
 <title>Book Appointment — Poornima's Care</title>
 <link rel="stylesheet" href="../css/main.css"/>
 <script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<script src="../js/embed-helper.js"></script>
 <style>
 .ap-header{background:linear-gradient(135deg,#0B2E33,#1A2A4A);padding:24px 28px;border-radius:16px;margin-bottom:24px;}
 .ap-header h1{color:#fff;font-size:20px;margin:0;}
@@ -40,7 +41,7 @@
   <div class="asb-link active" id="nl-book" onclick="showView('book',this)"><span class="asb-ic">📅</span> Book New</div>
   <div class="asb-link" id="nl-myappts" onclick="showView('myappts',this)"><span class="asb-ic">📋</span> My Appointments</div>
   <div class="asb-sec">Navigate</div>
-  <div class="asb-link" onclick="window.location.href='student.html'"><span class="asb-ic">🏠</span> Back to Portal</div>
+  <div class="asb-link" onclick="pcGoToPortalHome()"><span class="asb-ic">🏠</span> Back to Portal</div>
   <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
     <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
   </div>

@@ -4,6 +4,7 @@
 <title>PU Canteen — Poornima's Care</title>
 <link rel="stylesheet" href="../css/main.css"/>
 <script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<script src="../js/embed-helper.js"></script>
 <style>
 .ct-header{background:linear-gradient(135deg,#0B2E33,#1A4A30);padding:28px 32px;border-radius:16px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
 .ct-header h1{color:#fff;font-size:22px;margin:0;}
@@ -51,8 +52,8 @@
   <div class="asb-link active" id="nl-order" onclick="showView('order',this)"><span class="asb-ic">🍽️</span> Order Food</div>
   <div class="asb-link" id="nl-myorders" onclick="showView('myorders',this)"><span class="asb-ic">📋</span> My Orders</div>
   <div class="asb-sec">Navigate</div>
-  <div class="asb-link" onclick="window.location.href='student.html'"><span class="asb-ic">🏠</span> Back to Portal</div>
-  <div class="asb-link" onclick="window.location.href='pu-mess.html'"><span class="asb-ic">🍛</span> PU Mess</div>
+  <div class="asb-link" onclick="pcGoToPortalHome()"><span class="asb-ic">🏠</span> Back to Portal</div>
+  <div class="asb-link" onclick="pcNavigate('pu-mess.html')"><span class="asb-ic">🍛</span> PU Mess</div>
   <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
     <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
   </div>

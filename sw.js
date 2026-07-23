@@ -1,4 +1,4 @@
-const CACHE = 'pc-v3';
+const CACHE = 'pc-v4';
 const OFFLINE_ASSETS = [
   '/',
   '/index.html',

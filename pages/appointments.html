@@ -6,27 +6,23 @@
 <script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
 <script src="../js/embed-helper.js"></script>
 <style>
-.ap-header{background:linear-gradient(135deg,#0B2E33,#1A2A4A);padding:24px 28px;border-radius:16px;margin-bottom:24px;}
-.ap-header h1{color:#fff;font-size:20px;margin:0;}
-.ap-header p{color:#93B1B5;font-size:12px;margin:4px 0 0;}
-.faculty-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:24px;}
-.faculty-card{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:14px;padding:16px;cursor:pointer;transition:border-color .2s;}
-.faculty-card:hover,.faculty-card.selected{border-color:#2980B9;}
-.faculty-name{color:#D0EEF2;font-weight:700;font-size:14px;}
-.faculty-dept{color:#93B1B5;font-size:11px;margin-top:3px;}
-.booking-box{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:14px;padding:20px;display:none;}
-.slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin:14px 0;}
-.slot-pill{padding:10px;border-radius:8px;border:1px solid rgba(184,227,233,.2);text-align:center;font-size:12px;color:#93B1B5;cursor:pointer;background:rgba(184,227,233,.04);}
-.slot-pill.sel{background:#2980B9;border-color:#2980B9;color:#fff;}
+.tog{position:relative;display:inline-block;width:36px;height:20px;}
+.tog input{opacity:0;width:0;height:0;}
+.tog-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.2s;}
+.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.tog input:checked+.tog-sl{background:var(--teal);}
+.tog input:checked+.tog-sl:before{transform:translateX(16px);}
+
+.fac-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:18px;}
+.fac-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .18s;}
+.fac-card:hover,.fac-card.selected{border-color:var(--teal);background:#e8f6f8;}
+.slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:7px;margin:10px 0;}
+.slot-pill{padding:9px;border-radius:8px;border:1.5px solid var(--border);text-align:center;font-size:11px;color:var(--navy);cursor:pointer;background:var(--inp-bg);transition:all .15s;}
+.slot-pill:hover,.slot-pill.sel{background:var(--teal);border-color:var(--teal);color:#fff;}
 .slot-pill.booked{opacity:.35;pointer-events:none;text-decoration:line-through;}
-.ord-card{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:12px;padding:16px;margin-bottom:12px;}
-.st-pending{background:#2980B922;color:#2980B9;}
-.st-accepted{background:#27AE6022;color:#27AE60;}
-.st-rejected{background:#e74c3c22;color:#e74c3c;}
-.st-cancelled{background:#93B1B522;color:#93B1B5;}
+
 </style>
-</head>
-<body>
+</head><body>
 <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
 <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 <div class="admin-wrap">
@@ -37,173 +33,120 @@
     <div class="asb-nm" id="sbNm">—</div>
     <div class="asb-id" id="sbId">—</div>
   </div>
+  
   <div class="asb-sec">Appointments</div>
   <div class="asb-link active" id="nl-book" onclick="showView('book',this)"><span class="asb-ic">📅</span> Book New</div>
-  <div class="asb-link" id="nl-myappts" onclick="showView('myappts',this)"><span class="asb-ic">📋</span> My Appointments</div>
+  <div class="asb-link" id="nl-myappts" onclick="showView('myappts',this);loadMyAppts()"><span class="asb-ic">📋</span> My Appointments</div>
   <div class="asb-sec">Navigate</div>
   <div class="asb-link" onclick="pcGoToPortalHome()"><span class="asb-ic">🏠</span> Back to Portal</div>
   <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
-    <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
+    <button class="btn-p full" style="font-size:11px;padding:8px;" onclick="signOut()">Sign Out</button>
   </div>
 </div>
-<div class="admin-main">
-<div class="page-body">
-
-<!-- BOOK NEW -->
+<div class="admin-main"><div class="page-body">
 <div id="v-book" class="sec active">
-  <div class="ap-header">
-    <h1>📅 Book a Faculty Appointment</h1>
-    <p>Select a faculty member, pick a date and time slot</p>
-  </div>
-
-  <div id="facultyGrid" class="faculty-grid">
-    <div style="color:#93B1B5;font-size:13px;">Loading faculty…</div>
-  </div>
-
-  <div class="booking-box" id="bookingBox">
-    <div style="color:#D0EEF2;font-weight:700;margin-bottom:6px;" id="selectedFacultyName">—</div>
-    <div style="color:#93B1B5;font-size:12px;margin-bottom:14px;" id="selectedFacultyDept">—</div>
-
-    <label style="color:#93B1B5;font-size:12px;display:block;margin-bottom:6px;">Select Date</label>
-    <input type="date" id="apptDate" onchange="loadSlots()" style="background:#1A3A40;border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:9px 12px;border-radius:8px;font-size:13px;margin-bottom:14px;"/>
-
-    <div id="slotsArea"></div>
-
-    <label style="color:#93B1B5;font-size:12px;display:block;margin:14px 0 6px;">Reason for appointment</label>
-    <textarea id="apptReason" placeholder="Briefly explain why you'd like to meet..." style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:10px;border-radius:8px;font-size:13px;min-height:70px;resize:vertical;margin-bottom:16px;"></textarea>
-
-    <button class="btn-p" style="width:100%;padding:12px;" onclick="bookAppointment()">Request Appointment →</button>
+  <div class="admin-hdr"><div class="admin-hdr-t">📅 Book Appointment</div></div>
+  <div class="admin-body">
+    <div class="sec-lbl mb-2">SELECT FACULTY</div>
+    <div id="facultyGrid" class="fac-grid"><div class="empty"><div class="ei">🧑‍🏫</div><p>Loading faculty…</p></div></div>
+    <div id="bookingBox" style="display:none;">
+      <div class="card mb-3">
+        <div id="selectedFacultyName" style="font-weight:700;color:var(--navy);font-size:14px;margin-bottom:2px;">—</div>
+        <div id="selectedFacultyDept" style="color:var(--muted);font-size:11px;margin-bottom:14px;">—</div>
+        <div class="flbl">Select Date</div>
+        <input type="date" id="apptDate" class="finp" onchange="loadSlots()" style="margin-bottom:14px;"/>
+        <div id="slotsArea"></div>
+        <div class="flbl">Reason for appointment <span class="req">*</span></div>
+        <textarea id="apptReason" class="ftxt" placeholder="Briefly explain why you'd like to meet..."></textarea>
+        <button class="btn-p full" onclick="bookAppointment()">Request Appointment →</button>
+      </div>
+    </div>
   </div>
 </div>
-
-<!-- MY APPOINTMENTS -->
 <div id="v-myappts" class="sec">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-    <h2 style="color:#D0EEF2;margin:0;">My Appointments</h2>
-    <button class="btn-p" style="font-size:11px;padding:7px 14px;" onclick="loadMyAppts()">↻ Refresh</button>
-  </div>
-  <div id="myApptsList"><div style="color:#93B1B5;font-size:13px;">Loading…</div></div>
+  <div class="admin-hdr"><div class="admin-hdr-t">My Appointments</div><button class="btn-sec" onclick="loadMyAppts()">↻</button></div>
+  <div class="admin-body" id="myApptsList"><div class="empty"><div class="ei">📅</div><p>Loading…</p></div></div>
 </div>
-
-</div></div></div>
-
-<script src="../js/api.js"></script>
-<script src="../js/features.js"></script>
+</div></div>
+</div>
+<script src="../js/api.js"></script><script src="../js/features.js"></script>
 <script>
-const user = requireAuth(['student']);
-if(!user) throw new Error('not auth');
+const user=requireAuth(['student']);if(!user)throw new Error('auth');
 
 document.getElementById('tnAv').textContent=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
 document.getElementById('sbNm').textContent=user.name;
 document.getElementById('sbId').textContent=user.userId;
+function toggleSidebar(){document.querySelector('.admin-sb').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active');}
+function showView(id,el){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));document.getElementById('v-'+id).classList.add('active');if(el)el.classList.add('active');}
 
-let selectedFaculty = null;
-let selectedSlot = null;
-const minDate = new Date().toISOString().slice(0,10);
-
-function showView(id,el){
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
-  document.getElementById('v-'+id).classList.add('active');
-  if(el) el.classList.add('active');
-  if(id==='myappts') loadMyAppts();
-}
-function toggleSidebar(){
-  document.querySelector('.admin-sb').classList.toggle('open');
-  document.querySelector('.sidebar-overlay').classList.toggle('active');
-}
+let selFaculty=null,selSlot=null;
+const minDate=new Date().toISOString().slice(0,10);
 
 async function loadFaculty(){
   try{
-    const data = await apiFetch('/appointments/faculty-list');
-    const faculty = data.faculty || [];
-    if(!faculty.length){ document.getElementById('facultyGrid').innerHTML='<div style="color:#93B1B5;">No faculty available for appointments yet.</div>'; return; }
-    document.getElementById('facultyGrid').innerHTML = faculty.map(f=>`
-      <div class="faculty-card" id="fc-${f.userId._id}" onclick='selectFaculty("${f.userId._id}","${f.facultyName.replace(/"/g,"")}","${f.department}")'>
-        <div class="faculty-name">🧑‍🏫 ${f.facultyName}</div>
-        <div class="faculty-dept">${f.department} · ${f.designation}</div>
+    const data=await apiFetch('/appointments/faculty-list');const facs=data.faculty||[];
+    if(!facs.length){document.getElementById('facultyGrid').innerHTML='<div class="empty"><div class="ei">🧑‍🏫</div><p>No faculty available yet.</p></div>';return;}
+    document.getElementById('facultyGrid').innerHTML=facs.map(f=>`
+      <div class="fac-card" id="fc-${f.userId._id}" onclick='selectFac("${f.userId._id}","${f.facultyName.replace(/"/g,"")}","${f.department}")'>
+        <div style="font-size:20px;margin-bottom:6px;">🧑‍🏫</div>
+        <div style="font-weight:700;color:var(--navy);font-size:13px;">${f.facultyName}</div>
+        <div style="color:var(--muted);font-size:10px;">${f.department} · ${f.designation}</div>
       </div>`).join('');
-  }catch(e){ document.getElementById('facultyGrid').innerHTML=`<div style="color:#e74c3c;">${e.message}</div>`; }
+  }catch(e){document.getElementById('facultyGrid').innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
 }
-
-function selectFaculty(id, name, dept){
-  selectedFaculty = id;
-  selectedSlot = null;
-  document.querySelectorAll('.faculty-card').forEach(c=>c.classList.remove('selected'));
+function selectFac(id,name,dept){
+  selFaculty=id;selSlot=null;
+  document.querySelectorAll('.fac-card').forEach(c=>c.classList.remove('selected'));
   document.getElementById('fc-'+id).classList.add('selected');
-  document.getElementById('selectedFacultyName').textContent = name;
-  document.getElementById('selectedFacultyDept').textContent = dept;
-  document.getElementById('bookingBox').style.display = 'block';
-  document.getElementById('apptDate').min = minDate;
-  document.getElementById('apptDate').value = minDate;
+  document.getElementById('selectedFacultyName').textContent=name;
+  document.getElementById('selectedFacultyDept').textContent=dept;
+  document.getElementById('bookingBox').style.display='block';
+  document.getElementById('apptDate').min=minDate;
+  document.getElementById('apptDate').value=minDate;
   loadSlots();
 }
-
 async function loadSlots(){
-  const date = document.getElementById('apptDate').value;
-  if(!date || !selectedFaculty) return;
-  const area = document.getElementById('slotsArea');
-  area.innerHTML = '<div style="color:#93B1B5;font-size:12px;">Loading slots…</div>';
+  const date=document.getElementById('apptDate').value;if(!date||!selFaculty)return;
+  const area=document.getElementById('slotsArea');area.innerHTML='<div class="empty" style="padding:12px;"><p>Loading slots…</p></div>';
   try{
-    const data = await apiFetch('/appointments/faculty/'+selectedFaculty+'/availability?date='+date);
-    const slots = data.slots || [];
-    if(!slots.length){ area.innerHTML = `<div style="color:#93B1B5;font-size:12px;">No slots available on ${data.day}.</div>`; return; }
-    area.innerHTML = `<div style="color:#93B1B5;font-size:12px;margin-bottom:8px;">Available slots on ${data.day}:</div>
-      <div class="slot-grid">${slots.map(s=>`
-        <div class="slot-pill ${s.isBooked?'booked':''}" onclick="${s.isBooked?'':`selectSlot('${s.label}',this)`}">${s.label}${s.isBooked?' (Booked)':''}</div>
-      `).join('')}</div>`;
-  }catch(e){ area.innerHTML = `<div style="color:#e74c3c;font-size:12px;">${e.message}</div>`; }
+    const data=await apiFetch('/appointments/faculty/'+selFaculty+'/availability?date='+date);
+    const slots=data.slots||[];
+    if(!slots.length){area.innerHTML=`<div class="info-box">No slots available on ${data.day||'this day'}.</div>`;return;}
+    area.innerHTML=`<div class="sec-lbl mb-2">AVAILABLE SLOTS ON ${data.day||''}</div>
+      <div class="slot-grid">${slots.map(s=>`<div class="slot-pill ${s.isBooked?'booked':''}" onclick="${s.isBooked?'':''selectSlot('${s.label}',this)''}">${s.label}${s.isBooked?' (Booked)':''}</div>`).join('')}</div>`;
+  }catch(e){area.innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
 }
-
-function selectSlot(label, el){
-  selectedSlot = label;
-  document.querySelectorAll('.slot-pill').forEach(p=>p.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
+function selectSlot(label,el){selSlot=label;document.querySelectorAll('.slot-pill').forEach(p=>p.classList.remove('sel'));el.classList.add('sel');}
 async function bookAppointment(){
-  const date = document.getElementById('apptDate').value;
-  const reason = document.getElementById('apptReason').value.trim();
-  if(!selectedFaculty || !date || !selectedSlot || !reason)
-    return showToast('Please select faculty, date, slot, and enter a reason','warning');
+  const date=document.getElementById('apptDate').value;
+  const reason=document.getElementById('apptReason').value.trim();
+  if(!selFaculty||!date||!selSlot||!reason)return showToast('Please select faculty, date, slot, and enter a reason','warning');
   try{
-    await apiFetch('/appointments',{method:'POST',body:JSON.stringify({facultyId:selectedFaculty,date,timeSlot:selectedSlot,reason})});
+    await apiFetch('/appointments',{method:'POST',body:JSON.stringify({facultyId:selFaculty,date,timeSlot:selSlot,reason})});
     showToast('Appointment requested! Waiting for approval.','success');
-    document.getElementById('apptReason').value='';
-    selectedSlot=null;
-    loadSlots();
-  }catch(e){ showToast(e.message,'error'); }
+    document.getElementById('apptReason').value='';selSlot=null;loadSlots();
+  }catch(e){showToast(e.message,'error');}
 }
-
 async function loadMyAppts(){
-  const el = document.getElementById('myApptsList');
-  el.innerHTML = '<div style="color:#93B1B5;font-size:13px;">Loading…</div>';
+  const el=document.getElementById('myApptsList');el.innerHTML='<div class="empty"><div class="ei">⏳</div><p>Loading…</p></div>';
   try{
-    const data = await apiFetch('/appointments/my');
-    const appts = data.appointments || [];
-    if(!appts.length){ el.innerHTML='<div style="color:#93B1B5;text-align:center;padding:40px;">No appointments yet.</div>'; return; }
+    const data=await apiFetch('/appointments/my');const appts=data.appointments||[];
+    if(!appts.length){el.innerHTML='<div class="empty"><div class="ei">📅</div><p>No appointments yet.</p></div>';return;}
+    const stCls={pending:'badge-inprogress',accepted:'badge-resolved',rejected:'badge-red',cancelled:'badge-gold'};
     const stLabel={pending:'⏳ Pending',accepted:'✅ Accepted',rejected:'❌ Rejected',cancelled:'🚫 Cancelled'};
-    el.innerHTML = appts.map(a=>`
-      <div class="ord-card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-          <div>
-            <div style="color:#D0EEF2;font-weight:700;font-size:14px;">🧑‍🏫 ${a.facultyName}</div>
-            <div style="color:#93B1B5;font-size:12px;">${a.day}, ${a.date} · ${a.timeSlot}</div>
-          </div>
-          <span class="status-pill st-${a.status}" style="padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;">${stLabel[a.status]}</span>
+    el.innerHTML=appts.map(a=>`
+      <div class="card mb-2">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+          <div><div style="font-weight:700;color:var(--navy);">🧑‍🏫 ${a.facultyName}</div><div style="color:var(--muted);font-size:10px;">${a.day}, ${a.date} · ${a.timeSlot}</div></div>
+          <span class="badge ${stCls[a.status]||''}">${stLabel[a.status]||a.status}</span>
         </div>
-        <div style="color:#B8E3E9;font-size:13px;margin-bottom:8px;">"${a.reason}"</div>
-        ${a.facultyResponse?`<div style="color:#93B1B5;font-size:12px;margin-bottom:8px;">Faculty: ${a.facultyResponse}</div>`:''}
-        ${a.status==='pending'?`<button onclick="cancelAppt('${a._id}')" style="background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.25);color:#e74c3c;border-radius:6px;padding:6px 12px;font-size:11px;cursor:pointer;">Cancel Request</button>`:''}
+        <div style="color:var(--teal);font-size:12px;margin-bottom:6px;">"${a.reason}"</div>
+        ${a.facultyResponse?`<div class="info-box" style="font-size:11px;">Faculty: ${a.facultyResponse}</div>`:''}
+        ${a.status==='pending'?`<button class="btn-red" onclick="cancelAppt('${a._id}')">Cancel Request</button>`:''}
       </div>`).join('');
-  }catch(e){ el.innerHTML=`<div style="color:#e74c3c;">${e.message}</div>`; }
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
 }
-
-async function cancelAppt(id){
-  try{ await apiFetch('/appointments/'+id+'/cancel',{method:'PATCH'}); loadMyAppts(); showToast('Cancelled','success'); }
-  catch(e){ showToast(e.message,'error'); }
-}
-
+async function cancelAppt(id){try{await apiFetch('/appointments/'+id+'/cancel',{method:'PATCH'});loadMyAppts();showToast('Cancelled','success');}catch(e){showToast(e.message,'error');}}
 loadFaculty();
 </script>
 </body></html>

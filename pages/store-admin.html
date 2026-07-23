@@ -4,24 +4,17 @@
 <title>Store Admin — Poornima's Care</title>
 <link rel="stylesheet" href="../css/main.css"/>
 <script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<script src="../js/embed-helper.js"></script>
 <style>
-.type-toggle{display:flex;gap:8px;margin-bottom:20px;}
-.type-btn{padding:10px 20px;border-radius:10px;border:1px solid rgba(184,227,233,.2);background:rgba(184,227,233,.05);color:#93B1B5;font-size:13px;font-weight:700;cursor:pointer;}
-.type-btn.active{background:#8E44AD;border-color:#8E44AD;color:#fff;}
-.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:24px;}
-.stat-c{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:12px;padding:16px;text-align:center;}
-.stat-n{font-size:26px;font-weight:900;margin-bottom:4px;}
-.stat-l{color:#93B1B5;font-size:11px;}
-.ord-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:10px;padding:14px;margin-bottom:8px;}
 .tog{position:relative;display:inline-block;width:36px;height:20px;}
 .tog input{opacity:0;width:0;height:0;}
-.tog-sl{position:absolute;cursor:pointer;inset:0;background:#333;border-radius:20px;transition:.2s;}
+.tog-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.2s;}
 .tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
-.tog input:checked+.tog-sl{background:#8E44AD;}
+.tog input:checked+.tog-sl{background:var(--teal);}
 .tog input:checked+.tog-sl:before{transform:translateX(16px);}
+
 </style>
-</head>
-<body>
+</head><body>
 <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
 <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 <div class="admin-wrap">
@@ -30,237 +23,144 @@
     <div class="asb-logo">Poornima's <span>Care</span></div>
     <div class="asb-av" id="tnAv">—</div>
     <div class="asb-nm" id="sbNm">—</div>
-    <div class="asb-id" id="sbId">Store Admin</div>
+    <div class="asb-id" id="sbId">—</div>
   </div>
-  <div class="asb-sec">Manage</div>
+  
+  <div class="asb-sec">Store</div>
   <div class="asb-link active" id="nl-orders" onclick="showView('orders',this)"><span class="asb-ic">📋</span> Orders</div>
-  <div class="asb-link" id="nl-products" onclick="showView('products',this)"><span class="asb-ic">🏷️</span> Products</div>
+  <div class="asb-link" id="nl-products" onclick="showView('products',this);loadProducts()"><span class="asb-ic">🏷️</span> Products</div>
   <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
-    <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
+    <button class="btn-p full" style="font-size:11px;padding:8px;" onclick="signOut()">Sign Out</button>
   </div>
 </div>
-<div class="admin-main">
-<div class="page-body">
-
-<div class="type-toggle">
-  <button class="type-btn active" id="tb-store" onclick="switchType('store')">🛍️ PU Store</button>
-  <button class="type-btn" id="tb-stationery" onclick="switchType('stationery')">📚 PU Stationery</button>
+<div class="admin-main"><div class="page-body">
+<div class="ftabs mb-3">
+  <button class="ftab active" id="tb-store" onclick="switchType('store')">🛍️ PU Store</button>
+  <button class="ftab" id="tb-stationery" onclick="switchType('stationery')">📚 PU Stationery</button>
 </div>
-
-<!-- ORDERS -->
 <div id="v-orders" class="sec active">
-  <div class="admin-hdr">
-    <div class="admin-hdr-t" id="ordersTitle">📋 Store Orders</div>
-    <button class="btn-p" style="font-size:11px;padding:7px 14px;" onclick="loadOrders()">↻ Refresh</button>
+  <div class="admin-hdr"><div class="admin-hdr-t" id="ordersTitle">📋 Store Orders</div><button class="btn-sec" onclick="loadOrders()">↻</button></div>
+  <div class="admin-body">
+    <div class="g4 mb-3">
+      <div class="sc"><div class="sc-n" id="sTotal">—</div><div class="sc-l">Total</div></div>
+      <div class="sc"><div class="sc-n" id="sPaid" style="color:#1a4f8a;">—</div><div class="sc-l">New</div></div>
+      <div class="sc"><div class="sc-n" id="sProc" style="color:#e4a200;">—</div><div class="sc-l">Processing</div></div>
+      <div class="sc"><div class="sc-n" id="sReady" style="color:#085041;">—</div><div class="sc-l">Ready</div></div>
+      <div class="sc"><div class="sc-n" id="sRevenue" style="color:#085041;">—</div><div class="sc-l">Revenue ₹</div></div>
+    </div>
+    <div id="ordersList"><div class="empty"><div class="ei">📋</div><p>Loading…</p></div></div>
   </div>
-  <div class="stat-row">
-    <div class="stat-c"><div class="stat-n" id="sTotal" style="color:#D0EEF2;">—</div><div class="stat-l">Total</div></div>
-    <div class="stat-c"><div class="stat-n" id="sPaid" style="color:#2980B9;">—</div><div class="stat-l">New</div></div>
-    <div class="stat-c"><div class="stat-n" id="sProc" style="color:#e67e22;">—</div><div class="stat-l">Processing</div></div>
-    <div class="stat-c"><div class="stat-n" id="sReady" style="color:#27AE60;">—</div><div class="stat-l">Ready</div></div>
-    <div class="stat-c"><div class="stat-n" id="sCollect" style="color:#93B1B5;">—</div><div class="stat-l">Collected</div></div>
-    <div class="stat-c"><div class="stat-n" id="sRevenue" style="color:#27AE60;">—</div><div class="stat-l">Revenue ₹</div></div>
-  </div>
-  <div id="ordersList"><div style="color:#93B1B5;font-size:13px;">Loading…</div></div>
 </div>
-
-<!-- PRODUCTS -->
 <div id="v-products" class="sec">
   <div class="admin-hdr">
-    <div class="admin-hdr-t" id="productsTitle">🏷️ Manage Products</div>
+    <div class="admin-hdr-t" id="productsTitle">🏷️ Products</div>
     <div style="display:flex;gap:8px;">
-      <button class="btn-p" style="font-size:11px;padding:7px 14px;background:#1A3A40;" onclick="seedProducts()">🌱 Seed Default</button>
-      <button class="btn-p" style="font-size:11px;padding:7px 14px;" onclick="showAddItem()">+ Add Product</button>
+      <button class="btn-sec" onclick="seedProducts()">🌱 Seed Default</button>
+      <button class="btn-p" style="padding:8px 14px;font-size:12px;" onclick="showAddItem()">+ Add</button>
     </div>
   </div>
-  <div id="productsList"><div style="color:#93B1B5;font-size:13px;">Loading…</div></div>
+  <div class="admin-body" id="productsList"><div class="empty"><div class="ei">🏷️</div><p>Loading…</p></div></div>
+</div>
 </div>
 
-</div></div></div>
-
-<!-- ADD PRODUCT MODAL -->
-<div id="addItemModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#0B2E33;border:1px solid rgba(184,227,233,.15);border-radius:16px;padding:28px;max-width:420px;width:100%;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-      <h3 style="color:#D0EEF2;margin:0;" id="itemModalTitle">Add Product</h3>
-      <button onclick="closeAddItem()" style="background:none;border:none;color:#93B1B5;font-size:20px;cursor:pointer;">✕</button>
-    </div>
-    <input id="iName" placeholder="Product name*" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:10px;"/>
-    <input id="iCategory" placeholder="Category (e.g. T-Shirt, ID Card)*" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:10px;"/>
-    <input id="iPrice" type="number" placeholder="Price (₹)*" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:10px;"/>
-    <input id="iSizes" placeholder="Sizes, comma separated (leave blank if none)" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:10px;"/>
-    <input id="iEmoji" placeholder="Emoji" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:10px;"/>
-    <input id="iDesc" placeholder="Description (optional)" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:18px;"/>
+<div id="addItemModal" class="modal-ov">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('addItemModal')">✕</button>
+    <div class="modal-title" id="itemModalTitle">Add Product</div>
+    <div class="flbl">Name <span class="req">*</span></div><input id="iName" class="finp" placeholder="Product name"/>
+    <div class="flbl">Category <span class="req">*</span></div><input id="iCategory" class="finp" placeholder="e.g. T-Shirt, ID Card"/>
+    <div class="flbl">Price (₹) <span class="req">*</span></div><input id="iPrice" type="number" class="finp" placeholder="0"/>
+    <div class="flbl">Sizes (comma separated, leave blank if none)</div><input id="iSizes" class="finp" placeholder="S, M, L, XL, XXL"/>
+    <div class="flbl">Emoji</div><input id="iEmoji" class="finp" placeholder="e.g. 👕"/>
+    <div class="flbl">Description</div><input id="iDesc" class="finp" placeholder="Optional"/>
     <input type="hidden" id="iEditId"/>
-    <button class="btn-p" style="width:100%;padding:11px;background:#8E44AD;" onclick="saveItem()">Save Product</button>
+    <button class="btn-p full" onclick="saveItem()">Save Product</button>
   </div>
+</div></div>
 </div>
-
-<script src="../js/api.js"></script>
-<script src="../js/features.js"></script>
+<script src="../js/api.js"></script><script src="../js/features.js"></script>
 <script>
-const user = requireAuth(['store_admin','campus_admin','super_admin']);
-if(!user) throw new Error('not auth');
+const user=requireAuth(['store_admin','campus_admin','super_admin']);if(!user)throw new Error('auth');
 
 document.getElementById('tnAv').textContent=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
 document.getElementById('sbNm').textContent=user.name;
+document.getElementById('sbId').textContent=user.userId;
+function toggleSidebar(){document.querySelector('.admin-sb').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active');}
+function showView(id,el){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));document.getElementById('v-'+id).classList.add('active');if(el)el.classList.add('active');}
 
-let currentType = 'store';
-
-function switchType(type){
-  currentType = type;
-  document.getElementById('tb-store').classList.toggle('active', type==='store');
-  document.getElementById('tb-stationery').classList.toggle('active', type==='stationery');
-  document.getElementById('ordersTitle').textContent = type==='store' ? '📋 Store Orders' : '📋 Stationery Orders';
-  document.getElementById('productsTitle').textContent = type==='store' ? '🏷️ Manage Store Products' : '🏷️ Manage Stationery Products';
-  if(document.getElementById('v-orders').classList.contains('active')) loadOrders();
-  else loadProducts();
+let curType='store';
+function switchType(t){
+  curType=t;
+  document.getElementById('tb-store').classList.toggle('active',t==='store');
+  document.getElementById('tb-stationery').classList.toggle('active',t==='stationery');
+  document.getElementById('ordersTitle').textContent=t==='store'?'📋 Store Orders':'📋 Stationery Orders';
+  document.getElementById('productsTitle').textContent=t==='store'?'🏷️ Store Products':'🏷️ Stationery Products';
+  if(document.getElementById('v-orders').classList.contains('active'))loadOrders();else loadProducts();
 }
-
-function showView(id,el){
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
-  document.getElementById('v-'+id).classList.add('active');
-  if(el) el.classList.add('active');
-  if(id==='orders') loadOrders();
-  if(id==='products') loadProducts();
-}
-function toggleSidebar(){
-  document.querySelector('.admin-sb').classList.toggle('open');
-  document.querySelector('.sidebar-overlay').classList.toggle('active');
-}
-
+function showView(id,el){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));document.getElementById('v-'+id).classList.add('active');if(el)el.classList.add('active');}
 async function loadOrders(){
   try{
-    const [statsData, ordersData] = await Promise.all([
-      apiFetch('/store/stats?type='+currentType),
-      apiFetch('/store/orders?type='+currentType),
-    ]);
-    const s = statsData.stats;
-    document.getElementById('sTotal').textContent=s.total;
-    document.getElementById('sPaid').textContent=s.paid;
-    document.getElementById('sProc').textContent=s.processing;
-    document.getElementById('sReady').textContent=s.ready;
-    document.getElementById('sCollect').textContent=s.collected;
-    document.getElementById('sRevenue').textContent=s.revenue;
-
-    const orders=(ordersData.orders||[]).filter(o=>o.status!=='collected'&&o.status!=='cancelled');
+    const [sD,oD]=await Promise.all([apiFetch('/store/stats?type='+curType),apiFetch('/store/orders?type='+curType)]);
+    const s=sD.stats;
+    document.getElementById('sTotal').textContent=s.total;document.getElementById('sPaid').textContent=s.paid;
+    document.getElementById('sProc').textContent=s.processing;document.getElementById('sReady').textContent=s.ready;
+    document.getElementById('sRevenue').textContent='₹'+s.revenue;
+    const orders=(oD.orders||[]).filter(o=>o.status!=='collected'&&o.status!=='cancelled');
     const el=document.getElementById('ordersList');
-    if(!orders.length){ el.innerHTML='<div style="color:#93B1B5;text-align:center;padding:30px;">No active orders.</div>'; return; }
-
-    const stColor={paid:'#2980B9',processing:'#e67e22',ready:'#27AE60'};
+    if(!orders.length){el.innerHTML='<div class="empty"><div class="ei">✅</div><p>No active orders.</p></div>';return;}
+    const stCls={paid:'badge-inprogress',processing:'badge-inprogress',ready:'badge-resolved'};
     const stLabel={paid:'💳 New',processing:'⚙️ Processing',ready:'✅ Ready!'};
     el.innerHTML=orders.map(o=>`
-      <div class="ord-row">
-        <div style="min-width:150px;">
-          <div style="color:#8E44AD;font-weight:900;font-size:13px;letter-spacing:1px;">${o.orderId}</div>
-          <div style="color:#93B1B5;font-size:11px;">${o.studentName} (${o.studentUserId})</div>
+      <div class="card mb-2">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+          <div><div style="color:var(--teal);font-weight:800;letter-spacing:1px;">${o.orderId}</div><div style="color:var(--muted);font-size:10px;">${o.studentName} · ${o.studentUserId}</div></div>
+          <span class="badge ${stCls[o.status]||''}">${stLabel[o.status]||o.status}</span>
         </div>
-        <div style="flex:1;display:flex;flex-wrap:wrap;gap:5px;">
-          ${o.items.map(i=>`<span style="background:rgba(184,227,233,.08);border:1px solid rgba(184,227,233,.12);border-radius:5px;padding:2px 7px;font-size:10px;color:#D0EEF2;">${i.name}${i.size?' ('+i.size+')':''} ×${i.qty}</span>`).join('')}
-        </div>
-        ${o.idCardReason?`<span style="color:#5DADE2;font-size:11px;">📋 ${o.idCardReason}</span>`:''}
-        <span style="background:${stColor[o.status]}22;color:${stColor[o.status]};border:1px solid ${stColor[o.status]}44;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;">${stLabel[o.status]}</span>
-        <span style="color:#27AE60;font-weight:800;">₹${o.total}</span>
-        <div style="display:flex;gap:6px;">
-          ${o.status==='paid'?`<button onclick="updateOrder('${o._id}','processing')" style="background:#e67e22;border:none;color:#fff;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;">Process</button>`:''}
-          ${o.status==='processing'?`<button onclick="updateOrder('${o._id}','ready')" style="background:#27AE60;border:none;color:#fff;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;">Ready</button>`:''}
-          ${o.status==='ready'?`<button onclick="updateOrder('${o._id}','collected')" style="background:#8E44AD;border:none;color:#fff;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;">Collected</button>`:''}
-          <button onclick="updateOrder('${o._id}','cancelled')" style="background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.3);color:#e74c3c;border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;">✕</button>
+        ${o.idCardReason?`<div class="info-box" style="font-size:10px;margin-bottom:8px;">ID Card: ${o.idCardReason}</div>`:''}
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">${o.items.map(i=>`<span class="info-box" style="margin:0;padding:2px 7px;display:inline-block;font-size:10px;">${i.name}${i.size?' ('+i.size+')':''} ×${i.qty}</span>`).join('')}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="color:#085041;font-weight:700;">₹${o.total}</span>
+          <div style="display:flex;gap:6px;">
+            ${o.status==='paid'?`<button class="btn-sm" style="background:#e4a200;border-color:#e4a200;color:#fff;" onclick="updOrder('${o._id}','processing')">Process</button>`:''}
+            ${o.status==='processing'?`<button class="btn-sm" style="background:#085041;border-color:#085041;color:#fff;" onclick="updOrder('${o._id}','ready')">Ready</button>`:''}
+            ${o.status==='ready'?`<button class="btn-sm" style="background:var(--teal);border-color:var(--teal);color:#fff;" onclick="updOrder('${o._id}','collected')">Collected</button>`:''}
+            <button class="btn-red" onclick="updOrder('${o._id}','cancelled')">✕</button>
+          </div>
         </div>
       </div>`).join('');
-  }catch(e){ showToast(e.message,'error'); }
+  }catch(e){showToast(e.message,'error');}
 }
-
-async function updateOrder(id,status){
-  try{ await apiFetch('/store/orders/'+id,{method:'PATCH',body:JSON.stringify({status})}); loadOrders(); showToast('Order updated','success'); }
-  catch(e){ showToast(e.message,'error'); }
-}
-
+async function updOrder(id,status){try{await apiFetch('/store/orders/'+id,{method:'PATCH',body:JSON.stringify({status})});loadOrders();showToast('Updated','success');}catch(e){showToast(e.message,'error');}}
 async function loadProducts(){
-  const el=document.getElementById('productsList');
+  const el=document.getElementById('productsList');el.innerHTML='<div class="empty"><div class="ei">⏳</div><p>Loading…</p></div>';
   try{
-    const data=await apiFetch('/store/products?type='+currentType);
-    const items=data.products||[];
-    if(!items.length){ el.innerHTML='<div style="color:#93B1B5;text-align:center;padding:30px;">No products yet. Click "Seed Default" to add starter items.</div>'; return; }
+    const data=await apiFetch('/store/products?type='+curType);const items=data.products||[];
+    if(!items.length){el.innerHTML='<div class="empty"><div class="ei">🏷️</div><p>No products yet. Click "Seed Default".</p></div>';return;}
     el.innerHTML=items.map(item=>`
-      <div style="background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px;">
-        <span style="font-size:24px;">${item.imageEmoji}</span>
-        <div style="flex:1;min-width:140px;">
-          <div style="color:#D0EEF2;font-weight:600;font-size:13px;">${item.name}</div>
-          <div style="color:#93B1B5;font-size:11px;">${item.category}${item.sizes?.length?' · '+item.sizes.join(', '):''}</div>
+      <div class="card mb-2 flex items-c gap-3" style="flex-wrap:wrap;">
+        <span style="font-size:22px;">${item.imageEmoji||'🏷️'}</span>
+        <div style="flex:1;min-width:140px;"><div style="font-weight:600;color:var(--navy);">${item.name}</div><div style="color:var(--muted);font-size:10px;">${item.category}${item.sizes?.length?' · '+item.sizes.join(', '):''}</div></div>
+        <div style="color:#085041;font-weight:700;">₹${item.price}</div>
+        <label class="tog"><input type="checkbox" ${item.isAvailable?'checked':''} onchange="toggleAvail('${item._id}',this.checked)"/><span class="tog-sl"></span></label>
+        <div style="display:flex;gap:5px;">
+          <button class="btn-sm" onclick='editItem(${JSON.stringify(item).replace(/"/g,"&quot;")})'>Edit</button>
+          <button class="btn-red" onclick="deleteItem('${item._id}','${item.name.replace(/'/g,"\'")}')">Del</button>
         </div>
-        <div style="color:#27AE60;font-weight:800;">₹${item.price}</div>
-        <label class="tog">
-          <input type="checkbox" ${item.isAvailable?'checked':''} onchange="toggleAvail('${item._id}',this.checked)"/>
-          <span class="tog-sl"></span>
-        </label>
-        <button onclick='editItem(${JSON.stringify(item).replace(/"/g,"&quot;")})' style="background:rgba(184,227,233,.08);border:1px solid rgba(184,227,233,.2);color:#93B1B5;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;">Edit</button>
-        <button onclick="deleteItem('${item._id}','${item.name.replace(/'/g,"\\'")}') " style="background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.25);color:#e74c3c;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;">Delete</button>
       </div>`).join('');
-  }catch(e){ el.innerHTML=`<div style="color:#e74c3c;">${e.message}</div>`; }
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
 }
-
-async function toggleAvail(id,val){
-  try{ await apiFetch('/store/products/'+id,{method:'PATCH',body:JSON.stringify({isAvailable:val})}); }
-  catch(e){ showToast(e.message,'error'); }
-}
-
-function showAddItem(){
-  document.getElementById('iName').value='';document.getElementById('iCategory').value='';
-  document.getElementById('iPrice').value='';document.getElementById('iSizes').value='';
-  document.getElementById('iEmoji').value='';document.getElementById('iDesc').value='';
-  document.getElementById('iEditId').value='';
-  document.getElementById('itemModalTitle').textContent='Add Product';
-  document.getElementById('addItemModal').style.display='flex';
-}
-function editItem(item){
-  document.getElementById('iName').value=item.name;
-  document.getElementById('iCategory').value=item.category;
-  document.getElementById('iPrice').value=item.price;
-  document.getElementById('iSizes').value=(item.sizes||[]).join(', ');
-  document.getElementById('iEmoji').value=item.imageEmoji||'';
-  document.getElementById('iDesc').value=item.description||'';
-  document.getElementById('iEditId').value=item._id;
-  document.getElementById('itemModalTitle').textContent='Edit Product';
-  document.getElementById('addItemModal').style.display='flex';
-}
-function closeAddItem(){ document.getElementById('addItemModal').style.display='none'; }
-
+async function toggleAvail(id,val){try{await apiFetch('/store/products/'+id,{method:'PATCH',body:JSON.stringify({isAvailable:val})});showToast(val?'Enabled':'Disabled','success');}catch(e){showToast(e.message,'error');}}
+function showAddItem(){['iName','iCategory','iPrice','iSizes','iEmoji','iDesc'].forEach(id=>document.getElementById(id).value='');document.getElementById('iEditId').value='';document.getElementById('itemModalTitle').textContent='Add Product';openModal('addItemModal');}
+function editItem(item){document.getElementById('iName').value=item.name;document.getElementById('iCategory').value=item.category;document.getElementById('iPrice').value=item.price;document.getElementById('iSizes').value=(item.sizes||[]).join(', ');document.getElementById('iEmoji').value=item.imageEmoji||'';document.getElementById('iDesc').value=item.description||'';document.getElementById('iEditId').value=item._id;document.getElementById('itemModalTitle').textContent='Edit Product';openModal('addItemModal');}
 async function saveItem(){
   const id=document.getElementById('iEditId').value;
-  const sizesRaw=document.getElementById('iSizes').value.trim();
-  const body={
-    type: currentType,
-    name:document.getElementById('iName').value.trim(),
-    category:document.getElementById('iCategory').value.trim(),
-    price:+document.getElementById('iPrice').value,
-    sizes: sizesRaw ? sizesRaw.split(',').map(s=>s.trim()).filter(Boolean) : [],
-    imageEmoji:document.getElementById('iEmoji').value.trim()||'🛍️',
-    description:document.getElementById('iDesc').value.trim(),
-  };
-  if(!body.name||!body.category||!body.price) return showToast('Name, category, and price are required','warning');
-  try{
-    if(id) await apiFetch('/store/products/'+id,{method:'PATCH',body:JSON.stringify(body)});
-    else   await apiFetch('/store/products',{method:'POST',body:JSON.stringify(body)});
-    closeAddItem(); loadProducts();
-    showToast('Product saved!','success');
-  }catch(e){ showToast(e.message,'error'); }
+  const sz=document.getElementById('iSizes').value.trim();
+  const body={type:curType,name:document.getElementById('iName').value.trim(),category:document.getElementById('iCategory').value.trim(),price:+document.getElementById('iPrice').value,sizes:sz?sz.split(',').map(s=>s.trim()).filter(Boolean):[],imageEmoji:document.getElementById('iEmoji').value.trim()||'🏷️',description:document.getElementById('iDesc').value.trim()};
+  if(!body.name||!body.category||!body.price)return showToast('Name, category and price required','warning');
+  try{if(id)await apiFetch('/store/products/'+id,{method:'PATCH',body:JSON.stringify(body)});else await apiFetch('/store/products',{method:'POST',body:JSON.stringify(body)});closeModal('addItemModal');loadProducts();showToast('Saved!','success');}catch(e){showToast(e.message,'error');}
 }
-
-async function deleteItem(id,name){
-  if(!confirm(`Delete "${name}"?`)) return;
-  try{ await apiFetch('/store/products/'+id,{method:'DELETE'}); loadProducts(); showToast('Deleted','success'); }
-  catch(e){ showToast(e.message,'error'); }
-}
-
-async function seedProducts(){
-  if(!confirm('Seed default '+currentType+' products?')) return;
-  try{ const d=await apiFetch('/store/products/seed?type='+currentType,{method:'POST'}); showToast(d.message,'success'); loadProducts(); }
-  catch(e){ showToast(e.message,'error'); }
-}
-
-loadOrders();
-setInterval(()=>{ if(document.getElementById('v-orders').classList.contains('active')) loadOrders(); },20000);
+async function deleteItem(id,name){if(!confirm(`Delete "${name}"?`))return;try{await apiFetch('/store/products/'+id,{method:'DELETE'});loadProducts();showToast('Deleted','success');}catch(e){showToast(e.message,'error');}}
+async function seedProducts(){if(!confirm('Seed default '+curType+' products?'))return;try{const d=await apiFetch('/store/products/seed?type='+curType,{method:'POST'});showToast(d.message,'success');loadProducts();}catch(e){showToast(e.message,'error');}}
+loadOrders();setInterval(()=>{if(document.getElementById('v-orders').classList.contains('active'))loadOrders();},20000);
 </script>
 </body></html>

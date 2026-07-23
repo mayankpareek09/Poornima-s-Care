@@ -5,45 +5,40 @@
 <link rel="stylesheet" href="../css/main.css"/>
 <script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
 <script src="../js/embed-helper.js"></script>
+
 <style>
-.mess-hero{background:linear-gradient(135deg,#0B2E33,#2C1A3A);padding:24px 28px;border-radius:16px;margin-bottom:24px;}
-.mess-hero h1{color:#fff;font-size:22px;margin:0 0 4px;}
-.mess-hero p{color:#93B1B5;font-size:12px;margin:0;}
-.date-nav{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
-.date-nav button{background:rgba(184,227,233,.08);border:1px solid rgba(184,227,233,.2);color:#93B1B5;padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;}
-.date-nav .cur-date{color:#D0EEF2;font-weight:700;font-size:14px;}
-.meal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:28px;}
-.meal-card{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:14px;overflow:hidden;}
-.meal-hdr{padding:14px 16px;display:flex;align-items:center;gap:10px;}
-.meal-emoji{font-size:24px;}
-.meal-label{color:#D0EEF2;font-weight:700;font-size:14px;}
-.meal-timing{color:#93B1B5;font-size:11px;}
-.meal-body{padding:0 16px 16px;}
-.meal-items{color:#93B1B5;font-size:12px;line-height:1.8;}
-.meal-item{padding:3px 0;border-bottom:1px solid rgba(184,227,233,.06);color:#D0EEF2;}
+.tog{position:relative;display:inline-block;width:36px;height:20px;}
+.tog input{opacity:0;width:0;height:0;}
+.tog-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.2s;}
+.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.tog input:checked+.tog-sl{background:var(--teal);}
+.tog input:checked+.tog-sl:before{transform:translateX(16px);}
+
+.meal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:24px;}
+.meal-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);}
+.meal-hdr{padding:12px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e8f4f6;}
+.meal-emoji{font-size:22px;}
+.meal-label{color:var(--navy);font-weight:700;font-size:13px;}
+.meal-timing{color:var(--muted);font-size:10px;margin-top:2px;}
+.meal-body{padding:10px 14px;}
+.meal-item{padding:4px 0;border-bottom:1px solid #e8f4f6;font-size:12px;color:var(--navy);}
 .meal-item:last-child{border:none;}
-/* Token section */
-.token-section{background:#0D2A2E;border:1px solid rgba(184,227,233,.15);border-radius:16px;padding:24px;margin-bottom:24px;}
-.token-section h3{color:#D0EEF2;margin:0 0 8px;font-size:16px;}
-.token-section p{color:#93B1B5;font-size:12px;margin:0 0 20px;line-height:1.5;}
-.meal-token-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
-.meal-token-card{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;}
-.meal-token-card:hover{border-color:#1A7A82;}
-.meal-token-card.selected{border-color:#1A7A82;background:#1A7A8215;}
-.mtc-emoji{font-size:28px;margin-bottom:8px;}
-.mtc-name{color:#D0EEF2;font-weight:700;font-size:13px;margin-bottom:4px;}
-.mtc-time{color:#93B1B5;font-size:11px;margin-bottom:8px;}
-.mtc-price{color:#27AE60;font-weight:900;font-size:18px;}
-/* Token ticket */
-.mess-ticket{background:#0D2A2E;border:2px dashed #8E44AD;border-radius:14px;padding:20px;text-align:center;max-width:340px;margin:0 auto;}
-.mess-token-code{font-size:22px;font-weight:900;letter-spacing:2px;color:#8E44AD;margin:8px 0;}
+.tok-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;transition:all .18s;}
+.tok-card:hover{border-color:var(--teal);}
+.tok-card.selected{border-color:var(--teal);background:#e8f6f8;}
+.tok-emoji{font-size:28px;margin-bottom:6px;}
+.tok-name{color:var(--navy);font-weight:700;font-size:13px;margin-bottom:3px;}
+.tok-time{color:var(--muted);font-size:10px;margin-bottom:6px;}
+.tok-price{color:#085041;font-weight:900;font-size:17px;}
+.mess-ticket{background:var(--inp-bg);border:2px dashed var(--teal);border-radius:var(--r-lg);padding:20px;text-align:center;max-width:320px;margin:0 auto;}
+.mess-token-code{font-size:20px;font-weight:900;color:var(--teal);letter-spacing:2px;margin:6px 0;}
+@media(max-width:600px){.meal-grid{grid-template-columns:1fr;}}
+
 </style>
-</head>
-<body>
+</head><body>
 <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
 <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 <div class="admin-wrap">
-
 <div class="admin-sb">
   <div class="asb-top">
     <div class="asb-logo">Poornima's <span>Care</span></div>
@@ -51,282 +46,188 @@
     <div class="asb-nm" id="sbNm">—</div>
     <div class="asb-id" id="sbId">—</div>
   </div>
+  
   <div class="asb-sec">Mess</div>
   <div class="asb-link active" id="nl-menu" onclick="showView('menu',this)"><span class="asb-ic">🍛</span> Today's Menu</div>
-  <div class="asb-link" id="nl-tokens" onclick="showView('tokens',this)"><span class="asb-ic">🎫</span> My Tokens</div>
+  <div class="asb-link" id="nl-tokens" onclick="showView('tokens',this);loadMyTokens()"><span class="asb-ic">🎫</span> My Tokens</div>
   <div class="asb-sec">Navigate</div>
   <div class="asb-link" onclick="pcGoToPortalHome()"><span class="asb-ic">🏠</span> Back to Portal</div>
   <div class="asb-link" onclick="pcNavigate('pu-canteen.html')"><span class="asb-ic">🍽️</span> PU Canteen</div>
   <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
-    <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
+    <button class="btn-p full" style="font-size:11px;padding:8px;" onclick="signOut()">Sign Out</button>
   </div>
 </div>
-
 <div class="admin-main">
 <div class="page-body">
 
-<!-- MENU VIEW -->
 <div id="v-menu" class="sec active">
-  <div class="mess-hero">
-    <h1>🍛 PU Mess — Today's Menu</h1>
-    <p>Hostlers eat free with their hostel card. Day scholars & staff buy a token below.</p>
-  </div>
-
-  <div class="date-nav">
-    <button onclick="changeDate(-1)">← Previous</button>
-    <span class="cur-date" id="curDateLabel">—</span>
-    <button onclick="changeDate(1)" id="nextDayBtn">Next →</button>
-  </div>
-
-  <div id="menuNotice" style="display:none;background:#e67e2215;border:1px solid #e67e2244;border-radius:10px;padding:12px 16px;margin-bottom:16px;color:#e67e22;font-size:12px;font-weight:600;"></div>
-
-  <div id="mealGrid" class="meal-grid">
-    <div style="color:#93B1B5;font-size:13px;">Loading menu…</div>
-  </div>
-
-  <!-- Token purchase section for day scholars/staff -->
-  <div id="tokenSection" class="token-section">
-    <h3>🎫 Buy a Mess Token</h3>
-    <p>Day scholars and staff members need a token to enter the mess. Select your meal, pay, and show the token at the gate. Tokens are valid only for today.</p>
-
-    <div style="margin-bottom:16px;">
-      <label style="color:#93B1B5;font-size:12px;display:block;margin-bottom:8px;">I am a:</label>
-      <div style="display:flex;gap:10px;">
-        <label style="display:flex;align-items:center;gap:6px;color:#D0EEF2;font-size:13px;cursor:pointer;">
-          <input type="radio" name="userType" value="day_scholar" checked style="accent-color:#1A7A82;"/> Day Scholar
-        </label>
-        <label style="display:flex;align-items:center;gap=6px;color:#D0EEF2;font-size:13px;cursor:pointer;margin-left:10px;">
-          <input type="radio" name="userType" value="staff" style="accent-color:#1A7A82;"/> Staff / Teacher
-        </label>
-      </div>
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">🍛 PU Mess</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="btn-sec" onclick="changeDate(-1)">← Prev</button>
+      <span id="curDateLabel" style="font-size:12px;font-weight:700;color:var(--navy);">—</span>
+      <button class="btn-sec" id="nextDayBtn" onclick="changeDate(1)">Next →</button>
     </div>
+  </div>
+  <div class="admin-body">
+    <div id="menuNotice" class="info-box" style="display:none;"></div>
+    <div id="mealGrid" class="meal-grid"><div class="empty"><div class="ei">🍛</div><p>Loading menu…</p></div></div>
 
-    <div class="meal-token-grid" id="mealTokenGrid">
-      <!-- Rendered by JS -->
-    </div>
-
-    <div id="selectedMealInfo" style="display:none;margin-top:16px;background:rgba(184,227,233,.05);border:1px solid rgba(184,227,233,.15);border-radius:10px;padding:16px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-        <div>
-          <div style="color:#D0EEF2;font-weight:700;" id="selMealName">—</div>
-          <div style="color:#93B1B5;font-size:12px;" id="selMealTime">—</div>
+    <div id="tokenSection">
+      <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px;">🎫 Buy a Mess Token</div>
+      <div class="info-box mb-3">Day scholars and staff need a token to enter the mess. Select your meal, pay, and show the token at the gate. Tokens are valid only for today.</div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:11px;font-weight:600;color:var(--teal);display:block;margin-bottom:8px;">I AM A:</label>
+        <div style="display:flex;gap:14px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;"><input type="radio" name="userType" value="day_scholar" checked style="accent-color:var(--teal);"/> Day Scholar</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;"><input type="radio" name="userType" value="staff" style="accent-color:var(--teal);"/> Staff / Teacher</label>
         </div>
-        <div style="color:#27AE60;font-weight:900;font-size:20px;" id="selMealPrice">₹—</div>
       </div>
-      <button class="btn-p" style="width:100%;padding:11px;font-size:14px;" id="buyTokenBtn" onclick="buyToken()">
-        Pay &amp; Get Token →
-      </button>
-      <p style="color:#93B1B5;font-size:11px;text-align:center;margin:8px 0 0;">Payment is simulated — no real charge</p>
+      <div id="mealTokenGrid" class="g4 mb-3"></div>
+      <div id="selectedMealInfo" style="display:none;">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div><div id="selMealName" style="font-weight:700;color:var(--navy);">—</div><div id="selMealTime" style="color:var(--muted);font-size:11px;">—</div></div>
+            <div id="selMealPrice" style="color:#085041;font-weight:900;font-size:20px;">₹—</div>
+          </div>
+          <button id="buyTokenBtn" class="btn-p full" onclick="buyToken()">Pay &amp; Get Token →</button>
+          <p style="color:var(--muted);font-size:10px;text-align:center;margin-top:8px;">Payment is simulated — no real charge</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- MY TOKENS VIEW -->
 <div id="v-tokens" class="sec">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-    <h2 style="color:#D0EEF2;margin:0;">🎫 My Mess Tokens</h2>
-    <button class="btn-p" style="font-size:11px;padding:7px 14px;" onclick="loadMyTokens()">↻ Refresh</button>
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">🎫 My Tokens</div>
+    <button class="btn-sec" onclick="loadMyTokens()">↻ Refresh</button>
   </div>
-  <div id="myTokensList"><div style="color:#93B1B5;font-size:13px;">Loading…</div></div>
+  <div class="admin-body" id="myTokensList"><div class="empty"><div class="ei">🎫</div><p>Loading…</p></div></div>
 </div>
 
-</div></div></div>
+</div>
 
-<!-- TOKEN SUCCESS MODAL -->
-<div id="tokenSuccessModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#0B2E33;border:1px solid rgba(184,227,233,.15);border-radius:20px;padding:28px;max-width:400px;width:100%;text-align:center;">
-    <div style="font-size:48px;margin-bottom:12px;">🎫</div>
-    <h2 style="color:#8E44AD;margin:0 0 8px;">Token Issued!</h2>
-    <p style="color:#93B1B5;font-size:13px;margin:0 0 24px;">Show this at the mess entry gate.</p>
+<div id="tokenSuccessModal" class="modal-ov">
+  <div class="modal-box" style="text-align:center;max-width:360px;">
+    <div style="font-size:44px;margin-bottom:10px;">🎫</div>
+    <div class="modal-title">Token Issued!</div>
+    <div class="modal-sub">Show this at the mess entry gate.</div>
     <div class="mess-ticket" id="tokenTicket"></div>
-    <button class="btn-p" style="width:100%;margin-top:20px;" onclick="closeTokenModal()">Done</button>
+    <button class="btn-p full mt-4" onclick="closeModal('tokenSuccessModal')">Done</button>
   </div>
 </div>
-
-<script src="../js/api.js"></script>
-<script src="../js/features.js"></script>
+</div></div>
+<script src="../js/api.js"></script><script src="../js/features.js"></script>
 <script>
-const user = requireAuth(['student','academic_admin','hostel_admin','campus_admin',
-                          'laundry_admin','canteen_admin','mess_admin','super_admin','faculty']);
-if (!user) throw new Error('not auth');
+const user=requireAuth(['student','academic_admin','hostel_admin','campus_admin','laundry_admin','canteen_admin','mess_admin','store_admin','super_admin','faculty','guard']);
+if(!user)throw new Error('auth');
+document.getElementById('tnAv').textContent=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+document.getElementById('sbNm').textContent=user.name;
+document.getElementById('sbId').textContent=user.userId;
+function toggleSidebar(){document.querySelector('.admin-sb').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active');}
+function showView(id,el){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));document.getElementById('v-'+id).classList.add('active');if(el)el.classList.add('active');}
 
-document.getElementById('tnAv').textContent = user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-document.getElementById('sbNm').textContent = user.name;
-document.getElementById('sbId').textContent = user.userId;
-
-let currentDate = new Date().toISOString().slice(0,10);
-let selectedMeal = null;
-const today = new Date().toISOString().slice(0,10);
-
-const MEALS = [
-  { key:'breakfast', label:'Breakfast', emoji:'🥞', timing:'7:30 AM – 9:00 AM' },
-  { key:'lunch',     label:'Lunch',     emoji:'🍛', timing:'12:30 PM – 2:00 PM' },
-  { key:'snacks',    label:'Snacks',    emoji:'🍪', timing:'5:00 PM – 6:00 PM' },
-  { key:'dinner',    label:'Dinner',    emoji:'🍚', timing:'7:30 PM – 9:00 PM' },
+let currentDate=new Date().toISOString().slice(0,10);
+const today=new Date().toISOString().slice(0,10);
+let selectedMeal=null;
+const MEALS=[
+  {key:'breakfast',label:'Breakfast',emoji:'🥞',timing:'7:30 AM – 9:00 AM'},
+  {key:'lunch',label:'Lunch',emoji:'🍛',timing:'12:30 PM – 2:00 PM'},
+  {key:'snacks',label:'Snacks',emoji:'🍪',timing:'5:00 PM – 6:00 PM'},
+  {key:'dinner',label:'Dinner',emoji:'🍚',timing:'7:30 PM – 9:00 PM'},
 ];
 
-function showView(id, el) {
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
-  document.getElementById('v-'+id).classList.add('active');
-  if(el) el.classList.add('active');
-  if(id==='tokens') loadMyTokens();
+function updateDateLabel(){
+  const d=new Date(currentDate+'T00:00:00');
+  document.getElementById('curDateLabel').textContent=d.toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short'});
+  document.getElementById('nextDayBtn').disabled=currentDate>=today;
+}
+function changeDate(delta){
+  const d=new Date(currentDate+'T00:00:00');d.setDate(d.getDate()+delta);
+  const nd=d.toISOString().slice(0,10);
+  if(delta>0&&nd>today)return;
+  currentDate=nd;updateDateLabel();loadMenu();
 }
 
-function toggleSidebar() {
-  document.querySelector('.admin-sb').classList.toggle('open');
-  document.querySelector('.sidebar-overlay').classList.toggle('active');
-}
-
-function updateDateLabel() {
-  const d    = new Date(currentDate+'T00:00:00');
-  const opts = { weekday:'long', day:'2-digit', month:'long', year:'numeric' };
-  document.getElementById('curDateLabel').textContent = d.toLocaleDateString('en-IN', opts);
-  // Disable next if today
-  document.getElementById('nextDayBtn').disabled = (currentDate >= today);
-  document.getElementById('nextDayBtn').style.opacity = currentDate >= today ? '.4' : '1';
-}
-
-function changeDate(delta) {
-  const d = new Date(currentDate+'T00:00:00');
-  d.setDate(d.getDate()+delta);
-  const newDate = d.toISOString().slice(0,10);
-  if (delta > 0 && newDate > today) return; // don't go to future
-  currentDate = newDate;
-  updateDateLabel();
-  loadMenu();
-}
-
-// ── Load menu ──────────────────────────────────
-async function loadMenu() {
-  document.getElementById('mealGrid').innerHTML='<div style="color:#93B1B5;font-size:13px;">Loading…</div>';
-  try {
-    const data = await apiFetch('/mess/menu?date='+currentDate);
-    const menu = data.menu;
-    const prices = data.prices || { breakfast:30, lunch:60, snacks:20, dinner:50 };
-
-    // Notice
-    const noticeEl = document.getElementById('menuNotice');
-    if (menu.notice) { noticeEl.textContent = '📢 ' + menu.notice; noticeEl.style.display='block'; }
+async function loadMenu(){
+  document.getElementById('mealGrid').innerHTML='<div class="empty"><div class="ei">⏳</div><p>Loading…</p></div>';
+  try{
+    const data=await apiFetch('/mess/menu?date='+currentDate);
+    const menu=data.menu;const prices=data.prices||{breakfast:30,lunch:60,snacks:20,dinner:50};
+    const noticeEl=document.getElementById('menuNotice');
+    if(menu.notice){noticeEl.textContent='📢 '+menu.notice;noticeEl.style.display='block';}
     else noticeEl.style.display='none';
-
-    // Meal cards
-    document.getElementById('mealGrid').innerHTML = MEALS.map(m=>{
-      const meal = menu[m.key] || {};
-      const items = (meal.items||'Not posted yet').split(',').map(s=>s.trim()).filter(Boolean);
+    document.getElementById('mealGrid').innerHTML=MEALS.map(m=>{
+      const meal=menu[m.key]||{};
+      const items=(meal.items||'Not posted yet').split(',').map(s=>s.trim()).filter(Boolean);
       return `<div class="meal-card">
-        <div class="meal-hdr">
-          <span class="meal-emoji">${m.emoji}</span>
-          <div>
-            <div class="meal-label">${m.label}</div>
-            <div class="meal-timing">${meal.timing||m.timing}</div>
-          </div>
-        </div>
-        <div class="meal-body">
-          ${items.map(i=>`<div class="meal-item">${i}</div>`).join('')}
-        </div>
+        <div class="meal-hdr"><span class="meal-emoji">${m.emoji}</span><div><div class="meal-label">${m.label}</div><div class="meal-timing">${meal.timing||m.timing}</div></div></div>
+        <div class="meal-body">${items.map(i=>`<div class="meal-item">${i}</div>`).join('')}</div>
       </div>`;
     }).join('');
-
-    // Token purchase grid (only for today)
-    const tsEl = document.getElementById('tokenSection');
-    if (currentDate === today) {
+    const tsEl=document.getElementById('tokenSection');
+    if(currentDate===today){
       tsEl.style.display='block';
-      document.getElementById('mealTokenGrid').innerHTML = MEALS.map(m=>`
-        <div class="meal-token-card" id="mtc-${m.key}" onclick="selectMeal('${m.key}','${m.label}','${MEALS.find(x=>x.key===m.key).timing}',${prices[m.key]||0})">
-          <div class="mtc-emoji">${m.emoji}</div>
-          <div class="mtc-name">${m.label}</div>
-          <div class="mtc-time">${MEALS.find(x=>x.key===m.key).timing}</div>
-          <div class="mtc-price">₹${prices[m.key]||0}</div>
+      document.getElementById('mealTokenGrid').innerHTML=MEALS.map(m=>`
+        <div class="tok-card" id="mtc-${m.key}" onclick="selectMeal('${m.key}','${m.label}','${m.timing}',${prices[m.key]||0})">
+          <div class="tok-emoji">${m.emoji}</div><div class="tok-name">${m.label}</div>
+          <div class="tok-time">${m.timing}</div><div class="tok-price">₹${prices[m.key]||0}</div>
         </div>`).join('');
-    } else {
-      tsEl.style.display='none';
-    }
-  } catch(e) {
-    document.getElementById('mealGrid').innerHTML=`<div style="color:#e74c3c;font-size:13px;">${e.message}</div>`;
-  }
+    }else tsEl.style.display='none';
+  }catch(e){document.getElementById('mealGrid').innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
 }
 
-function selectMeal(key, label, timing, price) {
-  selectedMeal = { key, label, timing, price };
-  document.querySelectorAll('.meal-token-card').forEach(c=>c.classList.remove('selected'));
+function selectMeal(key,label,timing,price){
+  selectedMeal={key,label,timing,price};
+  document.querySelectorAll('.tok-card').forEach(c=>c.classList.remove('selected'));
   document.getElementById('mtc-'+key).classList.add('selected');
-  document.getElementById('selMealName').textContent  = label;
-  document.getElementById('selMealTime').textContent  = timing;
-  document.getElementById('selMealPrice').textContent = '₹'+price;
+  document.getElementById('selMealName').textContent=label;
+  document.getElementById('selMealTime').textContent=timing;
+  document.getElementById('selMealPrice').textContent='₹'+price;
   document.getElementById('selectedMealInfo').style.display='block';
 }
 
-async function buyToken() {
-  if (!selectedMeal) return showToast('Select a meal first','warning');
-  const userType = document.querySelector('input[name="userType"]:checked').value;
-  const btn = document.getElementById('buyTokenBtn');
-  btn.disabled = true; btn.textContent = 'Processing…';
-  try {
-    const data = await apiFetch('/mess/tokens', {
-      method:'POST',
-      body: JSON.stringify({ meal: selectedMeal.key, userType })
-    });
-    btn.disabled=false; btn.textContent='Pay & Get Token →';
-    showTokenTicket(data.token);
-  } catch(e) {
-    btn.disabled=false; btn.textContent='Pay & Get Token →';
-    showToast(e.message,'error');
-  }
+async function buyToken(){
+  if(!selectedMeal)return showToast('Select a meal first','warning');
+  const userType=document.querySelector('input[name="userType"]:checked').value;
+  const btn=document.getElementById('buyTokenBtn');
+  btn.disabled=true;btn.textContent='Processing…';
+  try{
+    const data=await apiFetch('/mess/tokens',{method:'POST',body:JSON.stringify({meal:selectedMeal.key,userType})});
+    btn.disabled=false;btn.textContent='Pay & Get Token →';
+    const t=data.token;const mInfo=MEALS.find(m=>m.key===t.meal)||{};
+    document.getElementById('tokenTicket').innerHTML=`
+      <div style="color:var(--muted);font-size:11px;">MESS TOKEN</div>
+      <div class="mess-token-code">${t.token}</div>
+      <div style="margin-bottom:12px;"><div style="font-weight:700;color:var(--navy);">${mInfo.emoji||'🍛'} ${t.meal.charAt(0).toUpperCase()+t.meal.slice(1)}</div><div style="color:var(--muted);font-size:10px;">${mInfo.timing||''}</div></div>
+      <hr/>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:3px 0;"><span>Name</span><b style="color:var(--navy);">${t.userName}</b></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:3px 0;"><span>Reg No</span><b style="color:var(--navy);">${t.userRegNo}</b></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:3px 0;"><span>Valid For</span><b style="color:var(--navy);">${t.date}</b></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:3px 0;"><span>Paid</span><b style="color:#085041;">₹${t.price}</b></div>`;
+    openModal('tokenSuccessModal');
+  }catch(e){btn.disabled=false;btn.textContent='Pay & Get Token →';showToast(e.message,'error');}
 }
 
-function showTokenTicket(token) {
-  const mealInfo = MEALS.find(m=>m.key===token.meal)||{};
-  document.getElementById('tokenTicket').innerHTML = `
-    <div style="color:#93B1B5;font-size:12px;">MESS TOKEN</div>
-    <div class="mess-token-code">${token.token}</div>
-    <div style="margin-bottom:16px;">
-      <div style="color:#D0EEF2;font-weight:700;font-size:15px;">${mealInfo.emoji||'🍛'} ${token.meal.charAt(0).toUpperCase()+token.meal.slice(1)}</div>
-      <div style="color:#93B1B5;font-size:11px;">${mealInfo.timing||''}</div>
-    </div>
-    <div style="border-top:1px dashed #8E44AD;margin:12px 0;"></div>
-    <div style="display:flex;justify-content:space-between;font-size:12px;color:#93B1B5;padding:4px 0;"><span>Name</span><b style="color:#D0EEF2;">${token.userName}</b></div>
-    <div style="display:flex;justify-content:space-between;font-size:12px;color:#93B1B5;padding:4px 0;"><span>Reg No</span><b style="color:#D0EEF2;">${token.userRegNo}</b></div>
-    <div style="display:flex;justify-content:space-between;font-size:12px;color:#93B1B5;padding:4px 0;"><span>Valid For</span><b style="color:#D0EEF2;">${token.date}</b></div>
-    <div style="display:flex;justify-content:space-between;font-size:12px;color:#93B1B5;padding:4px 0;"><span>Paid</span><b style="color:#27AE60;">₹${token.price}</b></div>
-    <div style="color:#93B1B5;font-size:11px;margin-top:12px;">Valid today only</div>`;
-  document.getElementById('tokenSuccessModal').style.display='flex';
-}
-
-function closeTokenModal() { document.getElementById('tokenSuccessModal').style.display='none'; }
-
-// ── My Tokens ──────────────────────────────────
-async function loadMyTokens() {
-  const el = document.getElementById('myTokensList');
-  el.innerHTML='<div style="color:#93B1B5;font-size:13px;">Loading…</div>';
-  try {
-    const data = await apiFetch('/mess/tokens/my');
-    const tokens = data.tokens||[];
-    if (!tokens.length) {
-      el.innerHTML='<div style="color:#93B1B5;text-align:center;padding:40px;">No tokens yet. Buy your first mess token!</div>';
-      return;
-    }
-    const stColors={active:'#27AE60',used:'#93B1B5',expired:'#e74c3c'};
+async function loadMyTokens(){
+  const el=document.getElementById('myTokensList');
+  el.innerHTML='<div class="empty"><div class="ei">⏳</div><p>Loading…</p></div>';
+  try{
+    const data=await apiFetch('/mess/tokens/my');const tokens=data.tokens||[];
+    if(!tokens.length){el.innerHTML='<div class="empty"><div class="ei">🎫</div><p>No tokens yet.</p></div>';return;}
+    const stColors={active:'var(--green)',used:'var(--muted)',expired:'var(--red)'};
     const stLabel={active:'✅ Active',used:'✔ Used',expired:'⌛ Expired'};
-    el.innerHTML=tokens.map(t=>{
-      const mInfo = MEALS.find(m=>m.key===t.meal)||{};
-      return `<div style="background:#112D32;border:1px solid rgba(184,227,233,.12);border-left:3px solid ${stColors[t.status]};border-radius:12px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-        <div style="min-width:160px;">
-          <div style="color:#8E44AD;font-weight:900;font-size:14px;letter-spacing:1px;">${t.token}</div>
-          <div style="color:#93B1B5;font-size:11px;">${t.date}</div>
-        </div>
-        <div style="flex:1;">
-          <div style="color:#D0EEF2;font-weight:600;">${mInfo.emoji||'🍛'} ${t.meal.charAt(0).toUpperCase()+t.meal.slice(1)}</div>
-          <div style="color:#93B1B5;font-size:11px;">${mInfo.timing||''}</div>
-        </div>
-        <span style="background:${stColors[t.status]}22;color:${stColors[t.status]};border:1px solid ${stColors[t.status]}44;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;">${stLabel[t.status]}</span>
-        <span style="color:#27AE60;font-weight:700;">₹${t.price}</span>
-      </div>`;
-    }).join('');
-  } catch(e) { el.innerHTML=`<div style="color:#e74c3c;">${e.message}</div>`; }
+    const mealEmoji={breakfast:'🥞',lunch:'🍛',snacks:'🍪',dinner:'🍚'};
+    el.innerHTML=tokens.map(t=>`
+      <div class="card mb-2 flex items-c gap-3" style="flex-wrap:wrap;">
+        <div style="min-width:160px;"><div style="color:var(--teal);font-weight:900;font-size:13px;letter-spacing:1px;">${t.token}</div><div style="color:var(--muted);font-size:10px;">${t.date}</div></div>
+        <div style="flex:1;"><div style="font-weight:600;color:var(--navy);">${mealEmoji[t.meal]||'🍛'} ${t.meal.charAt(0).toUpperCase()+t.meal.slice(1)}</div><div style="color:var(--muted);font-size:10px;">${MEALS.find(m=>m.key===t.meal)?.timing||''}</div></div>
+        <span class="badge" style="background:${stColors[t.status]}22;color:${stColors[t.status]};border:1px solid ${stColors[t.status]}44;">${stLabel[t.status]}</span>
+        <span style="color:#085041;font-weight:700;">₹${t.price}</span>
+      </div>`).join('');
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
 }
-
-updateDateLabel();
-loadMenu();
+updateDateLabel();loadMenu();
 </script>
 </body></html>

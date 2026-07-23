@@ -4,22 +4,21 @@
 <title>Faculty Portal — Poornima's Care</title>
 <link rel="stylesheet" href="../css/main.css"/>
 <script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<script src="../js/embed-helper.js"></script>
 <style>
-.fp-header{background:linear-gradient(135deg,#0B2E33,#1A2A4A);padding:24px 28px;border-radius:16px;margin-bottom:24px;}
-.fp-header h1{color:#fff;font-size:20px;margin:0;}
-.fp-header p{color:#93B1B5;font-size:12px;margin:4px 0 0;}
-.fp-form{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:14px;padding:20px;margin-bottom:24px;}
-.fp-input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:10px;}
+.tog{position:relative;display:inline-block;width:36px;height:20px;}
+.tog input{opacity:0;width:0;height:0;}
+.tog-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.2s;}
+.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.tog input:checked+.tog-sl{background:var(--teal);}
+.tog input:checked+.tog-sl:before{transform:translateX(16px);}
+
 .slot-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center;}
-.slot-row select,.slot-row input{background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:8px 10px;border-radius:8px;font-size:12px;}
-.req-card{background:#112D32;border:1px solid rgba(184,227,233,.12);border-radius:12px;padding:16px;margin-bottom:10px;}
-.st-pending{background:#2980B922;color:#2980B9;}
-.st-accepted{background:#27AE6022;color:#27AE60;}
-.st-rejected{background:#e74c3c22;color:#e74c3c;}
-.st-cancelled{background:#93B1B522;color:#93B1B5;}
+.slot-row select,.slot-row input{border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--navy);background:var(--inp-bg);font-family:'Sora',sans-serif;outline:none;}
+.slot-row select:focus,.slot-row input:focus{border-color:var(--teal);}
+
 </style>
-</head>
-<body>
+</head><body>
 <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
 <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 <div class="admin-wrap">
@@ -28,189 +27,118 @@
     <div class="asb-logo">Poornima's <span>Care</span></div>
     <div class="asb-av" id="tnAv">—</div>
     <div class="asb-nm" id="sbNm">—</div>
-    <div class="asb-id" id="sbId">Faculty</div>
+    <div class="asb-id" id="sbId">—</div>
   </div>
+  
   <div class="asb-sec">Appointments</div>
   <div class="asb-link active" id="nl-requests" onclick="showView('requests',this)"><span class="asb-ic">📥</span> Requests</div>
-  <div class="asb-link" id="nl-availability" onclick="showView('availability',this)"><span class="asb-ic">🗓️</span> My Availability</div>
+  <div class="asb-link" id="nl-availability" onclick="showView('availability',this);loadProfile()"><span class="asb-ic">🗓️</span> My Availability</div>
   <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
-    <button class="btn-p" style="width:100%;font-size:11px;padding:7px;" onclick="signOut()">Sign Out</button>
+    <button class="btn-p full" style="font-size:11px;padding:8px;" onclick="signOut()">Sign Out</button>
   </div>
 </div>
-<div class="admin-main">
-<div class="page-body">
-
-<!-- REQUESTS -->
+<div class="admin-main"><div class="page-body">
 <div id="v-requests" class="sec active">
-  <div class="fp-header">
-    <h1>📥 Appointment Requests</h1>
-    <p>Accept or reject student appointment requests</p>
-  </div>
-  <div id="requestsList"><div style="color:#93B1B5;font-size:13px;">Loading…</div></div>
+  <div class="admin-hdr"><div class="admin-hdr-t">📥 Appointment Requests</div><button class="btn-sec" onclick="loadRequests()">↻</button></div>
+  <div class="admin-body" id="requestsList"><div class="empty"><div class="ei">📥</div><p>Loading…</p></div></div>
 </div>
-
-<!-- AVAILABILITY -->
 <div id="v-availability" class="sec">
-  <div class="admin-hdr">
-    <div class="admin-hdr-t">🗓️ My Availability</div>
-  </div>
-
-  <div class="fp-form">
-    <input class="fp-input" id="fDept" placeholder="Department (e.g. Computer Science)"/>
-    <input class="fp-input" id="fDesignation" placeholder="Designation (e.g. Assistant Professor)"/>
-
-    <div style="color:#93B1B5;font-size:12px;font-weight:700;margin:16px 0 10px;">WEEKLY SLOTS</div>
-    <div id="slotsContainer"></div>
-    <button onclick="addSlotRow()" style="background:rgba(184,227,233,.08);border:1px solid rgba(184,227,233,.2);color:#93B1B5;border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;margin-bottom:16px;">+ Add Slot</button>
-
-    <label style="display:flex;align-items:center;gap:8px;color:#93B1B5;font-size:12px;margin-bottom:16px;cursor:pointer;">
-      <input type="checkbox" id="fAccepting" checked style="accent-color:#27AE60;"/> Currently accepting appointments
-    </label>
-
-    <button class="btn-p" style="width:100%;padding:12px;" onclick="saveProfile()">Save Availability</button>
-  </div>
-</div>
-
-</div></div></div>
-
-<!-- REJECT REASON MODAL -->
-<div id="rejectModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#0B2E33;border:1px solid rgba(184,227,233,.15);border-radius:16px;padding:24px;max-width:380px;width:100%;">
-    <h3 style="color:#D0EEF2;margin:0 0 14px;">Reason (optional)</h3>
-    <textarea id="rejectReason" placeholder="Let the student know why..." style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(184,227,233,.2);color:#D0EEF2;padding:10px;border-radius:8px;font-size:13px;min-height:80px;margin-bottom:14px;"></textarea>
-    <div style="display:flex;gap:10px;">
-      <button onclick="closeRejectModal()" style="flex:1;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#93B1B5;cursor:pointer;">Cancel</button>
-      <button onclick="confirmReject()" class="btn-p" style="flex:2;padding:10px;background:#e74c3c;">Confirm Reject</button>
+  <div class="admin-hdr"><div class="admin-hdr-t">🗓️ My Availability</div></div>
+  <div class="admin-body">
+    <div class="card">
+      <div class="frow mb-2">
+        <div><div class="flbl">Department</div><input id="fDept" class="finp" placeholder="e.g. Computer Science"/></div>
+        <div><div class="flbl">Designation</div><input id="fDesignation" class="finp" placeholder="e.g. Assistant Professor"/></div>
+      </div>
+      <div class="sec-lbl mb-2">WEEKLY AVAILABLE SLOTS</div>
+      <div id="slotsContainer"></div>
+      <button class="btn-sec mb-3" onclick="addSlotRow()">+ Add Slot</button>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:16px;cursor:pointer;">
+        <input type="checkbox" id="fAccepting" checked style="accent-color:var(--teal);"/> Currently accepting appointments
+      </label>
+      <button class="btn-p full" onclick="saveProfile()">Save Availability</button>
     </div>
   </div>
 </div>
+</div>
 
-<script src="../js/api.js"></script>
-<script src="../js/features.js"></script>
+<div id="rejectModal" class="modal-ov">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('rejectModal')">✕</button>
+    <div class="modal-title">Reason for Rejection</div>
+    <div class="modal-sub">Optional — let the student know why.</div>
+    <textarea id="rejectReason" class="ftxt" placeholder="Enter reason (optional)..."></textarea>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-sec" style="flex:1;" onclick="closeModal('rejectModal')">Cancel</button>
+      <button class="btn-p" style="flex:2;background:var(--red);border:none;" onclick="confirmReject()">Confirm Reject</button>
+    </div>
+  </div>
+</div></div>
+</div>
+<script src="../js/api.js"></script><script src="../js/features.js"></script>
 <script>
-const user = requireAuth(['faculty']);
-if(!user) throw new Error('not auth');
+const user=requireAuth(['faculty']);if(!user)throw new Error('auth');
 
 document.getElementById('tnAv').textContent=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
 document.getElementById('sbNm').textContent=user.name;
+document.getElementById('sbId').textContent=user.userId;
+function toggleSidebar(){document.querySelector('.admin-sb').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active');}
+function showView(id,el){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));document.getElementById('v-'+id).classList.add('active');if(el)el.classList.add('active');}
 
-let rejectingId = null;
-let slotCount = 0;
-
-function showView(id,el){
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
-  document.getElementById('v-'+id).classList.add('active');
-  if(el) el.classList.add('active');
-  if(id==='requests') loadRequests();
-  if(id==='availability') loadProfile();
-}
-function toggleSidebar(){
-  document.querySelector('.admin-sb').classList.toggle('open');
-  document.querySelector('.sidebar-overlay').classList.toggle('active');
-}
-
-function addSlotRow(day, start, end){
-  slotCount++;
-  const id = 'slot-'+slotCount;
-  const div = document.createElement('div');
-  div.className = 'slot-row';
-  div.id = id;
-  div.innerHTML = `
-    <select class="slot-day">
-      <option value="Mon" ${day==='Mon'?'selected':''}>Monday</option>
-      <option value="Tue" ${day==='Tue'?'selected':''}>Tuesday</option>
-      <option value="Wed" ${day==='Wed'?'selected':''}>Wednesday</option>
-      <option value="Thu" ${day==='Thu'?'selected':''}>Thursday</option>
-      <option value="Fri" ${day==='Fri'?'selected':''}>Friday</option>
-      <option value="Sat" ${day==='Sat'?'selected':''}>Saturday</option>
-    </select>
-    <input class="slot-start" placeholder="Start (e.g. 10:00 AM)" value="${start||''}"/>
-    <input class="slot-end" placeholder="End (e.g. 11:00 AM)" value="${end||''}"/>
-    <button onclick="document.getElementById('${id}').remove()" style="background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.25);color:#e74c3c;border-radius:6px;padding:8px 10px;cursor:pointer;">✕</button>`;
+let rejectingId=null,slotCount=0;
+function addSlotRow(day,start,end){
+  slotCount++;const id='slot-'+slotCount;const div=document.createElement('div');div.className='slot-row';div.id=id;
+  div.innerHTML=`<select class="slot-day"><option value="Mon" ${day==='Mon'?'selected':''}>Monday</option><option value="Tue" ${day==='Tue'?'selected':''}>Tuesday</option><option value="Wed" ${day==='Wed'?'selected':''}>Wednesday</option><option value="Thu" ${day==='Thu'?'selected':''}>Thursday</option><option value="Fri" ${day==='Fri'?'selected':''}>Friday</option><option value="Sat" ${day==='Sat'?'selected':''}>Saturday</option></select>
+    <input class="slot-start" placeholder="Start e.g. 10:00 AM" value="${start||''}"/>
+    <input class="slot-end" placeholder="End e.g. 11:00 AM" value="${end||''}"/>
+    <button class="btn-red" onclick="document.getElementById('${id}').remove()">✕</button>`;
   document.getElementById('slotsContainer').appendChild(div);
 }
-
 async function loadProfile(){
   try{
-    const data = await apiFetch('/appointments/faculty/profile/my');
-    document.getElementById('slotsContainer').innerHTML = '';
+    const data=await apiFetch('/appointments/faculty/profile/my');
+    document.getElementById('slotsContainer').innerHTML='';
     if(data.profile){
-      document.getElementById('fDept').value = data.profile.department || '';
-      document.getElementById('fDesignation').value = data.profile.designation || '';
-      document.getElementById('fAccepting').checked = data.profile.isAcceptingAppointments !== false;
-      (data.profile.availableSlots||[]).forEach(s => addSlotRow(s.day, s.startTime, s.endTime));
+      document.getElementById('fDept').value=data.profile.department||'';
+      document.getElementById('fDesignation').value=data.profile.designation||'';
+      document.getElementById('fAccepting').checked=data.profile.isAcceptingAppointments!==false;
+      (data.profile.availableSlots||[]).forEach(s=>addSlotRow(s.day,s.startTime,s.endTime));
     }
-    if(!document.getElementById('slotsContainer').children.length) addSlotRow();
-  }catch(e){ addSlotRow(); }
+    if(!document.getElementById('slotsContainer').children.length)addSlotRow();
+  }catch(e){addSlotRow();}
 }
-
 async function saveProfile(){
-  const slots = Array.from(document.querySelectorAll('.slot-row')).map(row => ({
-    day: row.querySelector('.slot-day').value,
-    startTime: row.querySelector('.slot-start').value.trim(),
-    endTime: row.querySelector('.slot-end').value.trim(),
-  })).filter(s => s.startTime && s.endTime);
-
+  const slots=Array.from(document.querySelectorAll('.slot-row')).map(row=>({day:row.querySelector('.slot-day').value,startTime:row.querySelector('.slot-start').value.trim(),endTime:row.querySelector('.slot-end').value.trim()})).filter(s=>s.startTime&&s.endTime);
   try{
-    await apiFetch('/appointments/faculty/profile', {
-      method:'POST',
-      body: JSON.stringify({
-        department: document.getElementById('fDept').value.trim(),
-        designation: document.getElementById('fDesignation').value.trim(),
-        availableSlots: slots,
-        isAcceptingAppointments: document.getElementById('fAccepting').checked,
-      })
-    });
+    await apiFetch('/appointments/faculty/profile',{method:'POST',body:JSON.stringify({department:document.getElementById('fDept').value.trim(),designation:document.getElementById('fDesignation').value.trim(),availableSlots:slots,isAcceptingAppointments:document.getElementById('fAccepting').checked})});
     showToast('Availability saved!','success');
-  }catch(e){ showToast(e.message,'error'); }
+  }catch(e){showToast(e.message,'error');}
 }
-
 async function loadRequests(){
-  const el = document.getElementById('requestsList');
-  el.innerHTML = '<div style="color:#93B1B5;font-size:13px;">Loading…</div>';
+  const el=document.getElementById('requestsList');el.innerHTML='<div class="empty"><div class="ei">⏳</div><p>Loading…</p></div>';
   try{
-    const data = await apiFetch('/appointments/requests');
-    const appts = data.appointments || [];
-    if(!appts.length){ el.innerHTML='<div style="color:#93B1B5;text-align:center;padding:40px;">No appointment requests yet.</div>'; return; }
-
+    const data=await apiFetch('/appointments/requests');const appts=data.appointments||[];
+    if(!appts.length){el.innerHTML='<div class="empty"><div class="ei">📥</div><p>No appointment requests yet.</p></div>';return;}
+    const stCls={pending:'badge-inprogress',accepted:'badge-resolved',rejected:'badge-red',cancelled:'badge-gold'};
     const stLabel={pending:'⏳ Pending',accepted:'✅ Accepted',rejected:'❌ Rejected',cancelled:'🚫 Cancelled'};
-    el.innerHTML = appts.map(a=>`
-      <div class="req-card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-          <div>
-            <div style="color:#D0EEF2;font-weight:700;font-size:14px;">${a.studentName} <span style="color:#93B1B5;font-weight:400;font-size:12px;">(${a.studentUserId})</span></div>
-            <div style="color:#93B1B5;font-size:12px;">${a.day}, ${a.date} · ${a.timeSlot}</div>
-          </div>
-          <span class="status-pill st-${a.status}" style="padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;">${stLabel[a.status]}</span>
+    el.innerHTML=appts.map(a=>`
+      <div class="card mb-2">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+          <div><div style="font-weight:700;color:var(--navy);">${a.studentName} <span style="color:var(--muted);font-weight:400;font-size:11px;">(${a.studentUserId})</span></div><div style="color:var(--muted);font-size:10px;">${a.day}, ${a.date} · ${a.timeSlot}</div></div>
+          <span class="badge ${stCls[a.status]||''}">${stLabel[a.status]||a.status}</span>
         </div>
-        <div style="color:#B8E3E9;font-size:13px;margin-bottom:10px;">"${a.reason}"</div>
-        ${a.facultyResponse?`<div style="color:#93B1B5;font-size:12px;margin-bottom:10px;">Your response: ${a.facultyResponse}</div>`:''}
-        ${a.status==='pending'?`
-          <div style="display:flex;gap:8px;">
-            <button onclick="acceptAppt('${a._id}')" style="flex:1;background:#27AE60;border:none;color:#fff;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;">✅ Accept</button>
-            <button onclick="openRejectModal('${a._id}')" style="flex:1;background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.3);color:#e74c3c;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;">❌ Reject</button>
-          </div>`:''}
+        <div style="color:var(--teal);font-size:12px;margin-bottom:8px;">"${a.reason}"</div>
+        ${a.facultyResponse?`<div class="info-box" style="font-size:11px;margin-bottom:8px;">Your response: ${a.facultyResponse}</div>`:''}
+        ${a.status==='pending'?`<div style="display:flex;gap:8px;"><button class="btn-p" style="flex:1;padding:9px;font-size:12px;" onclick="acceptAppt('${a._id}')">✅ Accept</button><button class="btn-red" style="flex:1;padding:9px;font-size:12px;" onclick="openRejectModal('${a._id}')">❌ Reject</button></div>`:''}
       </div>`).join('');
-  }catch(e){ el.innerHTML=`<div style="color:#e74c3c;">${e.message}</div>`; }
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
 }
-
-async function acceptAppt(id){
-  try{ await apiFetch('/appointments/'+id,{method:'PATCH',body:JSON.stringify({status:'accepted'})}); loadRequests(); showToast('Appointment accepted','success'); }
-  catch(e){ showToast(e.message,'error'); }
-}
-
-function openRejectModal(id){ rejectingId=id; document.getElementById('rejectReason').value=''; document.getElementById('rejectModal').style.display='flex'; }
-function closeRejectModal(){ document.getElementById('rejectModal').style.display='none'; }
-
+async function acceptAppt(id){try{await apiFetch('/appointments/'+id,{method:'PATCH',body:JSON.stringify({status:'accepted'})});loadRequests();showToast('Accepted','success');}catch(e){showToast(e.message,'error');}}
+function openRejectModal(id){rejectingId=id;document.getElementById('rejectReason').value='';openModal('rejectModal');}
 async function confirmReject(){
-  try{
-    await apiFetch('/appointments/'+rejectingId,{method:'PATCH',body:JSON.stringify({status:'rejected',facultyResponse:document.getElementById('rejectReason').value.trim()})});
-    closeRejectModal(); loadRequests();
-    showToast('Appointment rejected','success');
-  }catch(e){ showToast(e.message,'error'); }
+  try{await apiFetch('/appointments/'+rejectingId,{method:'PATCH',body:JSON.stringify({status:'rejected',facultyResponse:document.getElementById('rejectReason').value.trim()})});closeModal('rejectModal');loadRequests();showToast('Rejected','success');}
+  catch(e){showToast(e.message,'error');}
 }
-
 loadRequests();
 </script>
 </body></html>

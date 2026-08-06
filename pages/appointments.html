@@ -9,7 +9,7 @@
 .tog{position:relative;display:inline-block;width:36px;height:20px;}
 .tog input{opacity:0;width:0;height:0;}
 .tog-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.2s;}
-.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:var(--white);border-radius:50%;transition:.2s;}
 .tog input:checked+.tog-sl{background:var(--teal);}
 .tog input:checked+.tog-sl:before{transform:translateX(16px);}
 
@@ -18,7 +18,7 @@
 .fac-card:hover,.fac-card.selected{border-color:var(--teal);background:#e8f6f8;}
 .slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:7px;margin:10px 0;}
 .slot-pill{padding:9px;border-radius:8px;border:1.5px solid var(--border);text-align:center;font-size:11px;color:var(--navy);cursor:pointer;background:var(--inp-bg);transition:all .15s;}
-.slot-pill:hover,.slot-pill.sel{background:var(--teal);border-color:var(--teal);color:#fff;}
+.slot-pill:hover,.slot-pill.sel{background:var(--teal);border-color:var(--teal);color:var(--white);}
 .slot-pill.booked{opacity:.35;pointer-events:none;text-decoration:line-through;}
 
 </style>
@@ -113,7 +113,7 @@ async function loadSlots(){
     const slots=data.slots||[];
     if(!slots.length){area.innerHTML=`<div class="info-box">No slots available on ${data.day||'this day'}.</div>`;return;}
     area.innerHTML=`<div class="sec-lbl mb-2">AVAILABLE SLOTS ON ${data.day||''}</div>
-      <div class="slot-grid">${slots.map(s=>`<div class="slot-pill ${s.isBooked?'booked':''}" onclick="${s.isBooked?'':''selectSlot('${s.label}',this)''}">${s.label}${s.isBooked?' (Booked)':''}</div>`).join('')}</div>`;
+      <div class="slot-grid">${slots.map(s=>`<div class="slot-pill ${s.isBooked?'booked':''}" onclick="${s.isBooked?'':`selectSlot('${s.label}',this)`}">${s.label}${s.isBooked?' (Booked)':''}</div>`).join('')}</div>`;
   }catch(e){area.innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
 }
 function selectSlot(label,el){selSlot=label;document.querySelectorAll('.slot-pill').forEach(p=>p.classList.remove('sel'));el.classList.add('sel');}

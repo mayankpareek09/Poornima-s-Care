@@ -7,7 +7,7 @@ const FEAT_API = (function() {
   if (window.PC_API_URL) return window.PC_API_URL.replace(/\/$/, '');
   const meta = document.querySelector('meta[name="api-base"]');
   if (meta && meta.content) return meta.content.replace(/\/$/, '');
-  return 'https://poornima-s-care.onrender.com';
+  return window.location.origin;
 })();
 
 // ─── Safe wrappers (use api.js functions if loaded, else fallback) ─
@@ -825,12 +825,19 @@ function initAllFeatures() {
   const user = _getUser();
   if (!user || !_getToken()) return;
 
-  initNotifications();
-  initSOS();
+  // When embedded inside the student.html iframe shell, the shell already
+  // has its own persistent notification bell and SOS button — injecting
+  // another copy inside the iframe just duplicates them on screen.
+  const embedded = window.PC_EMBEDDED === true;
+
+  if (!embedded) {
+    initNotifications();
+    initSOS();
+  }
   initOfflineCache();
   personalizeWidgets();
 
-  if (user.role === 'student') {
+  if (user.role === 'student' && !embedded) {
     initOrionAI();
     initPredictiveInsights();
     initAutoCategory();

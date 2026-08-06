@@ -69,10 +69,10 @@
 </div>
   <div class="sec-lbl">Quick access</div>
   <div class="g4 mb-4">
-    <div class="sc"><div class="sc-ic">📋</div><div class="sc-n" id="sc-comp" style="color:#4F7C82;">—</div><div class="sc-l">Complaints</div></div>
-    <div class="sc"><div class="sc-ic">👕</div><div class="sc-n" id="sc-wash" style="color:#854F0B;">—</div><div class="sc-l">Washes left</div></div>
-    <div class="sc"><div class="sc-ic">🎉</div><div class="sc-n" id="sc-evts" style="color:#0B2E33;">—</div><div class="sc-l">Events</div></div>
-    <div class="sc"><div class="sc-ic">🏫</div><div class="sc-n" style="color:#085041;">35</div><div class="sc-l">Clubs</div></div>
+    <div class="sc"><div class="sc-ic">📋</div><div class="sc-n" id="sc-comp" style="color:var(--teal);">—</div><div class="sc-l">Complaints</div></div>
+    <div class="sc"><div class="sc-ic">👕</div><div class="sc-n" id="sc-wash" style="color:var(--yellow);">—</div><div class="sc-l">Washes left</div></div>
+    <div class="sc"><div class="sc-ic">🎉</div><div class="sc-n" id="sc-evts" style="color:var(--navy);">—</div><div class="sc-l">Events</div></div>
+    <div class="sc"><div class="sc-ic">🏫</div><div class="sc-n" style="color:var(--green);">35</div><div class="sc-l">Clubs</div></div>
   </div>
   <div class="sec-lbl">Today</div>
   <div class="g2">
@@ -89,12 +89,12 @@
 
 <!-- COMPLAINTS -->
 <div class="sec" id="s-complaints">
- <div style="font-size:22px;font-weight:800;color:#0B2E33;margin-bottom:6px;letter-spacing:-0.3px;">📋 My Complaints</div>
-  <div style="font-size:11px;color:#4F7C82;margin-bottom:16px;">Describe your issue — routed to the right department automatically.</div>
+ <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:6px;letter-spacing:-0.3px;">📋 My Complaints</div>
+  <div style="font-size:11px;color:var(--teal);margin-bottom:16px;">Describe your issue — routed to the right department automatically.</div>
   <div class="g4 mb-4">
-    <div class="sc"><div class="sc-ic">🔴</div><div class="sc-n" id="cOpen" style="color:#E24B4A;">0</div><div class="sc-l">Open</div></div>
-    <div class="sc"><div class="sc-ic">🟡</div><div class="sc-n" id="cProg" style="color:#854F0B;">0</div><div class="sc-l">In Progress</div></div>
-    <div class="sc"><div class="sc-ic">🟢</div><div class="sc-n" id="cRes" style="color:#085041;">0</div><div class="sc-l">Resolved</div></div>
+    <div class="sc"><div class="sc-ic">🔴</div><div class="sc-n" id="cOpen" style="color:var(--red);">0</div><div class="sc-l">Open</div></div>
+    <div class="sc"><div class="sc-ic">🟡</div><div class="sc-n" id="cProg" style="color:var(--yellow);">0</div><div class="sc-l">In Progress</div></div>
+    <div class="sc"><div class="sc-ic">🟢</div><div class="sc-n" id="cRes" style="color:var(--green);">0</div><div class="sc-l">Resolved</div></div>
     <div class="sc"><div class="sc-ic">📋</div><div class="sc-n" id="cTotal">0</div><div class="sc-l">Total</div></div>
   </div>
   <div class="g2">
@@ -126,7 +126,7 @@
       <button class="btn-p full" onclick="submitComplaint()">Submit Complaint →</button>
     </div>
     <div>
-      <div style="font-size:12px;font-weight:700;color:#0B2E33;margin-bottom:10px;">My Complaints</div>
+      <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px;">My Complaints</div>
       <div id="myComplaints"><div class="empty"><div class="ei">📋</div><p>No complaints yet</p></div></div>
     </div>
   </div>
@@ -134,31 +134,31 @@
 
 <!-- LAUNDRY (sample4 exact style) -->
 <div class="sec" id="s-laundry">
- <div style="font-size:22px;font-weight:800;color:#0B2E33;margin-bottom:3px;letter-spacing:-0.3px;">👕 Laundry Tracker</div>
-  <div style="font-size:12px;color:#4F7C82;margin-bottom:16px;" id="laundrySubtitle">Manage your annual 30-wash quota</div>
+ <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:3px;letter-spacing:-0.3px;">👕 Laundry Tracker</div>
+  <div style="font-size:12px;color:var(--teal);margin-bottom:16px;" id="laundrySubtitle">Manage your annual 30-wash quota</div>
   <div id="fridayAlert" style="display:none;" class="info-box mb-3">🚫 Today is Friday — laundry is closed. Come back Monday.</div>
   <div class="g2">
     <div class="card">
       <div class="card-t">Current Status <span class="status-pill" id="lStatusPill">Loading…</span></div>
-      <div style="font-size:40px;font-weight:800;color:#0B2E33;line-height:1;" id="lBigNum">—</div>
-      <div style="font-size:11px;color:#93B1B5;margin-top:4px;" id="lBigSub">washes used this year</div>
+      <div style="font-size:40px;font-weight:800;color:var(--navy);line-height:1;" id="lBigNum">—</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;" id="lBigSub">washes used this year</div>
       <div class="prog-bar"><div class="prog-fill" id="lProgFill" style="width:0%"></div></div>
       <div class="prog-lbl" id="lProgLbl">loading…</div>
-      <div style="font-size:11px;color:#4F7C82;margin-top:10px;font-weight:600;" id="lLastSub"></div>
+      <div style="font-size:11px;color:var(--teal);margin-top:10px;font-weight:600;" id="lLastSub"></div>
       <div class="qdots" id="lDots"></div>
     </div>
     <div class="card">
       <div class="card-t">New Wash Request</div>
       <div id="lSubmitArea">
         <div class="info-box" style="padding:14px 15px;line-height:1.7;">
-          <div style="font-weight:800;color:#0B2E33;margin-bottom:10px;font-size:12px;">👕 How Laundry Works</div>
+          <div style="font-weight:800;color:var(--navy);margin-bottom:10px;font-size:12px;">👕 How Laundry Works</div>
           <div style="display:grid;gap:7px;">
-            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#0B2E33;color:#B8E3E9;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">1</span><span><strong style="color:#0B2E33;">Submit your request</strong> — Fill in your clothes list below and click Submit (Mon–Thu only, not on Fridays).</span></div>
-            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#0B2E33;color:#B8E3E9;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">2</span><span><strong style="color:#0B2E33;">Keep your bag ready</strong> — Pack all listed clothes in one bag. Staff will collect from your hostel room, so be available by 8:00 AM next morning.</span></div>
-            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#0B2E33;color:#B8E3E9;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">3</span><span><strong style="color:#0B2E33;">Washing &amp; drying</strong> — Clothes are washed, dried, and neatly folded. Takes 1–2 days after collection.</span></div>
-            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#0B2E33;color:#B8E3E9;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">4</span><span><strong style="color:#0B2E33;">Collect your clothes</strong> — Once status shows ✅ Ready, collect your bag from the Laundry Room (Ground Floor, Hostel Block).</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:var(--navy);color:var(--light);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">1</span><span><strong style="color:var(--navy);">Submit your request</strong> — Fill in your clothes list below and click Submit (Mon–Thu only, not on Fridays).</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:var(--navy);color:var(--light);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">2</span><span><strong style="color:var(--navy);">Keep your bag ready</strong> — Pack all listed clothes in one bag. Staff will collect from your hostel room, so be available by 8:00 AM next morning.</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:var(--navy);color:var(--light);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">3</span><span><strong style="color:var(--navy);">Washing &amp; drying</strong> — Clothes are washed, dried, and neatly folded. Takes 1–2 days after collection.</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:var(--navy);color:var(--light);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">4</span><span><strong style="color:var(--navy);">Collect your clothes</strong> — Once status shows ✅ Ready, collect your bag from the Laundry Room (Ground Floor, Hostel Block).</span></div>
           </div>
-          <div style="margin-top:10px;padding-top:10px;border-top:1px solid #B8E3E9;font-size:11px;color:#4F7C82;"><strong>📌 Rules:</strong> 30 washes per year · One bag at a time · No submissions on Fridays · Minimum 3 items per wash</div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--light);font-size:11px;color:var(--teal);"><strong>📌 Rules:</strong> 30 washes per year · One bag at a time · No submissions on Fridays · Minimum 3 items per wash</div>
         </div>
         <div class="flbl">Clothes description</div>
         <textarea class="ftxt" id="clothesDesc" placeholder="e.g. 3 shirts, 2 trousers, 4 socks…"></textarea>
@@ -168,17 +168,17 @@
   </div>
   <!-- Wash History -->
   <div class="card mt-4">
-    <div class="card-t">Wash History <span id="lHistCount" style="font-size:11px;font-weight:400;color:#93B1B5;"></span></div>
+    <div class="card-t">Wash History <span id="lHistCount" style="font-size:11px;font-weight:400;color:var(--muted);"></span></div>
     <div id="lHistory"><div class="empty"><div class="ei">👕</div><p>No wash history yet</p></div></div>
   </div>
 </div>
 
 <!-- TIMETABLE -->
 <div class="sec" id="s-timetable">
- <div style="font-size:22px;font-weight:800;color:#0B2E33;margin-bottom:3px;letter-spacing:-0.3px;">📅 Timetable</div>
+ <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:3px;letter-spacing:-0.3px;">📅 Timetable</div>
   <div class="ann mb-3">
     <div class="ann-t">📅 Exam Calendar</div>
-    <div class="ann-b"><a href="https://poornima.edu.in/exam-calendars" target="_blank" style="color:#4F7C82;font-weight:700;">View Official Exam Calendar →</a></div>
+    <div class="ann-b"><a href="https://poornima.edu.in/exam-calendars" target="_blank" style="color:var(--teal);font-weight:700;">View Official Exam Calendar →</a></div>
   </div>
   <div class="flex gap-2 mb-3" style="flex-wrap:wrap;">
     <select class="fsel" id="ttCourse" style="margin-bottom:0;flex:1;min-width:140px;"><option>All Courses</option><option>B.Tech CSE</option><option>B.Tech ECE</option><option>B.Tech ME</option><option>MBA</option></select>
@@ -190,17 +190,17 @@
 
 <!-- MATERIALS -->
 <div class="sec" id="s-materials">
-  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:4px;">📚 Study Materials</div>
-  <div style="font-size:11px;color:#4F7C82;margin-bottom:16px;">Access notes, question papers, syllabi and books shared by students and faculty.</div>
-  <div class="card mb-3" style="background:#e8f6f8;border-color:#93B1B5;">
+  <div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:4px;">📚 Study Materials</div>
+  <div style="font-size:11px;color:var(--teal);margin-bottom:16px;">Access notes, question papers, syllabi and books shared by students and faculty.</div>
+  <div class="card mb-3" style="background:#e8f6f8;border-color:var(--muted);">
     <div class="flex items-c gap-3 j-bet">
-      <div class="flex items-c gap-3"><span style="font-size:1.8rem;">📖</span><div><div style="font-weight:700;color:#0B2E33;">Poornima Digital Library</div><div style="font-size:11px;color:#4F7C82;">E-books, journals, NPTEL, research papers</div></div></div>
+      <div class="flex items-c gap-3"><span style="font-size:1.8rem;">📖</span><div><div style="font-weight:700;color:var(--navy);">Poornima Digital Library</div><div style="font-size:11px;color:var(--teal);">E-books, journals, NPTEL, research papers</div></div></div>
       <a href="https://sites.google.com/poornima.edu.in/poornima-library-resources/home" target="_blank" class="btn-p">Open Library →</a>
     </div>
   </div>
   <div class="g2 mb-3">
-    <a href="https://nptel.ac.in" target="_blank" class="card"><div class="card-t">📺 NPTEL</div><p style="font-size:11px;color:#93B1B5;">Free online courses from IITs &amp; IISc</p></a>
-    <a href="https://archive.org" target="_blank" class="card"><div class="card-t">📚 Internet Archive</div><p style="font-size:11px;color:#93B1B5;">Free books &amp; academic papers</p></a>
+    <a href="https://nptel.ac.in" target="_blank" class="card"><div class="card-t">📺 NPTEL</div><p style="font-size:11px;color:var(--muted);">Free online courses from IITs &amp; IISc</p></a>
+    <a href="https://archive.org" target="_blank" class="card"><div class="card-t">📚 Internet Archive</div><p style="font-size:11px;color:var(--muted);">Free books &amp; academic papers</p></a>
   </div>
   <div class="search-bar"><input type="text" id="matSearch" placeholder="Search materials by title or course…" oninput="searchMat(this.value)"/></div>
   <div id="matList"><div class="empty"><div class="ei">📚</div><p>No materials uploaded yet</p></div></div>
@@ -209,7 +209,7 @@
 
 <!-- EVENTS -->
 <div class="sec" id="s-events">
-  <div style="font-size:22px;font-weight:800;color:#0B2E33;margin-bottom:14px;">🎉 Campus Events</div>
+  <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:14px;">🎉 Campus Events</div>
   <div class="ftabs">
     <button class="ftab active" onclick="filterEvt('all',this)">All</button>
     <button class="ftab" onclick="filterEvt('ongoing',this)">🟢 Ongoing</button>
@@ -225,7 +225,7 @@
 
 <!-- CLUBS -->
 <div class="sec" id="s-clubs">
-  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:14px;">🏫 Student Clubs</div>
+  <div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:14px;">🏫 Student Clubs</div>
   <div class="search-bar"><input type="text" id="clubSearch" placeholder="Search clubs…" oninput="filterClub(this.value)"/></div>
   <div class="ftabs" id="clubCatBtns">
     <button class="ftab active" onclick="setCat('',this)">All</button>
@@ -242,18 +242,18 @@
 
 <!-- HOSTEL -->
 <div class="sec" id="s-hostel">
-  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:14px;">🏠 Hostel Accommodation</div>
+  <div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:14px;">🏠 Hostel Accommodation</div>
   <div class="g2 mb-4">
     <div class="card">
       <div class="card-t">My Room</div>
       <table style="width:100%;font-size:12px;">
-        <tr><td style="padding:5px 0;color:#93B1B5;">Hostel</td><td id="hHostel" style="font-weight:600;">—</td></tr>
-        <tr><td style="padding:5px 0;color:#93B1B5;">Room</td><td id="hRoom" style="font-weight:600;">—</td></tr>
+        <tr><td style="padding:5px 0;color:var(--muted);">Hostel</td><td id="hHostel" style="font-weight:600;">—</td></tr>
+        <tr><td style="padding:5px 0;color:var(--muted);">Room</td><td id="hRoom" style="font-weight:600;">—</td></tr>
       </table>
     </div>
     <div class="card">
       <div class="card-t">Fee Relaxation Scheme</div>
-      <p style="font-size:11px;color:#4F7C82;line-height:1.6;"><strong style="color:#0B2E33;">40% off</strong> if NOC received by December | <strong style="color:#0B2E33;">30% off</strong> by January<br/>For final year students on semester-long internships/placements.</p>
+      <p style="font-size:11px;color:var(--teal);line-height:1.6;"><strong style="color:var(--navy);">40% off</strong> if NOC received by December | <strong style="color:var(--navy);">30% off</strong> by January<br/>For final year students on semester-long internships/placements.</p>
     </div>
   </div>
   <div class="card mb-3">
@@ -306,8 +306,8 @@
 
 <!-- BUS -->
 <div class="sec" id="s-bus">
-  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:4px;">🚌 Bus Routes</div>
-  <div style="font-size:11px;color:#4F7C82;margin-bottom:14px;">Transport Officer: Vishnu Kumar Yadav · 9829855516</div>
+  <div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:4px;">🚌 Bus Routes</div>
+  <div style="font-size:11px;color:var(--teal);margin-bottom:14px;">Transport Officer: Vishnu Kumar Yadav · 9829855516</div>
   <div class="search-bar"><input type="text" id="busSearch" placeholder="Search any stop, area or landmark…" oninput="searchStop(this.value)"/></div>
   <div id="busSearchRes" style="margin-bottom:12px;"></div>
   <div class="g2" id="busGrid"><div class="empty" style="grid-column:1/-1"><div class="ei">🚌</div><p>Loading routes…</p></div></div>
@@ -315,17 +315,17 @@
 
 <!-- PROFILE -->
 <div class="sec" id="s-profile">
-  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:14px;">👤 My Profile</div>
+  <div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:14px;">👤 My Profile</div>
   <div class="g2">
     <div class="card">
       <div class="card-t">Account Information</div>
       <table style="width:100%;font-size:12px;">
-        <tr><td style="padding:5px 0;color:#93B1B5;width:100px;">Full Name</td><td id="pProfileName" style="font-weight:600;">—</td></tr>
-        <tr><td style="padding:5px 0;color:#93B1B5;">University ID</td><td id="pProfileId" style="font-weight:600;">—</td></tr>
-        <tr><td style="padding:5px 0;color:#93B1B5;">Course</td><td id="pProfileCourse">—</td></tr>
-        <tr><td style="padding:5px 0;color:#93B1B5;">Year</td><td id="pProfileYear">—</td></tr>
-        <tr><td style="padding:5px 0;color:#93B1B5;">Hostel</td><td id="pProfileHostel">—</td></tr>
-        <tr><td style="padding:5px 0;color:#93B1B5;">Room</td><td id="pProfileRoom">—</td></tr>
+        <tr><td style="padding:5px 0;color:var(--muted);width:100px;">Full Name</td><td id="pProfileName" style="font-weight:600;">—</td></tr>
+        <tr><td style="padding:5px 0;color:var(--muted);">University ID</td><td id="pProfileId" style="font-weight:600;">—</td></tr>
+        <tr><td style="padding:5px 0;color:var(--muted);">Course</td><td id="pProfileCourse">—</td></tr>
+        <tr><td style="padding:5px 0;color:var(--muted);">Year</td><td id="pProfileYear">—</td></tr>
+        <tr><td style="padding:5px 0;color:var(--muted);">Hostel</td><td id="pProfileHostel">—</td></tr>
+        <tr><td style="padding:5px 0;color:var(--muted);">Room</td><td id="pProfileRoom">—</td></tr>
       </table>
     </div>
     <div class="card">
@@ -343,12 +343,12 @@
 
 <!-- CHATBOT -->
 <div class="sec" id="s-chatbot">
-  <div style="font-size:16px;font-weight:800;color:#0B2E33;margin-bottom:4px;">🤖 ORION — Campus AI</div>
-  <div style="font-size:11px;color:#4F7C82;margin-bottom:16px;">Ask anything about Poornima University</div>
+  <div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:4px;">🤖 ORION — Campus AI</div>
+  <div style="font-size:11px;color:var(--teal);margin-bottom:16px;">Ask anything about Poornima University</div>
   <div class="card" style="max-width:680px;width:100%;">
     <div id="chatMsgs" style="min-height:300px;max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
-      <div style="align-self:flex-start;background:#e8f6f8;border:1px solid #B8E3E9;border-radius:10px;padding:11px 14px;max-width:80%;font-size:12px;">
-        <div style="font-weight:700;color:#0B2E33;margin-bottom:4px;">ORION</div>
+      <div style="align-self:flex-start;background:#e8f6f8;border:1px solid var(--light);border-radius:10px;padding:11px 14px;max-width:80%;font-size:12px;">
+        <div style="font-weight:700;color:var(--navy);margin-bottom:4px;">ORION</div>
         Hi! I'm ORION, your campus assistant. Ask me about contacts, fees, rules, transport or anything campus-related.
       </div>
     </div>
@@ -362,8 +362,8 @@
 
 <!-- EXAM CALENDAR -->
 <div class="sec" id="s-exam">
-  <div style="font-size:22px;font-weight:800;color:#0B2E33;margin-bottom:3px;letter-spacing:-0.3px;">📝 Exam Calendar</div>
-  <div style="font-size:11px;color:#4F7C82;margin-bottom:16px;">View upcoming exam schedules for your department and year.</div>
+  <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:3px;letter-spacing:-0.3px;">📝 Exam Calendar</div>
+  <div style="font-size:11px;color:var(--teal);margin-bottom:16px;">View upcoming exam schedules for your department and year.</div>
 
   <!-- Filters -->
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
@@ -372,7 +372,7 @@
     <select class="fsel" id="stuExamType" style="margin-bottom:0;width:auto;" onchange="loadStudentExam()"><option value="">All Exam Types</option></select>
   </div>
 
-  <div id="stuExamContent"><div style="color:#93B1B5;font-size:12px;">Loading exam schedules…</div></div>
+  <div id="stuExamContent"><div style="color:var(--muted);font-size:12px;">Loading exam schedules…</div></div>
 </div>
 
 <!-- PERSISTENT SHELL: utility portals (canteen, mess, store, stationery,
@@ -477,7 +477,7 @@ async function loadDash(){
       const el=document.getElementById('recentComplaints');
       const cs=(cD.value.complaints||[]).slice(0,3);
       const sMap={open:'badge-open',inprogress:'badge-prog',resolved:'badge-done'};
-      el.innerHTML=cs.length?cs.map(c=>`<div class="row-item"><div class="row-dot" style="background:${c.status==='open'?'#E24B4A':c.status==='resolved'?'#085041':'#4F7C82'};"></div><div><div class="row-title">${c.title}</div><div class="row-sub">${c.category} · ${c.createdAt?Math.floor((Date.now()-new Date(c.createdAt))/(1000*60*60*24))+'d ago':''}</div></div><span class="row-badge ${sMap[c.status]||'badge-open'}">${c.status==='inprogress'?'Working':c.status==='resolved'?'Done':'Open'}</span></div>`).join(''):'<div style="font-size:11px;color:#93B1B5;padding:8px 0;">No complaints yet</div>';
+      el.innerHTML=cs.length?cs.map(c=>`<div class="row-item"><div class="row-dot" style="background:${c.status==='open'?'var(--red)':c.status==='resolved'?'var(--green)':'var(--teal)'};"></div><div><div class="row-title">${c.title}</div><div class="row-sub">${c.category} · ${c.createdAt?Math.floor((Date.now()-new Date(c.createdAt))/(1000*60*60*24))+'d ago':''}</div></div><span class="row-badge ${sMap[c.status]||'badge-open'}">${c.status==='inprogress'?'Working':c.status==='resolved'?'Done':'Open'}</span></div>`).join(''):'<div style="font-size:11px;color:var(--muted);padding:8px 0;">No complaints yet</div>';
     }
     if(lD.status==='fulfilled'){
       const r=lD.value.record||{};
@@ -496,7 +496,7 @@ async function loadDash(){
         const days=['','monday','tuesday','wednesday','thursday','friday','saturday'];
         const today=days[new Date().getDay()]||'monday';
         const items=tt.slots.filter(s=>s[today]&&s[today]!=='—'&&s[today]!=='Free').slice(0,4);
-        document.getElementById('todayTl').innerHTML=items.length?items.map(s=>`<li><div class="tl-t">${s.time}</div><div class="tl-h">${s[today]}</div></li>`).join(''):'<li><div class="tl-d" style="color:#93B1B5;">No classes today</div></li>';
+        document.getElementById('todayTl').innerHTML=items.length?items.map(s=>`<li><div class="tl-t">${s.time}</div><div class="tl-h">${s[today]}</div></li>`).join(''):'<li><div class="tl-d" style="color:var(--muted);">No classes today</div></li>';
       }
     }
   }catch(e){}
@@ -516,7 +516,7 @@ async function loadComplaints(){
     if(!cs.length){el.innerHTML='<div class="empty"><div class="ei">📋</div><p>No complaints yet</p></div>';return;}
     const sMap={open:'st-open',inprogress:'st-prog',resolved:'st-done'};
     el.innerHTML=cs.map(c=>`<div class="cc"><div class="cc-hdr"><div><div class="cc-title">${c.title}</div><div class="cc-sub">${c.category} · ${c.priority}</div></div><span class="${sMap[c.status]||'st-open'}">${c.status}</span></div><div class="cc-body">${c.description}</div></div>`).join('');
-  }catch(e){document.getElementById('myComplaints').innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+  }catch(e){document.getElementById('myComplaints').innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
 }
 async function submitComplaint(){
   const title=document.getElementById('cTitle').value.trim();
@@ -534,7 +534,7 @@ async function loadLaundry(){
     const r=data.record||{};
     const used=r.usedWashes||0,total=r.totalWashes||30;
     const pct=Math.round(used/total*100);
-    document.getElementById('lBigNum').innerHTML=`${used} <span style="font-size:16px;color:#93B1B5;font-weight:400;">/ ${total}</span>`;
+    document.getElementById('lBigNum').innerHTML=`${used} <span style="font-size:16px;color:var(--muted);font-weight:400;">/ ${total}</span>`;
     document.getElementById('lProgFill').style.width=pct+'%';
     document.getElementById('lProgLbl').textContent=`${pct}% quota used · ${total-used} remaining`;
     const sMap={idle:'No active bag',submitted:'📦 Submitted',washing:'🔄 Washing',ready:'✅ Ready for Pickup'};
@@ -551,7 +551,7 @@ async function loadLaundry(){
     // History
     const hist=r.washHistory||[];
     document.getElementById('lHistCount').textContent=hist.length+' entries';
-    document.getElementById('lHistory').innerHTML=hist.length?`<div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:#B8E3E9;"><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">#</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Clothes</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Submitted</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Collected</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:#0B2E33;text-transform:uppercase;">Status</th></tr></thead><tbody>${hist.slice().reverse().map(h=>`<tr style="border-bottom:1px solid #e8f4f6;"><td style="padding:8px 10px;">${h.washNo}</td><td style="padding:8px 10px;">${h.clothesDesc||'—'}</td><td style="padding:8px 10px;">${h.submittedAt?new Date(h.submittedAt).toLocaleDateString('en-IN'):'—'}</td><td style="padding:8px 10px;">${h.collectedAt?new Date(h.collectedAt).toLocaleDateString('en-IN'):'—'}</td><td style="padding:8px 10px;"><span class="${h.status==='collected'?'st-done':'st-sub'}">${h.status}</span></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><div class="ei">👕</div><p>No wash history yet</p></div>';
+    document.getElementById('lHistory').innerHTML=hist.length?`<div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:var(--light);"><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">#</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Clothes</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Submitted</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Collected</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Status</th></tr></thead><tbody>${hist.slice().reverse().map(h=>`<tr style="border-bottom:1px solid #e8f4f6;"><td style="padding:8px 10px;">${h.washNo}</td><td style="padding:8px 10px;">${h.clothesDesc||'—'}</td><td style="padding:8px 10px;">${h.submittedAt?new Date(h.submittedAt).toLocaleDateString('en-IN'):'—'}</td><td style="padding:8px 10px;">${h.collectedAt?new Date(h.collectedAt).toLocaleDateString('en-IN'):'—'}</td><td style="padding:8px 10px;"><span class="${h.status==='collected'?'st-done':'st-sub'}">${h.status}</span></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><div class="ei">👕</div><p>No wash history yet</p></div>';
   }catch(e){document.getElementById('lBigNum').textContent='—';showToast(e.message,'error');}
 }
 async function submitBag(){
@@ -565,23 +565,23 @@ async function submitBag(){
 // TIMETABLE
 async function loadTT(){
   const el=document.getElementById('ttContent');
-  el.innerHTML='<div style="padding:20px;color:#93B1B5;font-size:12px;">Loading…</div>';
+  el.innerHTML='<div style="padding:20px;color:var(--muted);font-size:12px;">Loading…</div>';
   try{
     const data=await apiFetch('/timetable');const tts=data.timetables||[];
     if(!tts.length){el.innerHTML='<div class="empty"><div class="ei">📅</div><p>No timetables found</p></div>';return;}
     el.innerHTML=tts.map(tt=>`<div class="card mb-3">
-      <div class="card-t">${tt.course} — ${tt.semester} (Section ${tt.section||'A'}) <span style="font-size:10px;font-weight:400;color:#93B1B5;">Updated: ${tt.updatedAt?new Date(tt.updatedAt).toLocaleDateString('en-IN'):''}</span></div>
+      <div class="card-t">${tt.course} — ${tt.semester} (Section ${tt.section||'A'}) <span style="font-size:10px;font-weight:400;color:var(--muted);">Updated: ${tt.updatedAt?new Date(tt.updatedAt).toLocaleDateString('en-IN'):''}</span></div>
       <div class="tt-wrap"><table><thead><tr><th>Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
-      <tbody>${(tt.slots||[]).map(s=>`<tr><td class="tt-time">${s.time}</td>${['monday','tuesday','wednesday','thursday','friday'].map(d=>`<td>${s.type==='break'?`<span class="tt-break">${s[d]||'Break'}</span>`:s.type==='lab'?`<span class="tt-lab">${s[d]||'—'}</span>`:s[d]&&s[d]!=='—'&&s[d]!=='Free'?`<span class="tt-sub">${s[d]}</span>`:'<span style="color:#93B1B5;">—</span>'}</td>`).join('')}</tr>`).join('')}
+      <tbody>${(tt.slots||[]).map(s=>`<tr><td class="tt-time">${s.time}</td>${['monday','tuesday','wednesday','thursday','friday'].map(d=>`<td>${s.type==='break'?`<span class="tt-break">${s[d]||'Break'}</span>`:s.type==='lab'?`<span class="tt-lab">${s[d]||'—'}</span>`:s[d]&&s[d]!=='—'&&s[d]!=='Free'?`<span class="tt-sub">${s[d]}</span>`:'<span style="color:var(--muted);">—</span>'}</td>`).join('')}</tr>`).join('')}
       </tbody></table></div></div>`).join('');
-  }catch(e){el.innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+  }catch(e){el.innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
 }
 
 // EVENTS
 let allEvts=[];
 async function loadEvents(){
   try{const data=await apiFetch('/events');allEvts=data.events||[];renderEvts('all');}
-  catch(e){document.getElementById('evList').innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+  catch(e){document.getElementById('evList').innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
 }
 function filterEvt(f,btn){document.querySelectorAll('#s-events .ftab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderEvts(f);}
 function renderEvts(f){
@@ -606,7 +606,7 @@ function renderEvts(f){
 let allClubs=[],clubCat='';
 async function loadClubs(){
   try{const data=await apiFetch('/clubs');allClubs=data.clubs||[];renderClubs();}
-  catch(e){document.getElementById('clubGrid').innerHTML=`<div class="info-box" style="color:#E24B4A;grid-column:1/-1">${e.message}</div>`;}
+  catch(e){document.getElementById('clubGrid').innerHTML=`<div class="info-box" style="color:var(--red);grid-column:1/-1">${e.message}</div>`;}
 }
 function setCat(c,btn){clubCat=c;document.querySelectorAll('#s-clubs .ftab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderClubs();}
 function filterClub(q){renderClubs(q);}
@@ -649,7 +649,7 @@ async function submitHostel(){
 let allRoutes=[];
 async function loadBus(){
   try{const data=await apiFetch('/bus');allRoutes=data.routes||[];renderBus();}
-  catch(e){document.getElementById('busGrid').innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+  catch(e){document.getElementById('busGrid').innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
 }
 function searchStop(q){
   const el=document.getElementById('busSearchRes');
@@ -663,11 +663,11 @@ function renderBus(){
   const el=document.getElementById('busGrid');
   if(!allRoutes.length){el.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">🚌</div><p>No routes found</p></div>';return;}
   el.innerHTML=allRoutes.map(r=>`<div class="card"><div class="card-t">${r.routeNo} <span class="status-pill" style="font-size:10px;">${r.annualFee?'₹'+r.annualFee.toLocaleString('en-IN')+'/yr':'Free'}</span></div>
-    <div style="font-size:11px;color:#4F7C82;margin-bottom:10px;">${r.routeName}</div>
+    <div style="font-size:11px;color:var(--teal);margin-bottom:10px;">${r.routeName}</div>
     ${r.morning?`<div style="font-size:11px;margin-bottom:6px;">🕐 Morning: <strong>${r.morning}</strong></div>`:''}
     ${r.notes?`<div class="info-box mb-2" style="font-size:10px;">${r.notes}</div>`:''}
     <ul class="stop-list">${r.stops.map((s,i)=>`<li><div class="stop-dot"></div><span class="stop-num">${i+1}.</span>${s.name}</li>`).join('')}</ul>
-    <div style="font-size:10px;color:#93B1B5;margin-top:8px;">Officer: ${r.driver||'Vishnu Kumar Yadav'} · ${r.driverPhone||'9829855516'}</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:8px;">Officer: ${r.driver||'Vishnu Kumar Yadav'} · ${r.driverPhone||'9829855516'}</div>
   </div>`).join('');
 }
 
@@ -683,13 +683,13 @@ async function saveProfile(){
 async function sendChat(){
   const input=document.getElementById('chatInput');const q=input.value.trim();if(!q)return;input.value='';
   const msgs=document.getElementById('chatMsgs');
-  msgs.innerHTML+=`<div style="align-self:flex-end;background:#0B2E33;border-radius:10px;padding:10px 13px;max-width:75%;font-size:12px;color:#B8E3E9;">${q}</div>`;
-  msgs.innerHTML+=`<div id="orionThink" style="align-self:flex-start;background:#e8f6f8;border:1px solid #B8E3E9;border-radius:10px;padding:10px 13px;font-size:12px;color:#93B1B5;">ORION is thinking…</div>`;
+  msgs.innerHTML+=`<div style="align-self:flex-end;background:var(--navy);border-radius:10px;padding:10px 13px;max-width:75%;font-size:12px;color:var(--light);">${q}</div>`;
+  msgs.innerHTML+=`<div id="orionThink" style="align-self:flex-start;background:#e8f6f8;border:1px solid var(--light);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--muted);">ORION is thinking…</div>`;
   msgs.scrollTop=msgs.scrollHeight;
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'You are ORION, the AI assistant for Poornima University, Jaipur. Be helpful, concise and friendly.',messages:[{role:'user',content:q}]})});
     const data=await res.json();const reply=(data.content||[]).map(i=>i.text||'').join('');
-    document.getElementById('orionThink').outerHTML=`<div style="align-self:flex-start;background:#e8f6f8;border:1px solid #B8E3E9;border-radius:10px;padding:11px 14px;max-width:80%;font-size:12px;"><div style="font-weight:700;color:#0B2E33;margin-bottom:4px;">ORION</div>${reply||'Could not get response.'}</div>`;
+    document.getElementById('orionThink').outerHTML=`<div style="align-self:flex-start;background:#e8f6f8;border:1px solid var(--light);border-radius:10px;padding:11px 14px;max-width:80%;font-size:12px;"><div style="font-weight:700;color:var(--navy);margin-bottom:4px;">ORION</div>${reply||'Could not get response.'}</div>`;
   }catch(e){document.getElementById('orionThink').outerHTML=`<div style="align-self:flex-start;background:#fbe8e8;border:1px solid #f0c0c0;border-radius:10px;padding:10px 13px;font-size:12px;color:#A32D2D;">ORION unavailable right now.</div>`;}
   msgs.scrollTop=msgs.scrollHeight;
 }
@@ -721,7 +721,7 @@ async function loadStudentExam(){
   if(year) qs+=`&year=${encodeURIComponent(year)}`;
   if(type) qs+=`&examType=${encodeURIComponent(type)}`;
   const el=document.getElementById('stuExamContent');
-  el.innerHTML='<div style="color:#93B1B5;font-size:12px;">Loading…</div>';
+  el.innerHTML='<div style="color:var(--muted);font-size:12px;">Loading…</div>';
   try{
     const [cData,meta]=await Promise.all([
       apiFetch('/exam-calendar?'+qs.replace(/^&/,'')),
@@ -740,7 +740,7 @@ async function loadStudentExam(){
     fillSel('stuExamType',meta.examTypes,'All Exam Types');
 
     if(!cals.length){
-      el.innerHTML='<div style="color:#93B1B5;font-size:12px;">No exam schedules found for the selected filters.</div>';
+      el.innerHTML='<div style="color:var(--muted);font-size:12px;">No exam schedules found for the selected filters.</div>';
       return;
     }
 
@@ -750,31 +750,31 @@ async function loadStudentExam(){
       const upcoming=sorted.filter(s=>s.date>=today);
       const past=sorted.filter(s=>s.date<today);
       const rows=s=>`<div style="display:grid;grid-template-columns:100px 1fr 1fr 80px;gap:6px;padding:7px 0;border-bottom:1px solid #E8F7F9;font-size:11px;">
-        <span style="color:#0B2E33;font-weight:700;">${new Date(s.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</span>
-        <span style="font-weight:600;color:#0B2E33;">${s.subjectName||'—'}</span>
-        <span style="color:#4F7C82;">${s.time}</span>
-        <span style="color:#4F7C82;">${s.room||'—'}</span>
+        <span style="color:var(--navy);font-weight:700;">${new Date(s.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</span>
+        <span style="font-weight:600;color:var(--navy);">${s.subjectName||'—'}</span>
+        <span style="color:var(--teal);">${s.time}</span>
+        <span style="color:var(--teal);">${s.room||'—'}</span>
       </div>`;
 
-      return `<div style="background:#fff;border:1.5px solid #B8E3E9;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+      return `<div style="background:var(--white);border:1.5px solid var(--light);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
           <div>
-            <div style="font-size:14px;font-weight:800;color:#0B2E33;">${c.department} · ${c.year}</div>
-            <span style="background:#E8F7F9;color:#0B2E33;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;">${c.examType}</span>
+            <div style="font-size:14px;font-weight:800;color:var(--navy);">${c.department} · ${c.year}</div>
+            <span style="background:#E8F7F9;color:var(--navy);padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;">${c.examType}</span>
           </div>
-          <div style="font-size:11px;color:#93B1B5;">${c.subjects.length} subjects · ${c.schedule.length} slots</div>
+          <div style="font-size:11px;color:var(--muted);">${c.subjects.length} subjects · ${c.schedule.length} slots</div>
         </div>
-        ${!sorted.length?'<div style="font-size:11px;color:#93B1B5;">No schedule entries yet.</div>':`
-          <div style="display:grid;grid-template-columns:100px 1fr 1fr 80px;gap:6px;padding:5px 0;font-size:10px;font-weight:700;color:#93B1B5;text-transform:uppercase;border-bottom:2px solid #B8E3E9;">
+        ${!sorted.length?'<div style="font-size:11px;color:var(--muted);">No schedule entries yet.</div>':`
+          <div style="display:grid;grid-template-columns:100px 1fr 1fr 80px;gap:6px;padding:5px 0;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;border-bottom:2px solid var(--light);">
             <span>Date</span><span>Subject</span><span>Time</span><span>Room</span>
           </div>
           ${upcoming.length?upcoming.map(rows).join(''):''}
-          ${past.length?`<div style="margin-top:8px;font-size:10px;color:#93B1B5;font-weight:700;text-transform:uppercase;letter-spacing:.5px;">Past Exams</div>${past.map(s=>`<div style="opacity:.55;">${rows(s)}</div>`).join('')}`:''}
+          ${past.length?`<div style="margin-top:8px;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">Past Exams</div>${past.map(s=>`<div style="opacity:.55;">${rows(s)}</div>`).join('')}`:''}
         `}
       </div>`;
     }).join('');
   }catch(e){
-    el.innerHTML=`<div style="color:#E24B4A;font-size:12px;">${e.message}</div>`;
+    el.innerHTML=`<div style="color:var(--red);font-size:12px;">${e.message}</div>`;
   }
 }
 </script>
@@ -868,13 +868,13 @@ For council-portal.html:
   <div style="background:#1a1a2e;border:2px solid #e74c3c;border-radius:18px;padding:32px;max-width:400px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(231,76,60,.4);">
     <div style="font-size:56px;margin-bottom:12px;">🚨</div>
     <h2 style="color:#e74c3c;margin:0 0 8px;font-size:22px;letter-spacing:1px;">EMERGENCY SOS</h2>
-    <p style="color:#93B1B5;font-size:13px;margin:0 0 20px;line-height:1.5;">Your complete details (name, phone, hostel, room) will be sent immediately to all campus admins.</p>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 20px;line-height:1.5;">Your complete details (name, phone, hostel, room) will be sent immediately to all campus admins.</p>
     <div id="sosStudentInfo" style="background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);border-radius:10px;padding:14px;margin-bottom:20px;text-align:left;font-size:12px;color:#d0eef2;">
       Loading your details…
     </div>
     <textarea id="sosMessage" placeholder="Describe your emergency (optional)..." style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#d0eef2;padding:10px;font-size:12px;min-height:70px;resize:vertical;margin-bottom:16px;"></textarea>
     <div style="display:flex;gap:10px;">
-      <button onclick="cancelSOS()" style="flex:1;padding:11px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#93B1B5;font-size:13px;cursor:pointer;">Cancel</button>
+      <button onclick="cancelSOS()" style="flex:1;padding:11px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:var(--muted);font-size:13px;cursor:pointer;">Cancel</button>
       <button id="sosSendBtn" onclick="sendSOS()" style="flex:2;padding:11px;background:linear-gradient(135deg,#e74c3c,#c0392b);border:none;border-radius:8px;color:white;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.5px;">🚨 SEND SOS NOW</button>
     </div>
     <p style="color:#666;font-size:11px;margin:12px 0 0;">Only use in genuine emergencies</p>

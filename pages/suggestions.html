@@ -9,7 +9,7 @@
 .tog{position:relative;display:inline-block;width:36px;height:20px;}
 .tog input{opacity:0;width:0;height:0;}
 .tog-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.2s;}
-.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:var(--white);border-radius:50%;transition:.2s;}
 .tog input:checked+.tog-sl{background:var(--teal);}
 .tog input:checked+.tog-sl:before{transform:translateX(16px);}
 
@@ -18,12 +18,12 @@
 .sg-meta{color:var(--muted);font-size:10px;margin-bottom:8px;}
 .sg-desc{color:var(--teal);font-size:12px;line-height:1.5;margin-bottom:10px;}
 .vote-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--inp-bg);color:var(--navy);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
-.vote-btn.liked{background:#e0f2ee;border-color:#085041;color:#085041;}
+.vote-btn.liked{background:#e0f2ee;border-color:var(--green);color:var(--green);}
 .vote-btn.disliked{background:#fbe8e8;border-color:#A32D2D;color:#A32D2D;}
 .sg-status{padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;}
 .st-open{background:#e8f4ff;color:#1a4f8a;}
 .st-under_review{background:#fff8e0;color:#633806;}
-.st-implemented{background:#e0f2ee;color:#085041;}
+.st-implemented{background:#e0f2ee;color:var(--green);}
 .st-rejected{background:#fbe8e8;color:#A32D2D;}
 
 </style>
@@ -143,7 +143,7 @@ async function loadSuggestions(){
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <button class="vote-btn ${s.userVote==='like'?'liked':''}" onclick="vote('${s._id}','like')">👍 ${s.likeCount}</button>
           <button class="vote-btn ${s.userVote==='dislike'?'disliked':''}" onclick="vote('${s._id}','dislike')">👎 ${s.dislikeCount}</button>
-          <span style="font-size:12px;font-weight:700;color:${s.score>0?'#085041':s.score<0?'#A32D2D':'var(--muted)'};">Score: ${s.score>0?'+':''}${s.score}</span>
+          <span style="font-size:12px;font-weight:700;color:${s.score>0?'var(--green)':s.score<0?'#A32D2D':'var(--muted)'};">Score: ${s.score>0?'+':''}${s.score}</span>
         </div>
       </div>`).join('');
   }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}

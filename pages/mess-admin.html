@@ -9,7 +9,7 @@
 .tog{position:relative;display:inline-block;width:36px;height:20px;}
 .tog input{opacity:0;width:0;height:0;}
 .tog-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.2s;}
-.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:var(--white);border-radius:50%;transition:.2s;}
 .tog input:checked+.tog-sl{background:var(--teal);}
 .tog input:checked+.tog-sl:before{transform:translateX(16px);}
 
@@ -79,9 +79,9 @@
     <div class="g4 mb-3">
       <div class="sc"><div class="sc-ic">🥞</div><div class="sc-n" id="tBreakfast" style="color:#e4a200;">—</div><div class="sc-l">Breakfast</div></div>
       <div class="sc"><div class="sc-ic">🍛</div><div class="sc-n" id="tLunch" style="color:#1a4f8a;">—</div><div class="sc-l">Lunch</div></div>
-      <div class="sc"><div class="sc-ic">🍪</div><div class="sc-n" id="tSnacks" style="color:#085041;">—</div><div class="sc-l">Snacks</div></div>
+      <div class="sc"><div class="sc-ic">🍪</div><div class="sc-n" id="tSnacks" style="color:var(--green);">—</div><div class="sc-l">Snacks</div></div>
       <div class="sc"><div class="sc-ic">🍚</div><div class="sc-n" id="tDinner" style="color:var(--teal);">—</div><div class="sc-l">Dinner</div></div>
-      <div class="sc"><div class="sc-ic">₹</div><div class="sc-n" id="tRevenue" style="color:#085041;">—</div><div class="sc-l">Revenue</div></div>
+      <div class="sc"><div class="sc-ic">₹</div><div class="sc-n" id="tRevenue" style="color:var(--green);">—</div><div class="sc-l">Revenue</div></div>
     </div>
     <div id="tokenReportList"><div class="empty"><div class="ei">📊</div><p>Select a date above.</p></div></div>
   </div>
@@ -127,7 +127,7 @@ async function verifyToken(){
   try{
     const data=await apiFetch('/mess/tokens/verify',{method:'PATCH',body:JSON.stringify({token:tokenCode})});
     const t=data.token;
-    resEl.className='info-box';resEl.style.display='block';resEl.style.borderColor='#085041';resEl.style.color='#085041';
+    resEl.className='info-box';resEl.style.display='block';resEl.style.borderColor='var(--green)';resEl.style.color='var(--green)';
     resEl.innerHTML=`✅ Valid — Entry Granted<br/><span style="font-weight:400;">${t.userName} (${t.userRegNo}) · ${t.meal.charAt(0).toUpperCase()+t.meal.slice(1)} · ₹${t.price}</span>`;
     document.getElementById('verifyInput').value='';document.getElementById('verifyInput').focus();
   }catch(e){
@@ -152,7 +152,7 @@ async function loadTokenReport(){
         <span style="font-size:16px;">${mEm[t.meal]||'🍛'}</span>
         <div style="flex:1;"><div style="font-weight:600;color:var(--navy);">${t.userName} <span style="color:var(--muted);font-weight:400;">(${t.userRegNo})</span></div><div style="color:var(--muted);font-size:10px;">${t.userType.replace('_',' ')}</div></div>
         <span class="badge ${stCls[t.status]||''}">${t.status}</span>
-        <span style="color:#085041;font-weight:700;">₹${t.price}</span>
+        <span style="color:var(--green);font-weight:700;">₹${t.price}</span>
       </div>`).join('');
   }catch(e){showToast(e.message,'error');}
 }

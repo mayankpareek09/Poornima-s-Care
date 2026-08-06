@@ -9,14 +9,14 @@
 .tog{position:relative;display:inline-block;width:36px;height:20px;}
 .tog input{opacity:0;width:0;height:0;}
 .tog-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.2s;}
-.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:var(--white);border-radius:50%;transition:.2s;}
 .tog input:checked+.tog-sl{background:var(--teal);}
 .tog input:checked+.tog-sl:before{transform:translateX(16px);}
 
 .q-card{background:var(--white);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;}
 .q-card.st-paid{border-left-color:#1a4f8a;}
 .q-card.st-preparing{border-left-color:#e4a200;}
-.q-card.st-ready{border-left-color:#085041;}
+.q-card.st-ready{border-left-color:var(--green);}
 .q-token{font-size:16px;font-weight:900;letter-spacing:2px;color:var(--teal);margin-bottom:4px;}
 .q-pills{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0;}
 .q-pill{background:var(--inp-bg);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-size:10px;color:var(--navy);}
@@ -53,9 +53,9 @@
       <div class="sc"><div class="sc-ic">📦</div><div class="sc-n" id="sTotal">—</div><div class="sc-l">Total Today</div></div>
       <div class="sc"><div class="sc-ic">💳</div><div class="sc-n" id="sPaid" style="color:#1a4f8a;">—</div><div class="sc-l">New</div></div>
       <div class="sc"><div class="sc-ic">👨‍🍳</div><div class="sc-n" id="sPrep" style="color:#e4a200;">—</div><div class="sc-l">Preparing</div></div>
-      <div class="sc"><div class="sc-ic">✅</div><div class="sc-n" id="sReady" style="color:#085041;">—</div><div class="sc-l">Ready</div></div>
+      <div class="sc"><div class="sc-ic">✅</div><div class="sc-n" id="sReady" style="color:var(--green);">—</div><div class="sc-l">Ready</div></div>
       <div class="sc"><div class="sc-ic">📦</div><div class="sc-n" id="sCollect" style="color:var(--muted);">—</div><div class="sc-l">Collected</div></div>
-      <div class="sc"><div class="sc-ic">₹</div><div class="sc-n" id="sRevenue" style="color:#085041;">—</div><div class="sc-l">Revenue</div></div>
+      <div class="sc"><div class="sc-ic">₹</div><div class="sc-n" id="sRevenue" style="color:var(--green);">—</div><div class="sc-l">Revenue</div></div>
     </div>
     <div id="queueBoard"></div>
   </div>
@@ -128,11 +128,11 @@ async function loadQueue(){
         <div class="q-pills">${o.items.map(i=>`<span class="q-pill">${i.name} ×${i.qty}</span>`).join('')}</div>
         ${o.note?`<div style="color:var(--muted);font-size:11px;font-style:italic;margin-bottom:8px;">"${o.note}"</div>`:''}
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
-          <span style="color:#085041;font-weight:800;">₹${o.total}</span>
+          <span style="color:var(--green);font-weight:800;">₹${o.total}</span>
           <div style="display:flex;gap:6px;">
-            ${o.status==='paid'?`<button class="btn-sm" style="background:#e4a200;border-color:#e4a200;color:#fff;" onclick="updateOrder('${o._id}','preparing')">Start</button>`:''}
-            ${o.status==='preparing'?`<button class="btn-sm" style="background:#085041;border-color:#085041;color:#fff;" onclick="updateOrder('${o._id}','ready')">Ready</button>`:''}
-            ${o.status==='ready'?`<button class="btn-sm" style="background:var(--teal);border-color:var(--teal);color:#fff;" onclick="updateOrder('${o._id}','collected')">Collected</button>`:''}
+            ${o.status==='paid'?`<button class="btn-sm" style="background:#e4a200;border-color:#e4a200;color:var(--white);" onclick="updateOrder('${o._id}','preparing')">Start</button>`:''}
+            ${o.status==='preparing'?`<button class="btn-sm" style="background:var(--green);border-color:var(--green);color:var(--white);" onclick="updateOrder('${o._id}','ready')">Ready</button>`:''}
+            ${o.status==='ready'?`<button class="btn-sm" style="background:var(--teal);border-color:var(--teal);color:var(--white);" onclick="updateOrder('${o._id}','collected')">Collected</button>`:''}
             <button class="btn-red" onclick="updateOrder('${o._id}','cancelled')">✕</button>
           </div>
         </div>
@@ -154,7 +154,7 @@ async function loadMenuAdmin(){
         <div class="card mb-2 flex items-c gap-3" style="flex-wrap:wrap;">
           <span style="font-size:22px;">${item.imageEmoji||'🍽️'}</span>
           <div style="flex:1;min-width:120px;"><div style="font-weight:600;color:var(--navy);">${item.name}</div>${item.description?`<div style="color:var(--muted);font-size:10px;">${item.description}</div>`:''}</div>
-          <div style="color:#085041;font-weight:700;">₹${item.price}</div>
+          <div style="color:var(--green);font-weight:700;">₹${item.price}</div>
           <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;color:var(--muted);">Avail.</span><label class="tog"><input type="checkbox" ${item.isAvailable?'checked':''} onchange="toggleAvail('${item._id}',this.checked)"/><span class="tog-sl"></span></label></div>
           <div style="display:flex;gap:5px;">
             <button class="btn-sm" onclick='editItem(${JSON.stringify(item).replace(/"/g,"&quot;")})'>Edit</button>
@@ -183,12 +183,12 @@ async function loadHistory(){
     const data=await apiFetch('/canteen/orders?date='+date);const orders=data.orders||[];
     if(!orders.length){el.innerHTML='<div class="empty"><div class="ei">📊</div><p>No orders for this date.</p></div>';return;}
     const stCls={paid:'badge-inprogress',preparing:'badge-inprogress',ready:'badge-resolved',collected:'badge-gold',cancelled:'badge-red'};
-    el.innerHTML=`<div style="color:#085041;font-weight:700;margin-bottom:12px;">Revenue: ₹${data.todayRevenue||0} · ${orders.length} orders</div>`+orders.map(o=>`
+    el.innerHTML=`<div style="color:var(--green);font-weight:700;margin-bottom:12px;">Revenue: ₹${data.todayRevenue||0} · ${orders.length} orders</div>`+orders.map(o=>`
       <div class="card mb-2 flex items-c gap-3" style="flex-wrap:wrap;">
         <div style="min-width:150px;"><div style="color:var(--teal);font-weight:800;letter-spacing:1px;">${o.token}</div><div style="color:var(--muted);font-size:10px;">${o.studentName} · ${o.studentUserId}</div></div>
         <div style="flex:1;color:var(--muted);font-size:11px;">${o.items.map(i=>i.name+'×'+i.qty).join(', ')}</div>
         <span class="badge ${stCls[o.status]||''}">${o.status}</span>
-        <span style="color:#085041;font-weight:700;">₹${o.total}</span>
+        <span style="color:var(--green);font-weight:700;">₹${o.total}</span>
       </div>`).join('');
   }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
 }

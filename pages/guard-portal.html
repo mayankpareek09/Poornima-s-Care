@@ -9,7 +9,7 @@
 .tog{position:relative;display:inline-block;width:36px;height:20px;}
 .tog input{opacity:0;width:0;height:0;}
 .tog-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.2s;}
-.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:var(--white);border-radius:50%;transition:.2s;}
 .tog input:checked+.tog-sl{background:var(--teal);}
 .tog input:checked+.tog-sl:before{transform:translateX(16px);}
 
@@ -110,7 +110,7 @@ async function verifyOtp(){
   const resEl=document.getElementById('otpResult');resEl.style.display='none';
   try{
     const data=await apiFetch('/visitors/'+curVisitorId+'/verify',{method:'PATCH',body:JSON.stringify({otp})});
-    resEl.className='info-box';resEl.style.borderColor='#085041';resEl.style.color='#085041';resEl.style.display='block';
+    resEl.className='info-box';resEl.style.borderColor='var(--green)';resEl.style.color='var(--green)';resEl.style.display='block';
     resEl.innerHTML='✅ '+data.message;
   }catch(e){
     resEl.className='info-box';resEl.style.borderColor='var(--red)';resEl.style.color='var(--red)';resEl.style.display='block';
@@ -137,7 +137,7 @@ async function loadLog(){
         <div style="flex:1;"><div style="color:var(--teal);font-size:12px;">Meeting: <b>${v.whomToMeet}</b></div><div style="color:var(--muted);font-size:10px;">${v.reason}${v.vehicleNo?' · 🚗 '+v.vehicleNo:''}</div></div>
         <span class="badge ${stCls[v.status]||''}">${stLabel[v.status]||v.status}</span>
         <div style="color:var(--muted);font-size:10px;text-align:right;">${v.checkInTime?'In: '+new Date(v.checkInTime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):''}${v.checkOutTime?' · Out: '+new Date(v.checkOutTime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):''}</div>
-        ${v.status==='verified'?`<button class="btn-sm" style="background:var(--teal);border-color:var(--teal);color:#fff;" onclick="checkout('${v._id}')">Check Out</button>`:''}
+        ${v.status==='verified'?`<button class="btn-sm" style="background:var(--teal);border-color:var(--teal);color:var(--white);" onclick="checkout('${v._id}')">Check Out</button>`:''}
       </div>`).join('');
   }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
 }

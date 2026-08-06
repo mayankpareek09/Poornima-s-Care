@@ -168,31 +168,6 @@ input, select, textarea { font-family:'Sora',sans-serif; }
   .g4,.g3,.g2 { grid-template-columns: 1fr; }
 
   .page-body, .admin-body { padding: 12px 14px; }
-  @media (max-width: 768px) {
-  /* Sidebar should be hidden by default on mobile */
-  .sidebar { 
-    position: fixed; 
-    left: -100%; 
-    z-index: 999; 
-    transition: left 0.3s; 
-  }
-  .sidebar.open { left: 0; }
-  
-  /* Main content takes full width */
-  .main-content, .content { 
-    margin-left: 0 !important; 
-    width: 100% !important; 
-  }
-  
-  /* Stats grid - 2 columns on mobile instead of 4 */
-  .stats-grid, .grid-4 { 
-    grid-template-columns: 1fr 1fr !important; 
-  }
-  
-  /* Full width forms */
-  .form-row { flex-direction: column !important; }
-  .fsel, input[type="text"], textarea { width: 100% !important; box-sizing: border-box; }
-}
 
   /* Hero */
   .hero { padding: 64px 14px 16px; }  /* top padding for hamburger button */

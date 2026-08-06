@@ -24,10 +24,10 @@
 <div class="admin-sb">
   <div class="asb-top"><div class="asb-logo">Poornima's <span>Care</span></div><div class="asb-av" id="sbAv">SC</div><div class="asb-nm" id="sbNm">—</div><div class="asb-id" id="sbId">—</div></div>
   <div style="padding:10px 16px;border-bottom:1px solid rgba(184,227,233,.1);">
-    <div style="font-size:10px;font-weight:700;color:#4F7C82;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">Council 2026–27</div>
-    <div style="font-size:11px;color:#B8E3E9;font-weight:600;margin-bottom:2px;">👑 Vanshaj Pradhan</div>
-    <div style="font-size:10px;color:#93B1B5;margin-bottom:6px;">Chair</div>
-    <div style="font-size:10px;color:#93B1B5;">Uma Todi · Aaryan Singh<br/>Pranjal Yadav — Co-Chairs</div>
+    <div style="font-size:10px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">Council 2026–27</div>
+    <div style="font-size:11px;color:var(--light);font-weight:600;margin-bottom:2px;">👑 Vanshaj Pradhan</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:6px;">Chair</div>
+    <div style="font-size:10px;color:var(--muted);">Uma Todi · Aaryan Singh<br/>Pranjal Yadav — Co-Chairs</div>
   </div>
   <div class="asb-sec">Council</div>
   <div class="asb-link active" id="lnk-clubs" onclick="show('clubs',this)"><span class="asb-ic">🏆</span> All Clubs</div>
@@ -40,9 +40,9 @@
     <div class="admin-hdr"><div class="admin-hdr-t">🏆 All Clubs</div>
       <div class="flex items-c gap-2">
         <div style="display:flex;gap:14px;align-items:center;">
-          <div style="font-size:11px;color:#4F7C82;">Clubs: <strong id="stClubs" style="color:#0B2E33;">35</strong></div>
-          <div style="font-size:11px;color:#4F7C82;">Members: <strong id="stMembers" style="color:#0B2E33;">—</strong></div>
-          <div style="font-size:11px;color:#4F7C82;">Events: <strong id="stEvts" style="color:#0B2E33;">—</strong></div>
+          <div style="font-size:11px;color:var(--teal);">Clubs: <strong id="stClubs" style="color:var(--navy);">35</strong></div>
+          <div style="font-size:11px;color:var(--teal);">Members: <strong id="stMembers" style="color:var(--navy);">—</strong></div>
+          <div style="font-size:11px;color:var(--teal);">Events: <strong id="stEvts" style="color:var(--navy);">—</strong></div>
         </div>
         <button class="btn-p" style="font-size:11px;padding:7px 13px;display:none;" id="addClubBtn" onclick="openModal('addClubModal')">+ Club</button>
         <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="signOut()">Sign Out</button>
@@ -62,7 +62,7 @@
         <button class="ftab" onclick="setCat('NSS',this)">🫱 NSS / Seva</button>
         <button class="ftab" onclick="setCat('Environment',this)">🌿 Environment</button>
       </div>
-      <div id="clubStats" style="font-size:11px;color:#93B1B5;margin-bottom:10px;"></div>
+      <div id="clubStats" style="font-size:11px;color:var(--muted);margin-bottom:10px;"></div>
       <div class="g-auto" id="clubGrid"><div class="empty" style="grid-column:1/-1"><div class="ei">🏆</div><p>Loading clubs…</p></div></div>
     </div>
   </div>
@@ -73,7 +73,7 @@
       <div class="admin-hdr-t">🎉 Events</div>
       <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="openModal('addEvModal')">+ Add Event</button>
     </div>
-    <div class="admin-body"><div id="evList"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div></div>
+    <div class="admin-body"><div id="evList"><div style="color:var(--muted);font-size:12px;">Loading…</div></div></div>
   </div>
 </div>
 </div>
@@ -103,7 +103,7 @@
   <button class="modal-close" onclick="closeModal('editClubModal')">✕</button>
   <div class="modal-title">Edit Club</div>
   <input type="hidden" id="ecId"/>
-  <div class="flbl">Club Name</div><input class="finp" id="ecName" readonly style="background:#f0f0f0;color:#93B1B5;"/>
+  <div class="flbl">Club Name</div><input class="finp" id="ecName" readonly style="background:#f0f0f0;color:var(--muted);"/>
   <div class="flbl">Description</div><textarea class="ftxt" id="ecDesc"></textarea>
   <div class="frow">
     <div><div class="flbl">Captain</div><input class="finp" id="ecCap"/></div>
@@ -276,7 +276,7 @@ async function loadEvents(){
         <button class="btn-red" onclick="delEvent('${e._id}')">Delete</button>
       </div>
     </div></div>`).join('');
-  }catch(e){document.getElementById('evList').innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+  }catch(e){document.getElementById('evList').innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
 }
 
 async function addEvent(){

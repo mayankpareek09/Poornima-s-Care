@@ -4,9 +4,9 @@
 <link rel="stylesheet" href="../css/main.css"/>
 <style>
 .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:10px;}
-.photo-thumb{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:2px solid #B8E3E9;}
+.photo-thumb{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:2px solid var(--light);}
 .photo-thumb-wrap{position:relative;}
-.photo-del{position:absolute;top:3px;right:3px;background:#E24B4A;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.photo-del{position:absolute;top:3px;right:3px;background:var(--red);color:var(--white);border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 </style>
 <script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
 </head><body>
@@ -39,10 +39,10 @@
     <div class="admin-body">
       <div class="g4 mb-4">
         <div class="sc" style="cursor:pointer;" onclick="showSOSPanel()"><div class="sc-ic">🚨</div><div class="sc-n" id="dSOS" style="color:#e74c3c;">—</div><div class="sc-l">Active SOS</div></div>
-        <div class="sc"><div class="sc-ic">🔴</div><div class="sc-n" id="dOpen" style="color:#E24B4A;">—</div><div class="sc-l">Open Complaints</div></div>
-        <div class="sc"><div class="sc-ic">🟡</div><div class="sc-n" id="dProg" style="color:#854F0B;">—</div><div class="sc-l">In Progress</div></div>
-        <div class="sc"><div class="sc-ic">🟢</div><div class="sc-n" id="dRes" style="color:#085041;">—</div><div class="sc-l">Resolved</div></div>
-        <div class="sc"><div class="sc-ic">🎉</div><div class="sc-n" id="dEvt" style="color:#4F7C82;">—</div><div class="sc-l">Events</div></div>
+        <div class="sc"><div class="sc-ic">🔴</div><div class="sc-n" id="dOpen" style="color:var(--red);">—</div><div class="sc-l">Open Complaints</div></div>
+        <div class="sc"><div class="sc-ic">🟡</div><div class="sc-n" id="dProg" style="color:var(--yellow);">—</div><div class="sc-l">In Progress</div></div>
+        <div class="sc"><div class="sc-ic">🟢</div><div class="sc-n" id="dRes" style="color:var(--green);">—</div><div class="sc-l">Resolved</div></div>
+        <div class="sc"><div class="sc-ic">🎉</div><div class="sc-n" id="dEvt" style="color:var(--teal);">—</div><div class="sc-l">Events</div></div>
         <div class="sc"><div class="sc-ic">🚌</div><div class="sc-n" id="dBus">—</div><div class="sc-l">Bus Routes</div></div>
       </div>
     </div>
@@ -59,13 +59,13 @@
     </div>
     <div class="admin-body">
       <div class="g3 mb-4">
-        <div class="sc"><div class="sc-n" id="cOpen" style="color:#E24B4A;">0</div><div class="sc-l">Open</div></div>
-        <div class="sc"><div class="sc-n" id="cProg" style="color:#854F0B;">0</div><div class="sc-l">In Progress</div></div>
-        <div class="sc"><div class="sc-n" id="cRes" style="color:#085041;">0</div><div class="sc-l">Resolved</div></div>
+        <div class="sc"><div class="sc-n" id="cOpen" style="color:var(--red);">0</div><div class="sc-l">Open</div></div>
+        <div class="sc"><div class="sc-n" id="cProg" style="color:var(--yellow);">0</div><div class="sc-l">In Progress</div></div>
+        <div class="sc"><div class="sc-n" id="cRes" style="color:var(--green);">0</div><div class="sc-l">Resolved</div></div>
       </div>
       <div class="tbl-wrap">
         <div class="tbl-row head" style="grid-template-columns:2fr 1fr 1fr 80px;"><span>Student &amp; Issue</span><span>Category</span><span>Date</span><span>Status</span></div>
-        <div id="complaintRows"><div style="padding:12px 14px;font-size:11px;color:#93B1B5;">Loading…</div></div>
+        <div id="complaintRows"><div style="padding:12px 14px;font-size:11px;color:var(--muted);">Loading…</div></div>
       </div>
     </div>
   </div>
@@ -73,7 +73,7 @@
   <!-- ANALYTICS -->
   <div class="sec" id="s-analytics">
     <div class="admin-hdr"><div class="admin-hdr-t">📈 Analytics</div><button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="loadAnalytics()">↺ Refresh</button></div>
-    <div class="admin-body"><div id="analyticsBody"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div></div>
+    <div class="admin-body"><div id="analyticsBody"><div style="color:var(--muted);font-size:12px;">Loading…</div></div></div>
   </div>
 
   <!-- TIMETABLE -->
@@ -82,7 +82,7 @@
       <div class="admin-hdr-t">📅 Timetable</div>
       <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="openModal('addTTModal')">+ Add</button>
     </div>
-    <div class="admin-body"><div id="ttList"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div></div>
+    <div class="admin-body"><div id="ttList"><div style="color:var(--muted);font-size:12px;">Loading…</div></div></div>
   </div>
 
   <!-- EVENTS -->
@@ -91,7 +91,7 @@
       <div class="admin-hdr-t">🎉 Events</div>
       <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="openAddEvModal()">+ Add Event</button>
     </div>
-    <div class="admin-body"><div id="evList"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div></div>
+    <div class="admin-body"><div id="evList"><div style="color:var(--muted);font-size:12px;">Loading…</div></div></div>
   </div>
 
   <!-- BUS -->
@@ -100,7 +100,7 @@
       <div class="admin-hdr-t">🚌 Bus Routes</div>
       <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="openAddBusModal()">+ Add Route</button>
     </div>
-    <div class="admin-body"><div id="busList"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div></div>
+    <div class="admin-body"><div id="busList"><div style="color:var(--muted);font-size:12px;">Loading…</div></div></div>
   </div>
 
   <!-- EXAM CALENDAR -->
@@ -116,7 +116,7 @@
         <select class="fsel" id="examFilterYear" style="margin-bottom:0;width:auto;" onchange="loadExamCalendar()"><option value="">All Years</option></select>
         <select class="fsel" id="examFilterType" style="margin-bottom:0;width:auto;" onchange="loadExamCalendar()"><option value="">All Exam Types</option></select>
       </div>
-      <div id="examList"><div style="color:#93B1B5;font-size:12px;">Loading…</div></div>
+      <div id="examList"><div style="color:var(--muted);font-size:12px;">Loading…</div></div>
     </div>
   </div>
 
@@ -125,7 +125,7 @@
 <div class="modal-ov" id="updateComplaintModal"><div class="modal-box">
   <button class="modal-close" onclick="closeModal('updateComplaintModal')">✕</button>
   <div class="modal-title">Update Complaint</div>
-  <div id="ucInfo" style="font-size:11px;color:#4F7C82;margin-bottom:14px;"></div>
+  <div id="ucInfo" style="font-size:11px;color:var(--teal);margin-bottom:14px;"></div>
   <div class="flbl">Status</div>
   <select class="fsel" id="ucStatus"><option value="open">Open</option><option value="inprogress">In Progress</option><option value="resolved">Resolved</option></select>
   <div class="flbl">Response / Notes</div>
@@ -233,9 +233,9 @@
   <input type="hidden" id="examManageId"/>
 
   <!-- Tabs -->
-  <div style="display:flex;gap:6px;margin-bottom:16px;border-bottom:2px solid #B8E3E9;padding-bottom:10px;">
+  <div style="display:flex;gap:6px;margin-bottom:16px;border-bottom:2px solid var(--light);padding-bottom:10px;">
     <button id="emTab-subjects" class="btn-p" style="font-size:11px;padding:6px 14px;" onclick="switchExamTab('subjects')">📚 Subjects</button>
-    <button id="emTab-schedule" class="btn-p" style="font-size:11px;padding:6px 14px;background:#4F7C82;" onclick="switchExamTab('schedule')">🗓 Schedule</button>
+    <button id="emTab-schedule" class="btn-p" style="font-size:11px;padding:6px 14px;background:var(--teal);" onclick="switchExamTab('schedule')">🗓 Schedule</button>
   </div>
 
   <!-- SUBJECTS TAB -->
@@ -316,11 +316,11 @@ async function loadComplaints(){
     document.getElementById('cProg').textContent=cs.filter(c=>c.status==='inprogress').length;
     document.getElementById('cRes').textContent=cs.filter(c=>c.status==='resolved').length;
     const el=document.getElementById('complaintRows');
-    if(!cs.length){el.innerHTML='<div style="padding:12px 14px;font-size:11px;color:#93B1B5;">No complaints found</div>';return;}
+    if(!cs.length){el.innerHTML='<div style="padding:12px 14px;font-size:11px;color:var(--muted);">No complaints found</div>';return;}
     el.innerHTML=cs.map(c=>`<div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 80px;">
-      <span style="font-size:12px;font-weight:600;color:#0B2E33;">${c.title} · <span style="font-weight:400;color:#4F7C82;">${c.studentUserId||''}</span></span>
-      <span style="color:#4F7C82;">${c.category}</span>
-      <span style="color:#93B1B5;">${c.createdAt?new Date(c.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}):''}</span>
+      <span style="font-size:12px;font-weight:600;color:var(--navy);">${c.title} · <span style="font-weight:400;color:var(--teal);">${c.studentUserId||''}</span></span>
+      <span style="color:var(--teal);">${c.category}</span>
+      <span style="color:var(--muted);">${c.createdAt?new Date(c.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}):''}</span>
       <span class="${c.status==='open'?'st-open':c.status==='inprogress'?'st-prog':'st-done'}" style="cursor:pointer;" onclick="openUpdateComplaint('${c._id}','${c.title.replace(/'/g,"\\'")}','${c.status}','${(c.adminNotes||'').replace(/'/g,"\\'")}')">
         ${c.status==='inprogress'?'Working':c.status==='resolved'?'Resolved':'Open'}
       </span>
@@ -344,7 +344,7 @@ await apiFetch('/complaints/'+id,{method:'PATCH',body:JSON.stringify({status:doc
 
 async function loadAnalytics(){
   const el=document.getElementById('analyticsBody');
-  el.innerHTML='<div style="color:#93B1B5;font-size:12px;padding:20px;">Loading analytics…</div>';
+  el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:20px;">Loading analytics…</div>';
   try{
     const data = await apiFetch('/analytics');
     const s = data.stats || {};
@@ -354,24 +354,24 @@ async function loadAnalytics(){
 
     el.innerHTML=`
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px;">
-      <div class="sc" style="border-left:4px solid #E24B4A;">
+      <div class="sc" style="border-left:4px solid var(--red);">
         <div class="sc-ic">🔴</div>
-        <div class="sc-n" style="color:#E24B4A;font-size:28px;">${s.open||0}</div>
+        <div class="sc-n" style="color:var(--red);font-size:28px;">${s.open||0}</div>
         <div class="sc-l">Open Complaints</div>
       </div>
-      <div class="sc" style="border-left:4px solid #854F0B;">
+      <div class="sc" style="border-left:4px solid var(--yellow);">
         <div class="sc-ic">🟡</div>
-        <div class="sc-n" style="color:#854F0B;font-size:28px;">${s.inprogress||0}</div>
+        <div class="sc-n" style="color:var(--yellow);font-size:28px;">${s.inprogress||0}</div>
         <div class="sc-l">In Progress</div>
       </div>
-      <div class="sc" style="border-left:4px solid #085041;">
+      <div class="sc" style="border-left:4px solid var(--green);">
         <div class="sc-ic">🟢</div>
-        <div class="sc-n" style="color:#085041;font-size:28px;">${s.resolved||0}</div>
+        <div class="sc-n" style="color:var(--green);font-size:28px;">${s.resolved||0}</div>
         <div class="sc-l">Resolved</div>
       </div>
-      <div class="sc" style="border-left:4px solid #4F7C82;">
+      <div class="sc" style="border-left:4px solid var(--teal);">
         <div class="sc-ic">📋</div>
-        <div class="sc-n" style="color:#4F7C82;font-size:28px;">${s.total||0}</div>
+        <div class="sc-n" style="color:var(--teal);font-size:28px;">${s.total||0}</div>
         <div class="sc-l">Total</div>
       </div>
     </div>
@@ -380,18 +380,18 @@ async function loadAnalytics(){
       <div class="card">
         <div class="card-t" style="font-size:15px;font-weight:800;margin-bottom:14px;">📊 Resolution Rate</div>
         <div style="text-align:center;padding:10px 0;">
-          <div style="font-size:42px;font-weight:800;color:#085041;">${s.resolutionRate||0}%</div>
-          <div style="font-size:12px;color:#93B1B5;margin-top:4px;">of all complaints resolved</div>
+          <div style="font-size:42px;font-weight:800;color:var(--green);">${s.resolutionRate||0}%</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">of all complaints resolved</div>
         </div>
-        <div class="prog-bar" style="margin-top:10px;"><div class="prog-fill" style="width:${s.resolutionRate||0}%;background:#085041;"></div></div>
+        <div class="prog-bar" style="margin-top:10px;"><div class="prog-fill" style="width:${s.resolutionRate||0}%;background:var(--green);"></div></div>
       </div>
       <div class="card">
         <div class="card-t" style="font-size:15px;font-weight:800;margin-bottom:14px;">⏱️ Avg Resolution Time</div>
         <div style="text-align:center;padding:10px 0;">
-          <div style="font-size:42px;font-weight:800;color:#4F7C82;">${s.avgResolutionHours||0}</div>
-          <div style="font-size:12px;color:#93B1B5;margin-top:4px;">hours average</div>
+          <div style="font-size:42px;font-weight:800;color:var(--teal);">${s.avgResolutionHours||0}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">hours average</div>
         </div>
-        <div style="font-size:11px;color:#93B1B5;text-align:center;margin-top:8px;">${s.avgResolutionHours<24?'✅ Same day resolution':'⚠️ Takes more than a day'}</div>
+        <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">${s.avgResolutionHours<24?'✅ Same day resolution':'⚠️ Takes more than a day'}</div>
       </div>
     </div>
 
@@ -401,24 +401,24 @@ async function loadAnalytics(){
         ${cats.length ? cats.map(c=>`
           <div style="margin-bottom:10px;">
             <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-              <span style="font-size:12px;font-weight:600;color:#0B2E33;">${c._id}</span>
-              <span style="font-size:12px;font-weight:700;color:#4F7C82;">${c.count}</span>
+              <span style="font-size:12px;font-weight:600;color:var(--navy);">${c._id}</span>
+              <span style="font-size:12px;font-weight:700;color:var(--teal);">${c.count}</span>
             </div>
             <div class="prog-bar" style="margin:0;"><div class="prog-fill" style="width:${Math.round(c.count/(s.total||1)*100)}%;"></div></div>
-          </div>`).join('') : '<div style="color:#93B1B5;font-size:11px;">No data</div>'}
+          </div>`).join('') : '<div style="color:var(--muted);font-size:11px;">No data</div>'}
       </div>
       <div class="card">
         <div class="card-t" style="font-size:15px;font-weight:800;margin-bottom:14px;">📅 Last 7 Days Trend</div>
         ${trend.length ? `<div style="display:flex;align-items:flex-end;gap:6px;height:100px;padding:0 4px;">
           ${trend.map(t=>`<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
-            <div style="font-size:10px;color:#4F7C82;font-weight:700;">${t.count}</div>
-            <div style="width:100%;background:#4F7C82;border-radius:4px 4px 0 0;height:${Math.round((t.count/maxTrend)*80)}px;min-height:4px;"></div>
-            <div style="font-size:9px;color:#93B1B5;white-space:nowrap;">${t._id.slice(5)}</div>
+            <div style="font-size:10px;color:var(--teal);font-weight:700;">${t.count}</div>
+            <div style="width:100%;background:var(--teal);border-radius:4px 4px 0 0;height:${Math.round((t.count/maxTrend)*80)}px;min-height:4px;"></div>
+            <div style="font-size:9px;color:var(--muted);white-space:nowrap;">${t._id.slice(5)}</div>
           </div>`).join('')}
-        </div>` : '<div style="color:#93B1B5;font-size:11px;text-align:center;padding:20px 0;">No complaints in last 7 days 🎉</div>'}
+        </div>` : '<div style="color:var(--muted);font-size:11px;text-align:center;padding:20px 0;">No complaints in last 7 days 🎉</div>'}
       </div>
     </div>`;
-  }catch(e){el.innerHTML=`<div class="info-box" style="color:#E24B4A;">${e.message}</div>`;}
+  }catch(e){el.innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
 }
 
 // ── TIMETABLE ──
@@ -508,7 +508,7 @@ function removeExistingPhoto(i){evPhotosExisting.splice(i,1);renderExistingPhoto
 function renderExistingPhotos(){
   const el=document.getElementById('evExistingPhotos');
   if(!evPhotosExisting.length){el.innerHTML='';return;}
-  el.innerHTML='<div style="font-size:11px;font-weight:600;color:#4F7C82;margin-bottom:6px;">Existing Photos:</div><div class="photo-grid">'+evPhotosExisting.map((src,i)=>`<div class="photo-thumb-wrap"><img src="${src}" class="photo-thumb"/><button class="photo-del" onclick="removeExistingPhoto(${i})">✕</button></div>`).join('')+'</div>';
+  el.innerHTML='<div style="font-size:11px;font-weight:600;color:var(--teal);margin-bottom:6px;">Existing Photos:</div><div class="photo-grid">'+evPhotosExisting.map((src,i)=>`<div class="photo-thumb-wrap"><img src="${src}" class="photo-thumb"/><button class="photo-del" onclick="removeExistingPhoto(${i})">✕</button></div>`).join('')+'</div>';
 }
 
 async function loadEvents(){
@@ -520,7 +520,7 @@ async function loadEvents(){
       <div>
         <div class="cc-title">${e.title} ${e.isOngoing?'<span class="st-done" style="font-size:9px;padding:2px 7px;">Ongoing</span>':''}</div>
         <div class="cc-sub">${e.date?new Date(e.date).toLocaleDateString('en-IN'):''} · ${e.type||''} ${e.venue?' · '+e.venue:''}</div>
-        ${e.photos&&e.photos.length?`<div style="margin-top:6px;display:flex;gap:5px;">${e.photos.slice(0,4).map(p=>`<img src="${p}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid #B8E3E9;"/>`).join('')}${e.photos.length>4?`<div style="width:40px;height:40px;border-radius:6px;background:#B8E3E9;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0B2E33;">+${e.photos.length-4}</div>`:''}
+        ${e.photos&&e.photos.length?`<div style="margin-top:6px;display:flex;gap:5px;">${e.photos.slice(0,4).map(p=>`<img src="${p}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid var(--light);"/>`).join('')}${e.photos.length>4?`<div style="width:40px;height:40px;border-radius:6px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--navy);">+${e.photos.length-4}</div>`:''}
         </div>`:''}
       </div>
       <div class="flex gap-2 items-c">
@@ -585,7 +585,7 @@ async function loadBusAdmin(){
       <div>
         <div class="cc-title">Route ${r.routeNo} — ${r.routeName}</div>
         <div class="cc-sub">${r.stops.length} stops${r.annualFee?' · ₹'+r.annualFee.toLocaleString('en-IN')+'/yr':''}${r.morning?' · Morning: '+r.morning:''}${r.driver?' · '+r.driver:''}</div>
-        ${r.notes?`<div style="font-size:10px;color:#4F7C82;margin-top:3px;">${r.notes}</div>`:''}
+        ${r.notes?`<div style="font-size:10px;color:var(--teal);margin-top:3px;">${r.notes}</div>`:''}
       </div>
       <div class="flex gap-2">
         <button class="btn-sm" onclick='openEditBus(${JSON.stringify(r).replace(/'/g,"&#39;")})'>✏️ Edit</button>
@@ -684,7 +684,7 @@ async function loadExamCalendar(){
     renderExamList();
     await populateExamFilters();
   }catch(e){
-    document.getElementById('examList').innerHTML=`<div style="color:#E24B4A;font-size:12px;">${e.message}</div>`;
+    document.getElementById('examList').innerHTML=`<div style="color:var(--red);font-size:12px;">${e.message}</div>`;
   }
 }
 
@@ -705,15 +705,15 @@ async function populateExamFilters(){
 // ── Render calendar list ─────────────────────────────────────────
 function renderExamList(){
   const el=document.getElementById('examList');
-  if(!_examCals.length){el.innerHTML='<div style="color:#93B1B5;font-size:12px;">No exam calendars yet. Click + Add Calendar.</div>';return;}
+  if(!_examCals.length){el.innerHTML='<div style="color:var(--muted);font-size:12px;">No exam calendars yet. Click + Add Calendar.</div>';return;}
   el.innerHTML=_examCals.map(c=>{
     const schCount = (c.schedule||[]).length;
     const subCount = (c.subjects||[]).length;
-    return `<div style="background:#fff;border:1.5px solid #B8E3E9;border-radius:10px;padding:14px 16px;margin-bottom:8px;">
+    return `<div style="background:var(--white);border:1.5px solid var(--light);border-radius:10px;padding:14px 16px;margin-bottom:8px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <div>
-          <div style="font-size:13px;font-weight:800;color:#0B2E33;">${c.department} · ${c.year}</div>
-          <div style="font-size:11px;color:#4F7C82;margin-top:2px;">
+          <div style="font-size:13px;font-weight:800;color:var(--navy);">${c.department} · ${c.year}</div>
+          <div style="font-size:11px;color:var(--teal);margin-top:2px;">
             <span style="background:#E8F7F9;padding:2px 7px;border-radius:20px;font-weight:700;">${c.examType}</span>
             &nbsp;${subCount} subject${subCount!==1?'s':''}
             &nbsp;·&nbsp;${schCount} exam slot${schCount!==1?'s':''}
@@ -721,8 +721,8 @@ function renderExamList(){
         </div>
         <div style="display:flex;gap:6px;">
           <button class="btn-p" style="font-size:11px;padding:5px 11px;" onclick="openManageExam('${c._id}')">Manage</button>
-          <button class="btn-p" style="font-size:11px;padding:5px 11px;background:#4F7C82;" onclick="openEditExamCal('${c._id}')">Edit</button>
-          <button onclick="deleteExamCal('${c._id}')" style="font-size:11px;padding:5px 11px;background:#E24B4A;color:#fff;border:none;border-radius:6px;cursor:pointer;">Delete</button>
+          <button class="btn-p" style="font-size:11px;padding:5px 11px;background:var(--teal);" onclick="openEditExamCal('${c._id}')">Edit</button>
+          <button onclick="deleteExamCal('${c._id}')" style="font-size:11px;padding:5px 11px;background:var(--red);color:var(--white);border:none;border-radius:6px;cursor:pointer;">Delete</button>
         </div>
       </div>
     </div>`;
@@ -792,8 +792,8 @@ function switchExamTab(tab){
   _examTab=tab;
   document.getElementById('emSubjectsTab').style.display=tab==='subjects'?'':'none';
   document.getElementById('emScheduleTab').style.display=tab==='schedule'?'':'none';
-  document.getElementById('emTab-subjects').style.background=tab==='subjects'?'#0B2E33':'#4F7C82';
-  document.getElementById('emTab-schedule').style.background=tab==='schedule'?'#0B2E33':'#4F7C82';
+  document.getElementById('emTab-subjects').style.background=tab==='subjects'?'var(--navy)':'var(--teal)';
+  document.getElementById('emTab-schedule').style.background=tab==='schedule'?'var(--navy)':'var(--teal)';
   if(tab==='subjects') renderManageSubjects();
   else renderManageSchedule();
 }
@@ -802,16 +802,16 @@ function switchExamTab(tab){
 function renderManageSubjects(){
   const c=_examCurCal;
   const el=document.getElementById('emSubjectList');
-  if(!c||!c.subjects.length){el.innerHTML='<div style="color:#93B1B5;font-size:12px;">No subjects yet. Add one above.</div>';return;}
+  if(!c||!c.subjects.length){el.innerHTML='<div style="color:var(--muted);font-size:12px;">No subjects yet. Add one above.</div>';return;}
   el.innerHTML=c.subjects.map(s=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;background:#F4FAFB;border:1px solid #B8E3E9;border-radius:8px;padding:9px 12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#F4FAFB;border:1px solid var(--light);border-radius:8px;padding:9px 12px;">
       <div>
-        <span style="font-size:12px;font-weight:700;color:#0B2E33;">${s.name}</span>
-        <span style="font-size:11px;color:#4F7C82;margin-left:8px;">(${s.code})</span>
+        <span style="font-size:12px;font-weight:700;color:var(--navy);">${s.name}</span>
+        <span style="font-size:11px;color:var(--teal);margin-left:8px;">(${s.code})</span>
       </div>
       <div style="display:flex;gap:5px;">
         <button class="btn-p" style="font-size:10px;padding:4px 9px;" onclick="editSubject('${s._id}','${s.name.replace(/'/g,"\\'")}','${s.code}')">Edit</button>
-        <button onclick="deleteSubject('${s._id}')" style="font-size:10px;padding:4px 9px;background:#E24B4A;color:#fff;border:none;border-radius:5px;cursor:pointer;">Del</button>
+        <button onclick="deleteSubject('${s._id}')" style="font-size:10px;padding:4px 9px;background:var(--red);color:var(--white);border:none;border-radius:5px;cursor:pointer;">Del</button>
       </div>
     </div>`).join('');
 }
@@ -870,18 +870,18 @@ function renderManageSchedule(){
 
   const el=document.getElementById('emScheduleList');
   const sorted=[...(c.schedule||[])].sort((a,b)=>a.date<b.date?-1:1);
-  if(!sorted.length){el.innerHTML='<div style="color:#93B1B5;font-size:12px;">No schedule entries yet.</div>';return;}
+  if(!sorted.length){el.innerHTML='<div style="color:var(--muted);font-size:12px;">No schedule entries yet.</div>';return;}
   el.innerHTML=sorted.map(s=>{
     const dateStr=s.date?new Date(s.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'—';
-    return `<div style="display:flex;justify-content:space-between;align-items:center;background:#F4FAFB;border:1px solid #B8E3E9;border-radius:8px;padding:9px 12px;flex-wrap:wrap;gap:6px;">
+    return `<div style="display:flex;justify-content:space-between;align-items:center;background:#F4FAFB;border:1px solid var(--light);border-radius:8px;padding:9px 12px;flex-wrap:wrap;gap:6px;">
       <div>
-        <span style="font-size:12px;font-weight:700;color:#0B2E33;">${s.subjectName||'(no subject)'}</span>
-        <span style="font-size:10px;color:#4F7C82;margin-left:6px;">${s.subjectCode||''}</span><br/>
-        <span style="font-size:11px;color:#4F7C82;">📅 ${dateStr} &nbsp;⏰ ${s.time} &nbsp;🏫 ${s.room||'—'}</span>
+        <span style="font-size:12px;font-weight:700;color:var(--navy);">${s.subjectName||'(no subject)'}</span>
+        <span style="font-size:10px;color:var(--teal);margin-left:6px;">${s.subjectCode||''}</span><br/>
+        <span style="font-size:11px;color:var(--teal);">📅 ${dateStr} &nbsp;⏰ ${s.time} &nbsp;🏫 ${s.room||'—'}</span>
       </div>
       <div style="display:flex;gap:5px;">
         <button class="btn-p" style="font-size:10px;padding:4px 9px;" onclick="editScheduleEntry('${s._id}','${s.subjectId||''}','${s.date}','${s.time.replace(/'/g,"\\'")}','${(s.room||'').replace(/'/g,"\\'")}')">Edit</button>
-        <button onclick="deleteScheduleEntry('${s._id}')" style="font-size:10px;padding:4px 9px;background:#E24B4A;color:#fff;border:none;border-radius:5px;cursor:pointer;">Del</button>
+        <button onclick="deleteScheduleEntry('${s._id}')" style="font-size:10px;padding:4px 9px;background:var(--red);color:var(--white);border:none;border-radius:5px;cursor:pointer;">Del</button>
       </div>
     </div>`;
   }).join('');
@@ -1024,9 +1024,9 @@ For council-portal.html:
   <div style="background:#1a1a2e;border:2px solid #e74c3c;border-radius:18px;padding:28px;max-width:640px;width:95%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(231,76,60,.4);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
       <h2 style="color:#e74c3c;margin:0;font-size:20px;">🚨 SOS Emergency Alerts</h2>
-      <button onclick="closeSOSPanel()" style="background:rgba(255,255,255,.1);border:none;border-radius:8px;color:#93B1B5;padding:6px 12px;cursor:pointer;font-size:13px;">✕ Close</button>
+      <button onclick="closeSOSPanel()" style="background:rgba(255,255,255,.1);border:none;border-radius:8px;color:var(--muted);padding:6px 12px;cursor:pointer;font-size:13px;">✕ Close</button>
     </div>
-    <div id="sosPanelList"><div style="color:#93B1B5;font-size:12px;">Loading SOS alerts…</div></div>
+    <div id="sosPanelList"><div style="color:var(--muted);font-size:12px;">Loading SOS alerts…</div></div>
   </div>
 </div>
 
@@ -1048,7 +1048,7 @@ function showSOSPanel() { document.getElementById('sosPanelModal').style.display
 function closeSOSPanel() { document.getElementById('sosPanelModal').style.display = 'none'; }
 async function renderSOSPanel() {
   const el = document.getElementById('sosPanelList');
-  el.innerHTML = '<div style="color:#93B1B5;font-size:12px;">Loading…</div>';
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading…</div>';
   try {
     const data = await apiFetch('/sos');
     const alerts = data.alerts || [];
@@ -1061,9 +1061,9 @@ async function renderSOSPanel() {
       return `<div style="background:rgba(255,255,255,.05);border:1px solid ${statusColor}33;border-left:4px solid ${statusColor};border-radius:10px;padding:16px;margin-bottom:12px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
           <div>
-            <div style="color:white;font-weight:700;font-size:14px;">👤 ${a.studentName} <span style="color:#93B1B5;font-weight:400;font-size:12px;">(${a.studentUserId})</span></div>
+            <div style="color:white;font-weight:700;font-size:14px;">👤 ${a.studentName} <span style="color:var(--muted);font-weight:400;font-size:12px;">(${a.studentUserId})</span></div>
             <div style="color:#d0eef2;font-size:12px;margin-top:4px;">📞 ${a.phone} &nbsp;|&nbsp; 🏠 ${a.hostel}, Room ${a.room}</div>
-            <div style="color:#93B1B5;font-size:11px;margin-top:3px;">🕐 ${ts.toLocaleString()} (${agoStr})</div>
+            <div style="color:var(--muted);font-size:11px;margin-top:3px;">🕐 ${ts.toLocaleString()} (${agoStr})</div>
           </div>
           <span style="background:${statusColor}22;color:${statusColor};border:1px solid ${statusColor}55;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;white-space:nowrap;">${a.status.toUpperCase()}</span>
         </div>

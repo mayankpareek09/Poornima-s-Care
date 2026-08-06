@@ -9,7 +9,7 @@
 .tog{position:relative;display:inline-block;width:36px;height:20px;}
 .tog input{opacity:0;width:0;height:0;}
 .tog-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.2s;}
-.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.tog-sl:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:var(--white);border-radius:50%;transition:.2s;}
 .tog input:checked+.tog-sl{background:var(--teal);}
 .tog input:checked+.tog-sl:before{transform:translateX(16px);}
 
@@ -45,8 +45,8 @@
       <div class="sc"><div class="sc-n" id="sTotal">—</div><div class="sc-l">Total</div></div>
       <div class="sc"><div class="sc-n" id="sPaid" style="color:#1a4f8a;">—</div><div class="sc-l">New</div></div>
       <div class="sc"><div class="sc-n" id="sProc" style="color:#e4a200;">—</div><div class="sc-l">Processing</div></div>
-      <div class="sc"><div class="sc-n" id="sReady" style="color:#085041;">—</div><div class="sc-l">Ready</div></div>
-      <div class="sc"><div class="sc-n" id="sRevenue" style="color:#085041;">—</div><div class="sc-l">Revenue ₹</div></div>
+      <div class="sc"><div class="sc-n" id="sReady" style="color:var(--green);">—</div><div class="sc-l">Ready</div></div>
+      <div class="sc"><div class="sc-n" id="sRevenue" style="color:var(--green);">—</div><div class="sc-l">Revenue ₹</div></div>
     </div>
     <div id="ordersList"><div class="empty"><div class="ei">📋</div><p>Loading…</p></div></div>
   </div>
@@ -119,11 +119,11 @@ async function loadOrders(){
         ${o.idCardReason?`<div class="info-box" style="font-size:10px;margin-bottom:8px;">ID Card: ${o.idCardReason}</div>`:''}
         <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">${o.items.map(i=>`<span class="info-box" style="margin:0;padding:2px 7px;display:inline-block;font-size:10px;">${i.name}${i.size?' ('+i.size+')':''} ×${i.qty}</span>`).join('')}</div>
         <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="color:#085041;font-weight:700;">₹${o.total}</span>
+          <span style="color:var(--green);font-weight:700;">₹${o.total}</span>
           <div style="display:flex;gap:6px;">
-            ${o.status==='paid'?`<button class="btn-sm" style="background:#e4a200;border-color:#e4a200;color:#fff;" onclick="updOrder('${o._id}','processing')">Process</button>`:''}
-            ${o.status==='processing'?`<button class="btn-sm" style="background:#085041;border-color:#085041;color:#fff;" onclick="updOrder('${o._id}','ready')">Ready</button>`:''}
-            ${o.status==='ready'?`<button class="btn-sm" style="background:var(--teal);border-color:var(--teal);color:#fff;" onclick="updOrder('${o._id}','collected')">Collected</button>`:''}
+            ${o.status==='paid'?`<button class="btn-sm" style="background:#e4a200;border-color:#e4a200;color:var(--white);" onclick="updOrder('${o._id}','processing')">Process</button>`:''}
+            ${o.status==='processing'?`<button class="btn-sm" style="background:var(--green);border-color:var(--green);color:var(--white);" onclick="updOrder('${o._id}','ready')">Ready</button>`:''}
+            ${o.status==='ready'?`<button class="btn-sm" style="background:var(--teal);border-color:var(--teal);color:var(--white);" onclick="updOrder('${o._id}','collected')">Collected</button>`:''}
             <button class="btn-red" onclick="updOrder('${o._id}','cancelled')">✕</button>
           </div>
         </div>
@@ -140,7 +140,7 @@ async function loadProducts(){
       <div class="card mb-2 flex items-c gap-3" style="flex-wrap:wrap;">
         <span style="font-size:22px;">${item.imageEmoji||'🏷️'}</span>
         <div style="flex:1;min-width:140px;"><div style="font-weight:600;color:var(--navy);">${item.name}</div><div style="color:var(--muted);font-size:10px;">${item.category}${item.sizes?.length?' · '+item.sizes.join(', '):''}</div></div>
-        <div style="color:#085041;font-weight:700;">₹${item.price}</div>
+        <div style="color:var(--green);font-weight:700;">₹${item.price}</div>
         <label class="tog"><input type="checkbox" ${item.isAvailable?'checked':''} onchange="toggleAvail('${item._id}',this.checked)"/><span class="tog-sl"></span></label>
         <div style="display:flex;gap:5px;">
           <button class="btn-sm" onclick='editItem(${JSON.stringify(item).replace(/"/g,"&quot;")})'>Edit</button>

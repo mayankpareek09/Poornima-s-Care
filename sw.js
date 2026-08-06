@@ -1,4 +1,4 @@
-const CACHE = 'pc-v4';
+const CACHE = 'pc-v5';
 const OFFLINE_ASSETS = [
   '/',
   '/index.html',
@@ -44,14 +44,19 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // CSS/JS/images — cache first for speed, since these change less often
+  // CSS/JS/images — stale-while-revalidate: serve cached copy instantly for
+  // speed, but always fetch a fresh copy in the background and update the
+  // cache, so the next load already has the latest deployed version instead
+  // of being stuck on an old cached file until the cache name is bumped.
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).then(resp => {
-      if (resp && resp.status === 200) {
-        const clone = resp.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
-      }
-      return resp;
-    }))
+    caches.open(CACHE).then(cache =>
+      cache.match(e.request).then(cached => {
+        const fetchPromise = fetch(e.request).then(resp => {
+          if (resp && resp.status === 200) cache.put(e.request, resp.clone());
+          return resp;
+        }).catch(() => cached);
+        return cached || fetchPromise;
+      })
+    )
   );
 });

@@ -3,45 +3,45 @@
 <title>Register — Poornima's Care</title>
 <link rel="stylesheet" href="css/main.css"/>
 <style>
-body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;font-family:'Sora',sans-serif;}
+body{background:linear-gradient(135deg,var(--navy) 0%,#1a4f58 50%,var(--navy) 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;font-family:'Sora',sans-serif;}
 .reg-wrap{width:100%;max-width:580px;}
-.reg-card{background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
-.reg-top{background:#0B2E33;padding:28px 36px 24px;position:relative;overflow:hidden;}
+.reg-card{background:var(--white);border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.reg-top{background:var(--navy);padding:28px 36px 24px;position:relative;overflow:hidden;}
 .reg-top::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(79,124,130,0.15);}
 .logo-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;position:relative;z-index:1;}
-.logo-sq{width:40px;height:40px;background:linear-gradient(135deg,#4F7C82,#93B1B5);border-radius:12px;display:flex;align-items:center;justify-content:center;}
-.logo-sq svg{width:20px;height:20px;fill:#fff;}
-.logo-text{font-size:16px;font-weight:800;color:#B8E3E9;}
-.logo-text span{color:#4F7C82;}
-.hero-title{font-size:22px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:5px;position:relative;z-index:1;}
-.hero-sub{font-size:12px;color:#93B1B5;position:relative;z-index:1;}
+.logo-sq{width:40px;height:40px;background:linear-gradient(135deg,var(--teal),var(--muted));border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.logo-sq svg{width:20px;height:20px;fill:var(--white);}
+.logo-text{font-size:16px;font-weight:800;color:var(--light);}
+.logo-text span{color:var(--teal);}
+.hero-title{font-size:22px;font-weight:800;color:var(--white);line-height:1.2;margin-bottom:5px;position:relative;z-index:1;}
+.hero-sub{font-size:12px;color:var(--muted);position:relative;z-index:1;}
 .reg-body{padding:28px 36px 32px;}
 .step{display:none;}
 .step.active{display:block;}
 .step-indicator{display:flex;align-items:center;gap:6px;margin-bottom:22px;}
-.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;border:2px solid #B8E3E9;color:#93B1B5;background:#f0fafb;transition:all .2s;flex-shrink:0;}
-.step-dot.done{background:#4F7C82;border-color:#4F7C82;color:#fff;}
-.step-dot.active{background:#0B2E33;border-color:#0B2E33;color:#fff;}
-.step-line{flex:1;height:2px;background:#B8E3E9;border-radius:2px;}
-.step-line.done{background:#4F7C82;}
-.flbl{font-size:11px;font-weight:700;color:#4F7C82;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;margin-top:2px;}
-.finp,.fsel{width:100%;border:2px solid #B8E3E9;border-radius:10px;padding:12px 14px;font-size:13px;color:#0B2E33;background:#f8fcfd;outline:none;margin-bottom:13px;font-family:'Sora',sans-serif;transition:border .2s;}
-.finp:focus,.fsel:focus{border-color:#4F7C82;background:#fff;box-shadow:0 0 0 3px rgba(79,124,130,0.1);}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;border:2px solid var(--light);color:var(--muted);background:var(--bg);transition:all .2s;flex-shrink:0;}
+.step-dot.done{background:var(--teal);border-color:var(--teal);color:var(--white);}
+.step-dot.active{background:var(--navy);border-color:var(--navy);color:var(--white);}
+.step-line{flex:1;height:2px;background:var(--light);border-radius:2px;}
+.step-line.done{background:var(--teal);}
+.flbl{font-size:11px;font-weight:700;color:var(--teal);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;margin-top:2px;}
+.finp,.fsel{width:100%;border:2px solid var(--light);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--navy);background:#f8fcfd;outline:none;margin-bottom:13px;font-family:'Sora',sans-serif;transition:border .2s;}
+.finp:focus,.fsel:focus{border-color:var(--teal);background:var(--white);box-shadow:0 0 0 3px rgba(79,124,130,0.1);}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.btn-p{padding:13px 20px;background:#0B2E33;border:none;border-radius:11px;color:#B8E3E9;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;font-family:'Sora',sans-serif;width:100%;}
+.btn-p{padding:13px 20px;background:var(--navy);border:none;border-radius:11px;color:var(--light);font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;font-family:'Sora',sans-serif;width:100%;}
 .btn-p:hover{background:#0d3b42;transform:translateY(-1px);box-shadow:0 4px 14px rgba(11,46,51,0.3);}
 .btn-p:disabled{opacity:.6;cursor:not-allowed;transform:none;}
-.btn-sec{padding:12px 20px;background:#f0fafb;border:2px solid #B8E3E9;border-radius:11px;color:#4F7C82;font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;width:100%;margin-bottom:10px;}
-.btn-sec:hover{border-color:#4F7C82;}
-.errmsg{color:#E24B4A;font-size:12px;margin-bottom:10px;font-weight:600;min-height:18px;}
-.info-box{background:#e8f6f8;border:1px solid #B8E3E9;border-radius:9px;padding:11px 14px;font-size:12px;color:#4F7C82;margin-bottom:14px;line-height:1.6;}
+.btn-sec{padding:12px 20px;background:var(--bg);border:2px solid var(--light);border-radius:11px;color:var(--teal);font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;width:100%;margin-bottom:10px;}
+.btn-sec:hover{border-color:var(--teal);}
+.errmsg{color:var(--red);font-size:12px;margin-bottom:10px;font-weight:600;min-height:18px;}
+.info-box{background:#e8f6f8;border:1px solid var(--light);border-radius:9px;padding:11px 14px;font-size:12px;color:var(--teal);margin-bottom:14px;line-height:1.6;}
 .otp-row{display:flex;gap:8px;}
-.otp-input{width:48px;height:52px;border:2px solid #B8E3E9;border-radius:10px;text-align:center;font-size:20px;font-weight:800;color:#0B2E33;background:#f8fcfd;outline:none;font-family:'Sora',sans-serif;transition:border .2s;}
-.otp-input:focus{border-color:#4F7C82;background:#fff;}
+.otp-input{width:48px;height:52px;border:2px solid var(--light);border-radius:10px;text-align:center;font-size:20px;font-weight:800;color:var(--navy);background:#f8fcfd;outline:none;font-family:'Sora',sans-serif;transition:border .2s;}
+.otp-input:focus{border-color:var(--teal);background:var(--white);}
 .success-icon{font-size:48px;text-align:center;margin-bottom:12px;}
 .reg-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px;}
-.rtab{padding:12px;border-radius:12px;border:2px solid #B8E3E9;text-align:center;cursor:pointer;background:#f0fafb;transition:all .2s;font-size:13px;font-weight:700;color:#4F7C82;}
-.rtab.active{background:#0B2E33;border-color:#0B2E33;color:#B8E3E9;}
+.rtab{padding:12px;border-radius:12px;border:2px solid var(--light);text-align:center;cursor:pointer;background:var(--bg);transition:all .2s;font-size:13px;font-weight:700;color:var(--teal);}
+.rtab.active{background:var(--navy);border-color:var(--navy);color:var(--light);}
 @media(max-width:768px){
   .reg-wrap{
     max-width:100%;
@@ -143,13 +143,13 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
 
         <!-- STEP 1: Basic Info -->
         <div class="step active" id="step1">
-          <div style="font-size:15px;font-weight:800;color:#0B2E33;margin-bottom:4px;">Personal Details</div>
-          <div style="font-size:11px;color:#93B1B5;margin-bottom:18px;">Fill your university information</div>
-          <div class="flbl">Full Name <span style="color:#E24B4A;">*</span></div>
+          <div style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:4px;">Personal Details</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:18px;">Fill your university information</div>
+          <div class="flbl">Full Name <span style="color:var(--red);">*</span></div>
           <input class="finp" id="regName" placeholder="Your full name as per records"/>
           <div class="frow">
             <div>
-              <div class="flbl">University Enrollment ID <span style="color:#E24B4A;">*</span></div>
+              <div class="flbl">University Enrollment ID <span style="color:var(--red);">*</span></div>
               <input class="finp" id="regId" placeholder="e.g. PU2021CS045"/>
             </div>
             <div>
@@ -192,17 +192,17 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
           </div>
           <div class="errmsg" id="step1Err"></div>
           <button class="btn-p" onclick="goStep2()">Next →</button>
-          <div style="text-align:center;margin-top:14px;"><a href="login.html" style="font-size:12px;color:#4F7C82;font-weight:600;">Already registered? Sign in</a></div>
+          <div style="text-align:center;margin-top:14px;"><a href="login.html" style="font-size:12px;color:var(--teal);font-weight:600;">Already registered? Sign in</a></div>
         </div>
 
         <!-- STEP 2: Password -->
         <div class="step" id="step2">
-          <div style="font-size:15px;font-weight:800;color:#0B2E33;margin-bottom:4px;">Set Password</div>
-          <div style="font-size:11px;color:#93B1B5;margin-bottom:18px;">Choose a secure password for your account</div>
+          <div style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:4px;">Set Password</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:18px;">Choose a secure password for your account</div>
           <div class="info-box">🔒 Password must be at least 8 characters. Use a mix of letters and numbers.</div>
-          <div class="flbl">Password <span style="color:#E24B4A;">*</span></div>
+          <div class="flbl">Password <span style="color:var(--red);">*</span></div>
           <input class="finp" type="password" id="regPwd" placeholder="Min. 8 characters"/>
-          <div class="flbl">Confirm Password <span style="color:#E24B4A;">*</span></div>
+          <div class="flbl">Confirm Password <span style="color:var(--red);">*</span></div>
           <input class="finp" type="password" id="regPwd2" placeholder="Re-enter password"/>
           <div class="errmsg" id="step2Err"></div>
           <button class="btn-p" onclick="doRegister()" id="regBtn">Register & Get OTP →</button>
@@ -211,8 +211,8 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
 
         <!-- STEP 3: OTP -->
         <div class="step" id="step3">
-          <div style="font-size:15px;font-weight:800;color:#0B2E33;margin-bottom:4px;">Verify OTP</div>
-          <div style="font-size:11px;color:#93B1B5;margin-bottom:18px;" id="otpSubtitle">Enter the 6-digit OTP sent to you</div>
+          <div style="font-size:15px;font-weight:800;color:var(--navy);margin-bottom:4px;">Verify OTP</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:18px;" id="otpSubtitle">Enter the 6-digit OTP sent to you</div>
           <div class="info-box">📱 OTP has been generated. During development, check your server terminal/console for the OTP. In production with SMS configured, it will be sent to your phone.</div>
           <div class="flbl">Enter 6-digit OTP</div>
           <div class="otp-row" style="margin-bottom:16px;">
@@ -232,8 +232,8 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
         <div class="step" id="step4">
           <div class="success-icon">🎉</div>
           <div style="text-align:center;">
-            <div style="font-size:18px;font-weight:800;color:#0B2E33;margin-bottom:6px;">Account Created!</div>
-            <div style="font-size:12px;color:#93B1B5;margin-bottom:20px;">Your account is verified. Welcome to Poornima's Care!</div>
+            <div style="font-size:18px;font-weight:800;color:var(--navy);margin-bottom:6px;">Account Created!</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">Your account is verified. Welcome to Poornima's Care!</div>
           </div>
           <button class="btn-p" onclick="window.location.href='login.html'">Go to Login →</button>
         </div>
@@ -242,12 +242,12 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
       <!-- ADMIN FLOW -->
       <div id="adminFlow" style="display:none;">
         <div class="info-box">🔐 Admin registration requires a secret key provided by the system administrator. Contact your IT department for the key.</div>
-        <div class="flbl">Full Name <span style="color:#E24B4A;">*</span></div>
+        <div class="flbl">Full Name <span style="color:var(--red);">*</span></div>
         <input class="finp" id="adName" placeholder="Full name"/>
         <div class="frow">
-          <div><div class="flbl">Admin ID <span style="color:#E24B4A;">*</span></div><input class="finp" id="adId" placeholder="e.g. ACAD001"/></div>
+          <div><div class="flbl">Admin ID <span style="color:var(--red);">*</span></div><input class="finp" id="adId" placeholder="e.g. ACAD001"/></div>
           <div>
-            <div class="flbl">Role <span style="color:#E24B4A;">*</span></div>
+            <div class="flbl">Role <span style="color:var(--red);">*</span></div>
             <select class="fsel" id="adRole">
               <option value="academic_admin">Academic Admin</option>
               <option value="laundry_admin">Laundry Admin</option>
@@ -268,13 +268,13 @@ body{background:linear-gradient(135deg,#0B2E33 0%,#1a4f58 50%,#0B2E33 100%);min-
           <div class="flbl">Club Name</div>
           <input class="finp" id="adClub" placeholder="e.g. Hack Elite"/>
         </div>
-        <div class="flbl">Password <span style="color:#E24B4A;">*</span></div>
+        <div class="flbl">Password <span style="color:var(--red);">*</span></div>
         <input class="finp" type="password" id="adPwd" placeholder="Min. 8 characters"/>
-        <div class="flbl">Admin Secret Key <span style="color:#E24B4A;">*</span></div>
+        <div class="flbl">Admin Secret Key <span style="color:var(--red);">*</span></div>
         <input class="finp" type="password" id="adKey" placeholder="Provided by IT department"/>
         <div class="errmsg" id="adErr"></div>
         <button class="btn-p" onclick="doAdminRegister()" id="adBtn">Create Admin Account →</button>
-        <div style="text-align:center;margin-top:14px;"><a href="login.html" style="font-size:12px;color:#4F7C82;font-weight:600;">Back to Login</a></div>
+        <div style="text-align:center;margin-top:14px;"><a href="login.html" style="font-size:12px;color:var(--teal);font-weight:600;">Back to Login</a></div>
       </div>
 
     </div>

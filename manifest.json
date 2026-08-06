@@ -4,8 +4,8 @@
   "description": "Campus management portal \u2014 complaints, laundry, timetable, clubs, ORION AI",
   "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#1a3668",
-  "theme_color": "#1a3668",
+  "background_color": "#F0FAFB",
+  "theme_color": "#0B2E33",
   "orientation": "portrait-primary",
   "icons": [
     {

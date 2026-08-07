@@ -192,7 +192,7 @@ body{background:linear-gradient(135deg,var(--navy) 0%,#1a4f58 50%,var(--navy) 10
           </div>
           <div class="errmsg" id="step1Err"></div>
           <button class="btn-p" onclick="goStep2()">Next →</button>
-          <div style="text-align:center;margin-top:14px;"><a href="login.html" style="font-size:12px;color:var(--teal);font-weight:600;">Already registered? Sign in</a></div>
+          <div style="text-align:center;margin-top:14px;"><a href="index.html" style="font-size:12px;color:var(--teal);font-weight:600;">Already registered? Sign in</a></div>
         </div>
 
         <!-- STEP 2: Password -->
@@ -235,7 +235,7 @@ body{background:linear-gradient(135deg,var(--navy) 0%,#1a4f58 50%,var(--navy) 10
             <div style="font-size:18px;font-weight:800;color:var(--navy);margin-bottom:6px;">Account Created!</div>
             <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">Your account is verified. Welcome to Poornima's Care!</div>
           </div>
-          <button class="btn-p" onclick="window.location.href='login.html'">Go to Login →</button>
+          <button class="btn-p" onclick="window.location.href='index.html'">Go to Login →</button>
         </div>
       </div>
 
@@ -274,7 +274,7 @@ body{background:linear-gradient(135deg,var(--navy) 0%,#1a4f58 50%,var(--navy) 10
         <input class="finp" type="password" id="adKey" placeholder="Provided by IT department"/>
         <div class="errmsg" id="adErr"></div>
         <button class="btn-p" onclick="doAdminRegister()" id="adBtn">Create Admin Account →</button>
-        <div style="text-align:center;margin-top:14px;"><a href="login.html" style="font-size:12px;color:var(--teal);font-weight:600;">Back to Login</a></div>
+        <div style="text-align:center;margin-top:14px;"><a href="index.html" style="font-size:12px;color:var(--teal);font-weight:600;">Back to Login</a></div>
       </div>
 
     </div>
@@ -419,7 +419,7 @@ async function doAdminRegister(){
     const data=await res.json();
     if(!data.success){errEl.textContent=data.message;return;}
     showToast('Admin account created! You can now login.','success');
-    setTimeout(()=>window.location.href='login.html',2000);
+    setTimeout(()=>window.location.href='index.html',2000);
   }catch(e){errEl.textContent='Cannot connect to server.';}
   finally{btn.disabled=false;btn.textContent='Create Admin Account →';}
 }

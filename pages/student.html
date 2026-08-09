@@ -39,6 +39,7 @@
   <div class="asb-link" id="nl-clubs" onclick="show('clubs',this)"><span class="asb-ic">🏫</span> Clubs</div>
   <div class="asb-link" id="nl-hostel" onclick="show('hostel',this)"><span class="asb-ic">🏠</span> Hostel</div>
   <div class="asb-link" id="nl-bus" onclick="show('bus',this)"><span class="asb-ic">🚌</span> Bus</div>
+  <div class="asb-link" id="nl-lostfound" onclick="show('lostfound',this)"><span class="asb-ic">🔍</span> Lost &amp; Found</div>
   <div class="asb-sec">Account</div>
   <div class="asb-link" id="nl-profile" onclick="show('profile',this)"><span class="asb-ic">👤</span> Profile</div>
   <div class="asb-link ai" id="nl-chatbot" onclick="show('chatbot',this)"><span class="asb-ic">🤖</span> ORION AI</div>
@@ -145,18 +146,25 @@
       <div class="prog-bar"><div class="prog-fill" id="lProgFill" style="width:0%"></div></div>
       <div class="prog-lbl" id="lProgLbl">loading…</div>
       <div style="font-size:11px;color:var(--teal);margin-top:10px;font-weight:600;" id="lLastSub"></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px;" id="lEta"></div>
+      <div id="lStepper" style="margin-top:14px;"></div>
       <div class="qdots" id="lDots"></div>
     </div>
     <div class="card">
-      <div class="card-t">New Wash Request</div>
+      <div class="card-t">Your Laundry Bag QR</div>
+      <div id="lQrArea" style="text-align:center;padding:10px 0;">
+        <img id="lQrImg" alt="Laundry bag QR code" style="width:150px;height:150px;border-radius:10px;border:1px solid var(--border);" />
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;">Tag this on your bag. Staff scans it at every step to update your status — no manual lookup needed.</div>
+        <div id="lBagCode" style="font-size:11px;color:var(--teal);font-weight:700;margin-top:6px;letter-spacing:0.5px;"></div>
+      </div>
       <div id="lSubmitArea">
         <div class="info-box" style="padding:14px 15px;line-height:1.7;">
           <div style="font-weight:800;color:var(--navy);margin-bottom:10px;font-size:12px;">👕 How Laundry Works</div>
           <div style="display:grid;gap:7px;">
             <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:var(--navy);color:var(--light);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">1</span><span><strong style="color:var(--navy);">Submit your request</strong> — Fill in your clothes list below and click Submit (Mon–Thu only, not on Fridays).</span></div>
-            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:var(--navy);color:var(--light);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">2</span><span><strong style="color:var(--navy);">Keep your bag ready</strong> — Pack all listed clothes in one bag. Staff will collect from your hostel room, so be available by 8:00 AM next morning.</span></div>
-            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:var(--navy);color:var(--light);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">3</span><span><strong style="color:var(--navy);">Washing &amp; drying</strong> — Clothes are washed, dried, and neatly folded. Takes 1–2 days after collection.</span></div>
-            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:var(--navy);color:var(--light);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">4</span><span><strong style="color:var(--navy);">Collect your clothes</strong> — Once status shows ✅ Ready, collect your bag from the Laundry Room (Ground Floor, Hostel Block).</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:var(--navy);color:var(--light);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">2</span><span><strong style="color:var(--navy);">Keep your bag ready</strong> — Pack all listed clothes in one bag with your QR code visible. Staff will scan it when they collect from your hostel room, so be available by 8:00 AM next morning.</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:var(--navy);color:var(--light);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">3</span><span><strong style="color:var(--navy);">Washing, drying &amp; ironing</strong> — Track each step live above. Takes 1–2 days after collection.</span></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:var(--navy);color:var(--light);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;">4</span><span><strong style="color:var(--navy);">Delivered</strong> — Once status shows ✅ Delivered, your clothes are back at your room.</span></div>
           </div>
           <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--light);font-size:11px;color:var(--teal);"><strong>📌 Rules:</strong> 30 washes per year · One bag at a time · No submissions on Fridays · Minimum 3 items per wash</div>
         </div>
@@ -221,6 +229,45 @@
     <button class="ftab" onclick="filterEvt('exam',this)">Exam</button>
   </div>
   <div id="evList"><div class="empty"><div class="ei">🎉</div><p>Loading events…</p></div></div>
+</div>
+
+<!-- LOST & FOUND -->
+<div class="sec" id="s-lostfound">
+  <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:3px;letter-spacing:-0.3px;">🔍 Lost &amp; Found</div>
+  <div style="font-size:12px;color:var(--teal);margin-bottom:16px;">Report a lost item, or list something you found so its owner can claim it.</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-t">Report an Item</div>
+      <div class="flbl">Type</div>
+      <select class="fsel" id="lfType">
+        <option value="lost">😟 I lost something</option>
+        <option value="found">🙌 I found something</option>
+      </select>
+      <div class="flbl">Item Name</div>
+      <input class="finp" id="lfItemName" placeholder="e.g. Black wallet, Blue water bottle…"/>
+      <div class="flbl">Category</div>
+      <select class="fsel" id="lfCategory">
+        <option>Electronics</option><option>Books & Stationery</option><option>ID Card</option>
+        <option>Clothing</option><option>Accessories</option><option>Keys</option>
+        <option>Bag</option><option>Documents</option><option>Other</option>
+      </select>
+      <div class="flbl">Where (last seen / found)</div>
+      <input class="finp" id="lfLocation" placeholder="e.g. Library 2nd floor, Canteen…"/>
+      <div class="flbl">Description</div>
+      <textarea class="ftxt" id="lfDesc" placeholder="Any identifying details — color, brand, contents…"></textarea>
+      <button class="btn-p full" id="lfSubmitBtn" onclick="submitLostFound()">Post Listing →</button>
+    </div>
+    <div class="card">
+      <div class="card-t">Browse Listings <span id="lfCount" style="font-size:11px;font-weight:400;color:var(--muted);"></span></div>
+      <div class="ftabs" style="margin-bottom:10px;">
+        <button class="ftab active" onclick="filterLF('all',this)">All</button>
+        <button class="ftab" onclick="filterLF('lost',this)">😟 Lost</button>
+        <button class="ftab" onclick="filterLF('found',this)">🙌 Found</button>
+      </div>
+      <div class="search-bar mb-2"><input type="text" id="lfSearch" placeholder="Search items…" oninput="loadLostFound()"/></div>
+      <div id="lfList" style="max-height:520px;overflow-y:auto;"><div class="empty"><div class="ei">🔍</div><p>Loading…</p></div></div>
+    </div>
+  </div>
 </div>
 
 <!-- CLUBS -->
@@ -317,6 +364,32 @@
 <div class="sec" id="s-profile">
   <div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:14px;">👤 My Profile</div>
   <div class="g2">
+    <div class="card" id="idCardWrap">
+      <div class="card-t">Digital ID Card</div>
+      <div id="idCard" style="background:linear-gradient(135deg,var(--navy),var(--teal));border-radius:14px;padding:18px;color:#fff;max-width:340px;margin:0 auto;box-shadow:0 6px 20px rgba(11,46,51,0.25);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:800;letter-spacing:1px;">POORNIMA'S CARE</div>
+          <div style="font-size:9px;background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:10px;font-weight:700;">STUDENT</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div id="idAv" style="width:56px;height:56px;border-radius:10px;background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0;">—</div>
+          <div style="flex:1;min-width:0;">
+            <div id="idName" style="font-size:15px;font-weight:800;line-height:1.2;">—</div>
+            <div id="idCourse" style="font-size:10px;opacity:0.85;margin-top:2px;">—</div>
+            <div id="idHostelRoom" style="font-size:10px;opacity:0.85;">—</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.25);">
+          <div>
+            <div style="font-size:8px;opacity:0.7;text-transform:uppercase;letter-spacing:0.5px;">University ID</div>
+            <div id="idUid" style="font-size:12px;font-weight:700;letter-spacing:0.5px;">—</div>
+            <div style="font-size:8px;opacity:0.7;margin-top:6px;">Valid for Session 2026–27</div>
+          </div>
+          <img id="idQr" style="width:56px;height:56px;border-radius:6px;background:#fff;padding:3px;" alt="ID verification QR"/>
+        </div>
+      </div>
+      <button class="btn-p full mt-3" onclick="window.print()">🖨️ Print / Save as PDF</button>
+    </div>
     <div class="card">
       <div class="card-t">Account Information</div>
       <table style="width:100%;font-size:12px;">
@@ -340,6 +413,13 @@
     </div>
   </div>
 </div>
+
+<style media="print">
+  body * { visibility: hidden; }
+  #idCardWrap, #idCardWrap * { visibility: visible; }
+  #idCardWrap { position: absolute; top: 20px; left: 20px; box-shadow: none !important; }
+  #idCardWrap button { display: none !important; }
+</style>
 
 <!-- CHATBOT -->
 <div class="sec" id="s-chatbot">
@@ -431,6 +511,13 @@ if(user){
   if(user.phone) document.getElementById('editPhone').value = user.phone;
   const lSub = 'Manage your annual 30-wash quota'+(user.hostel?' · '+user.hostel:'')+(user.room?' · Room '+user.room:'');
   document.getElementById('laundrySubtitle').textContent = lSub;
+  // Digital ID card
+  document.getElementById('idAv').textContent = ini;
+  document.getElementById('idName').textContent = user.name;
+  document.getElementById('idCourse').textContent = (user.course||'Student')+(user.year?' · '+user.year:'');
+  document.getElementById('idHostelRoom').textContent = user.hostel?user.hostel+(user.room?' · Room '+user.room:''):'Day Scholar';
+  document.getElementById('idUid').textContent = user.userId;
+  document.getElementById('idQr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data='+encodeURIComponent(user.userId);
 }
 
 // NAV
@@ -439,7 +526,7 @@ function show(id, btn){
   document.getElementById('s-'+id).classList.add('active');
   document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
   if(btn) btn.classList.add('active');
-  const loaders={complaints:loadComplaints,laundry:loadLaundry,timetable:loadTT,events:loadEvents,clubs:loadClubs,materials:loadMaterials,bus:loadBus,exam:loadStudentExam};
+  const loaders={complaints:loadComplaints,laundry:loadLaundry,timetable:loadTT,events:loadEvents,clubs:loadClubs,materials:loadMaterials,bus:loadBus,exam:loadStudentExam,lostfound:loadLostFound};
   if(loaders[id]) loaders[id]();
 }
 
@@ -526,7 +613,27 @@ async function submitComplaint(){
   catch(e){showToast(e.message,'error');}
 }
 
-// LAUNDRY (sample4 exact)
+// LAUNDRY
+const LAUNDRY_STEPS = ['submitted','collected','washing','drying','ironing','ready','out_for_delivery','delivered'];
+const LAUNDRY_STEP_LABELS = {submitted:'Submitted',collected:'Collected',washing:'Washing',drying:'Drying',ironing:'Ironing',ready:'Ready',out_for_delivery:'Out for Delivery',delivered:'Delivered'};
+const LAUNDRY_STEP_ICONS = {submitted:'📦',collected:'🧺',washing:'🌀',drying:'💨',ironing:'🔥',ready:'✅',out_for_delivery:'🚚',delivered:'🎉'};
+
+function renderLaundryStepper(currentStatus){
+  const el=document.getElementById('lStepper');
+  if(!currentStatus||currentStatus==='idle'){el.innerHTML='';return;}
+  const curIdx=LAUNDRY_STEPS.indexOf(currentStatus);
+  el.innerHTML=`<div style="display:flex;justify-content:space-between;gap:2px;">${LAUNDRY_STEPS.map((s,i)=>{
+    const done=i<curIdx, active=i===curIdx;
+    const color=done?'var(--green)':active?'var(--teal)':'var(--border)';
+    const bg=done?'var(--green)':active?'var(--teal)':'#fff';
+    const fg=done||active?'#fff':'var(--muted)';
+    return `<div style="flex:1;text-align:center;" title="${LAUNDRY_STEP_LABELS[s]}">
+      <div style="width:22px;height:22px;border-radius:50%;background:${bg};border:2px solid ${color};color:${fg};display:flex;align-items:center;justify-content:center;font-size:10px;margin:0 auto 4px;">${done?'✓':LAUNDRY_STEP_ICONS[s]}</div>
+      <div style="font-size:8px;color:${active?'var(--navy)':'var(--muted)'};font-weight:${active?'800':'500'};">${LAUNDRY_STEP_LABELS[s]}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
 async function loadLaundry(){
   if(new Date().getDay()===5){document.getElementById('fridayAlert').style.display='block';}
   try{
@@ -537,28 +644,48 @@ async function loadLaundry(){
     document.getElementById('lBigNum').innerHTML=`${used} <span style="font-size:16px;color:var(--muted);font-weight:400;">/ ${total}</span>`;
     document.getElementById('lProgFill').style.width=pct+'%';
     document.getElementById('lProgLbl').textContent=`${pct}% quota used · ${total-used} remaining`;
-    const sMap={idle:'No active bag',submitted:'📦 Submitted',washing:'🔄 Washing',ready:'✅ Ready for Pickup'};
+    const sMap={idle:'No active bag',submitted:'📦 Submitted',collected:'🧺 Collected',washing:'🌀 Washing',drying:'💨 Drying',ironing:'🔥 Ironing',ready:'✅ Ready',out_for_delivery:'🚚 Out for Delivery',delivered:'🎉 Delivered'};
     document.getElementById('lStatusPill').textContent=sMap[r.currentStatus||'idle']||'—';
     if(r.currentSubmittedAt) document.getElementById('lLastSub').textContent='Last submitted: '+new Date(r.currentSubmittedAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    else document.getElementById('lLastSub').textContent='';
+    const etaEl=document.getElementById('lEta');
+    if(r.currentEstimatedCompletion&&r.currentStatus&&r.currentStatus!=='idle') etaEl.textContent='Estimated ready by: '+new Date(r.currentEstimatedCompletion).toLocaleDateString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    else etaEl.textContent='';
+    renderLaundryStepper(r.currentStatus);
+    // QR code
+    if(r.bagCode){
+      document.getElementById('lQrImg').src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data='+encodeURIComponent(r.bagCode);
+      document.getElementById('lBagCode').textContent=r.bagCode;
+    }
     // Quota dots
     const dots=document.getElementById('lDots');
     dots.innerHTML=Array.from({length:Math.min(15,total)},(_,i)=>`<div class="qdot${i<used?' used':''}"><span>${i<used?'✓':i+1}</span></div>`).join('');
     // Submit area
     const canSub=(!r.currentStatus||r.currentStatus==='idle')&&used<total&&new Date().getDay()!==5;
+    const infoBox=document.querySelector('#lSubmitArea .info-box');
+    const formEls=[document.querySelector('#lSubmitArea .flbl'),document.getElementById('clothesDesc'),document.getElementById('lSubmitBtn')];
     if(!canSub){
-      document.getElementById('lSubmitArea').innerHTML=`<div class="info-box">${r.currentStatus&&r.currentStatus!=='idle'?'⏳ You have a bag currently being processed. Collect it before submitting again.':used>=total?'❌ Annual quota of 30 washes exhausted.':'🚫 Laundry closed on Fridays.'}</div>`;
+      formEls.forEach(e=>e&&(e.style.display='none'));
+      let msg=document.getElementById('lBlockMsg');
+      if(!msg){msg=document.createElement('div');msg.id='lBlockMsg';msg.className='info-box';msg.style.marginTop='10px';document.getElementById('lSubmitArea').appendChild(msg);}
+      msg.style.display='block';
+      msg.textContent=r.currentStatus&&r.currentStatus!=='idle'?'⏳ You have a bag currently being processed. It will be delivered automatically — no need to collect.':used>=total?'❌ Annual quota of 30 washes exhausted.':'🚫 Laundry closed on Fridays.';
+    }else{
+      formEls.forEach(e=>e&&(e.style.display=''));
+      const msg=document.getElementById('lBlockMsg');
+      if(msg)msg.style.display='none';
     }
     // History
     const hist=r.washHistory||[];
     document.getElementById('lHistCount').textContent=hist.length+' entries';
-    document.getElementById('lHistory').innerHTML=hist.length?`<div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:var(--light);"><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">#</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Clothes</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Submitted</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Collected</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Status</th></tr></thead><tbody>${hist.slice().reverse().map(h=>`<tr style="border-bottom:1px solid #e8f4f6;"><td style="padding:8px 10px;">${h.washNo}</td><td style="padding:8px 10px;">${h.clothesDesc||'—'}</td><td style="padding:8px 10px;">${h.submittedAt?new Date(h.submittedAt).toLocaleDateString('en-IN'):'—'}</td><td style="padding:8px 10px;">${h.collectedAt?new Date(h.collectedAt).toLocaleDateString('en-IN'):'—'}</td><td style="padding:8px 10px;"><span class="${h.status==='collected'?'st-done':'st-sub'}">${h.status}</span></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><div class="ei">👕</div><p>No wash history yet</p></div>';
+    document.getElementById('lHistory').innerHTML=hist.length?`<div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr style="background:var(--light);"><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">#</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Clothes</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Submitted</th><th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Status</th></tr></thead><tbody>${hist.slice().reverse().map(h=>`<tr style="border-bottom:1px solid #e8f4f6;"><td style="padding:8px 10px;">${h.washNo}</td><td style="padding:8px 10px;">${h.clothesDesc||'—'}</td><td style="padding:8px 10px;">${h.submittedAt?new Date(h.submittedAt).toLocaleDateString('en-IN'):'—'}</td><td style="padding:8px 10px;"><span class="${h.status==='delivered'?'st-done':'st-sub'}">${LAUNDRY_STEP_LABELS[h.status]||h.status}</span></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><div class="ei">👕</div><p>No wash history yet</p></div>';
   }catch(e){document.getElementById('lBigNum').textContent='—';showToast(e.message,'error');}
 }
 async function submitBag(){
   const desc=document.getElementById('clothesDesc').value.trim();
   const btn=document.getElementById('lSubmitBtn');
   btn.disabled=true;btn.textContent='Submitting…';
-  try{await apiFetch('/laundry/submit',{method:'POST',body:JSON.stringify({clothesDesc:desc})});showToast('Bag submitted! 👕','success');loadLaundry();}
+  try{await apiFetch('/laundry/submit',{method:'POST',body:JSON.stringify({clothesDesc:desc})});showToast('Bag submitted! 👕','success');document.getElementById('clothesDesc').value='';loadLaundry();}
   catch(e){showToast(e.message,'error');btn.disabled=false;btn.textContent='Submit for Washing →';}
 }
 
@@ -651,6 +778,72 @@ async function loadBus(){
   try{const data=await apiFetch('/bus');allRoutes=data.routes||[];renderBus();}
   catch(e){document.getElementById('busGrid').innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
 }
+
+// LOST & FOUND
+let lfFilter='all';
+function filterLF(f,btn){lfFilter=f;document.querySelectorAll('#s-lostfound .ftab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');loadLostFound();}
+async function loadLostFound(){
+  const el=document.getElementById('lfList');
+  try{
+    const q=document.getElementById('lfSearch').value.trim();
+    let url='/lostfound';
+    const params=[];
+    if(lfFilter!=='all')params.push('type='+lfFilter);
+    if(q)params.push('q='+encodeURIComponent(q));
+    if(params.length)url+='?'+params.join('&');
+    const data=await apiFetch(url);
+    const items=data.items||[];
+    document.getElementById('lfCount').textContent=items.length+' listing'+(items.length===1?'':'s');
+    if(!items.length){el.innerHTML='<div class="empty"><div class="ei">🔍</div><p>No listings yet</p></div>';return;}
+    el.innerHTML=items.map(it=>{
+      const mine=it.reporterUserId===user.userId;
+      const badge=it.type==='lost'?'<span style="background:#fff0ee;color:var(--red);padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;">😟 LOST</span>':'<span style="background:#e0f2ee;color:var(--green);padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;">🙌 FOUND</span>';
+      const statusBadge=it.status==='claimed'?'<span style="background:#fff8e0;color:var(--yellow);padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;margin-left:4px;">CLAIMED</span>':'';
+      return `<div class="card mb-2" style="padding:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+          <div style="font-weight:700;color:var(--navy);font-size:13px;">${it.itemName}</div>
+          <div>${badge}${statusBadge}</div>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin:4px 0;">${it.category}${it.location?' · '+it.location:''} · ${new Date(it.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}</div>
+        ${it.description?`<div style="font-size:11px;color:var(--teal);margin-bottom:6px;">${it.description}</div>`:''}
+        <div style="font-size:10px;color:var(--muted);">Reported by ${mine?'you':it.reporterName}</div>
+        ${it.status==='open'&&!mine?`<button class="btn-sm mt-2" onclick="claimLostFound('${it._id}')">${it.type==='found'?'This is mine — Claim':'I found this — Claim'}</button>`:''}
+        ${it.status==='open'&&mine?`<button class="btn-sm mt-2" onclick="closeLostFound('${it._id}')">Mark Resolved</button>`:''}
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
+}
+async function submitLostFound(){
+  const itemName=document.getElementById('lfItemName').value.trim();
+  if(!itemName){showToast('Item name is required','error');return;}
+  const btn=document.getElementById('lfSubmitBtn');
+  btn.disabled=true;btn.textContent='Posting…';
+  try{
+    await apiFetch('/lostfound',{method:'POST',body:JSON.stringify({
+      type:document.getElementById('lfType').value,
+      itemName,
+      category:document.getElementById('lfCategory').value,
+      location:document.getElementById('lfLocation').value.trim(),
+      description:document.getElementById('lfDesc').value.trim(),
+    })});
+    showToast('Listing posted! 🔍','success');
+    document.getElementById('lfItemName').value='';
+    document.getElementById('lfLocation').value='';
+    document.getElementById('lfDesc').value='';
+    loadLostFound();
+  }catch(e){showToast(e.message,'error');}
+  finally{btn.disabled=false;btn.textContent='Post Listing →';}
+}
+async function claimLostFound(id){
+  if(!confirm('Confirm you want to claim this item? The reporter will be notified and you should collect it from the Guard desk.'))return;
+  try{await apiFetch('/lostfound/'+id+'/claim',{method:'PATCH',body:JSON.stringify({})});showToast('Claimed — coordinate pickup at the Guard desk ✅','success');loadLostFound();}
+  catch(e){showToast(e.message,'error');}
+}
+async function closeLostFound(id){
+  if(!confirm('Mark this listing as resolved and remove it from the board?'))return;
+  try{await apiFetch('/lostfound/'+id+'/close',{method:'PATCH',body:JSON.stringify({})});showToast('Listing closed ✅','success');loadLostFound();}
+  catch(e){showToast(e.message,'error');}
+}
 function searchStop(q){
   const el=document.getElementById('busSearchRes');
   if(!q.trim()){el.innerHTML='';return;}
@@ -694,94 +887,6 @@ async function sendChat(){
   msgs.scrollTop=msgs.scrollHeight;
 }
 </script>
-<!-- ════════════════════════════════════════════════════════════
-     MOBILE MENU CODE FOR ALL PORTAL PAGES
-     
-     FILES TO UPDATE:
-     - pages/student.html
-     - pages/academic-admin.html
-     - pages/laundry-admin.html
-     - pages/council-portal.html
-════════════════════════════════════════════════════════════ -->
-
-<!-- STEP 1: Add this HTML right after <body> tag -->
-<!-- ================================================ -->
-
-
-
-
-<!-- ══ EXAM CALENDAR JS (STUDENT VIEW) ══════════════════════════ -->
-<script>
-async function loadStudentExam(){
-  const dept = document.getElementById('stuExamDept').value;
-  const year = document.getElementById('stuExamYear').value;
-  const type = document.getElementById('stuExamType').value;
-  let qs='';
-  if(dept) qs+=`&department=${encodeURIComponent(dept)}`;
-  if(year) qs+=`&year=${encodeURIComponent(year)}`;
-  if(type) qs+=`&examType=${encodeURIComponent(type)}`;
-  const el=document.getElementById('stuExamContent');
-  el.innerHTML='<div style="color:var(--muted);font-size:12px;">Loading…</div>';
-  try{
-    const [cData,meta]=await Promise.all([
-      apiFetch('/exam-calendar?'+qs.replace(/^&/,'')),
-      apiFetch('/exam-calendar/meta')
-    ]);
-    const cals=cData.calendars||[];
-
-    // populate filters
-    const fillSel=(id,arr,label)=>{
-      const sel=document.getElementById(id);
-      const cur=sel.value;
-      sel.innerHTML=`<option value="">${label}</option>`+arr.map(v=>`<option value="${v}"${v===cur?'selected':''}>${v}</option>`).join('');
-    };
-    fillSel('stuExamDept',meta.departments,'All Departments');
-    fillSel('stuExamYear',meta.years,'All Years');
-    fillSel('stuExamType',meta.examTypes,'All Exam Types');
-
-    if(!cals.length){
-      el.innerHTML='<div style="color:var(--muted);font-size:12px;">No exam schedules found for the selected filters.</div>';
-      return;
-    }
-
-    el.innerHTML=cals.map(c=>{
-      const sorted=[...(c.schedule||[])].sort((a,b)=>a.date<b.date?-1:1);
-      const today=new Date().toISOString().split('T')[0];
-      const upcoming=sorted.filter(s=>s.date>=today);
-      const past=sorted.filter(s=>s.date<today);
-      const rows=s=>`<div style="display:grid;grid-template-columns:100px 1fr 1fr 80px;gap:6px;padding:7px 0;border-bottom:1px solid #E8F7F9;font-size:11px;">
-        <span style="color:var(--navy);font-weight:700;">${new Date(s.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</span>
-        <span style="font-weight:600;color:var(--navy);">${s.subjectName||'—'}</span>
-        <span style="color:var(--teal);">${s.time}</span>
-        <span style="color:var(--teal);">${s.room||'—'}</span>
-      </div>`;
-
-      return `<div style="background:var(--white);border:1.5px solid var(--light);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
-          <div>
-            <div style="font-size:14px;font-weight:800;color:var(--navy);">${c.department} · ${c.year}</div>
-            <span style="background:#E8F7F9;color:var(--navy);padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;">${c.examType}</span>
-          </div>
-          <div style="font-size:11px;color:var(--muted);">${c.subjects.length} subjects · ${c.schedule.length} slots</div>
-        </div>
-        ${!sorted.length?'<div style="font-size:11px;color:var(--muted);">No schedule entries yet.</div>':`
-          <div style="display:grid;grid-template-columns:100px 1fr 1fr 80px;gap:6px;padding:5px 0;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;border-bottom:2px solid var(--light);">
-            <span>Date</span><span>Subject</span><span>Time</span><span>Room</span>
-          </div>
-          ${upcoming.length?upcoming.map(rows).join(''):''}
-          ${past.length?`<div style="margin-top:8px;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">Past Exams</div>${past.map(s=>`<div style="opacity:.55;">${rows(s)}</div>`).join('')}`:''}
-        `}
-      </div>`;
-    }).join('');
-  }catch(e){
-    el.innerHTML=`<div style="color:var(--red);font-size:12px;">${e.message}</div>`;
-  }
-}
-</script>
-
-<!-- STEP 2: Add this JavaScript before </body> tag -->
-<!-- ============================================== -->
-
 <script>
 // Mobile Sidebar Toggle
 function toggleSidebar() {
@@ -826,41 +931,6 @@ document.querySelectorAll('input, select, textarea').forEach(function(element) {
 });
 </script>
 
-
-<!-- ════════════════════════════════════════════════════════════
-     DETAILED INSTRUCTIONS
-════════════════════════════════════════════════════════════ -->
-
-<!--
-For student.html:
-1. Find: <body>
-   Add AFTER it: The HTML from STEP 1
-   
-2. Find: </body>
-   Add BEFORE it: The JavaScript from STEP 2
-
-For academic-admin.html:
-1. Find: <body>
-   Add AFTER it: The HTML from STEP 1
-   
-2. Find: </body>
-   Add BEFORE it: The JavaScript from STEP 2
-
-For laundry-admin.html:
-1. Find: <body>
-   Add AFTER it: The HTML from STEP 1
-   
-2. Find: </body>
-   Add BEFORE it: The JavaScript from STEP 2
-
-For council-portal.html:
-1. Find: <body>
-   Add AFTER it: The HTML from STEP 1
-   
-2. Find: </body>
-   Add BEFORE it: The JavaScript from STEP 2
--->
-   <!-- New Features -->
 <script src="/js/features.js"></script>
 
 <!-- ═══════════ SOS MODAL ═══════════ -->

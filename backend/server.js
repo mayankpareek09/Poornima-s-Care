@@ -105,6 +105,7 @@ app.use('/api/feedback',      apiLimiter, require('./routes/feedback'));
 app.use('/api/suggestions',   apiLimiter, require('./routes/suggestions'));
 app.use('/api/visitors',      apiLimiter, require('./routes/visitors'));
 app.use('/api/appointments',  apiLimiter, require('./routes/appointments'));
+app.use('/api/lostfound',     apiLimiter, require('./routes/lostfound'));
 
 // Serve login page for root
 app.get('/', (req, res) => res.sendFile(path.join(frontendPath, 'index.html')));

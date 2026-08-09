@@ -12,11 +12,12 @@
   <div class="asb-top"><div class="asb-logo">Poornima's <span>Care</span></div><div class="asb-av" id="sbAv">LA</div><div class="asb-nm" id="sbNm">—</div><div class="asb-id" id="sbId">—</div></div>
   <div class="asb-sec">Laundry</div>
   <div class="asb-link active" id="lnk-dash" onclick="show('dash',this)"><span class="asb-ic">⚡</span> Dashboard</div>
+  <div class="asb-link" id="lnk-scan" onclick="show('scan',this)"><span class="asb-ic">📷</span> Scan QR</div>
   <div class="asb-link" id="lnk-all" onclick="show('all',this)"><span class="asb-ic">📋</span> All Laundry</div>
   <div class="asb-link" id="lnk-submitted" onclick="show('submitted',this)"><span class="asb-ic">📦</span> Submitted</div>
   <div class="asb-link" id="lnk-washing" onclick="show('washing',this)"><span class="asb-ic">🔄</span> Washing</div>
   <div class="asb-link" id="lnk-ready" onclick="show('ready',this)"><span class="asb-ic">✅</span> Ready</div>
-  <div class="asb-link" id="lnk-collected" onclick="show('collected',this)"><span class="asb-ic">📬</span> Collected</div>
+  <div class="asb-link" id="lnk-collected" onclick="show('collected',this)"><span class="asb-ic">📬</span> Delivered</div>
 </div>
 <div class="admin-main">
   <!-- DASHBOARD -->
@@ -28,7 +29,36 @@
         <div class="sc"><div class="sc-ic">📦</div><div class="sc-n" id="dSub" style="color:var(--yellow);">—</div><div class="sc-l">Submitted</div></div>
         <div class="sc"><div class="sc-ic">🔄</div><div class="sc-n" id="dWash" style="color:var(--teal);">—</div><div class="sc-l">Washing</div></div>
         <div class="sc"><div class="sc-ic">✅</div><div class="sc-n" id="dReady" style="color:var(--green);">—</div><div class="sc-l">Ready</div></div>
-        <div class="sc"><div class="sc-ic">📬</div><div class="sc-n" id="dColl" style="color:var(--green);">—</div><div class="sc-l">Collected Today</div></div>
+        <div class="sc"><div class="sc-ic">📬</div><div class="sc-n" id="dColl" style="color:var(--green);">—</div><div class="sc-l">Delivered Today</div></div>
+      </div>
+    </div>
+  </div>
+  <!-- SCAN QR -->
+  <div class="sec" id="s-scan">
+    <div class="admin-hdr"><div class="admin-hdr-t">📷 Scan Laundry Bag</div></div>
+    <div class="admin-body">
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">Camera Scanner</div>
+          <div id="qrReader" style="width:100%;max-width:340px;margin:0 auto;border-radius:10px;overflow:hidden;"></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:10px;text-align:center;">Point the camera at the student's bag QR code. If the camera isn't available, enter the code manually below.</div>
+          <div class="flbl" style="margin-top:14px;">Manual Bag Code</div>
+          <div style="display:flex;gap:8px;">
+            <input type="text" class="fsel" id="manualBagCode" placeholder="e.g. LDY-PU2021CS045" style="flex:1;" onkeydown="if(event.key==='Enter')lookupBagCode(document.getElementById('manualBagCode').value)"/>
+            <button class="btn-p" style="font-size:11px;padding:9px 16px;" onclick="lookupBagCode(document.getElementById('manualBagCode').value)">Look Up</button>
+          </div>
+        </div>
+        <div class="card" id="scanResultCard" style="display:none;">
+          <div class="card-t">Bag Found</div>
+          <div id="scanInfo" style="font-size:13px;color:var(--navy);font-weight:700;margin-bottom:2px;"></div>
+          <div id="scanSub" style="font-size:11px;color:var(--muted);margin-bottom:12px;"></div>
+          <div id="scanStepper" style="margin-bottom:14px;"></div>
+          <div class="flbl">Advance To</div>
+          <select class="fsel" id="scanStatus"></select>
+          <div class="flbl">Admin Notes (optional)</div>
+          <textarea class="ftxt" id="scanNotes" placeholder="Optional notes for student…"></textarea>
+          <button class="btn-p full" onclick="applyScanUpdate()">Update Status →</button>
+        </div>
       </div>
     </div>
   </div>
@@ -72,9 +102,13 @@
   <div class="flbl">New Status</div>
   <select class="fsel" id="uStatus">
     <option value="submitted">📦 Submitted</option>
-    <option value="washing">🔄 Washing</option>
-    <option value="ready">✅ Ready for Pickup</option>
-    <option value="collected">📬 Collected</option>
+    <option value="collected">🧺 Collected from room</option>
+    <option value="washing">🌀 Washing</option>
+    <option value="drying">💨 Drying</option>
+    <option value="ironing">🔥 Ironing</option>
+    <option value="ready">✅ Ready for delivery</option>
+    <option value="out_for_delivery">🚚 Out for delivery</option>
+    <option value="delivered">🎉 Delivered</option>
   </select>
   <div class="flbl">Admin Notes (optional)</div>
   <textarea class="ftxt" id="uNotes" placeholder="Optional notes for student…"></textarea>
@@ -82,6 +116,7 @@
   <button class="btn-p full" onclick="doUpdate()">Update Status →</button>
 </div></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script src="../js/api.js"></script>
 <script>
 const user=requireAuth(['laundry_admin']);
@@ -91,11 +126,66 @@ if(user){
   document.getElementById('sbNm').textContent=user.name;
   document.getElementById('sbId').textContent=user.userId+' · Laundry Services';
 }
+let qrScanner=null;
+function startScanner(){
+  if(typeof Html5Qrcode==='undefined'){document.getElementById('qrReader').innerHTML='<div style="font-size:11px;color:var(--muted);padding:16px;text-align:center;">Camera scanner unavailable — use manual code entry below.</div>';return;}
+  if(qrScanner)return;
+  qrScanner=new Html5Qrcode('qrReader');
+  qrScanner.start({facingMode:'environment'},{fps:10,qrbox:220},
+    decodedText=>{ lookupBagCode(decodedText); stopScanner(); },
+    ()=>{}
+  ).catch(()=>{document.getElementById('qrReader').innerHTML='<div style="font-size:11px;color:var(--muted);padding:16px;text-align:center;">Camera permission denied or unavailable — use manual code entry below.</div>';qrScanner=null;});
+}
+function stopScanner(){
+  if(qrScanner){qrScanner.stop().then(()=>qrScanner.clear()).catch(()=>{});qrScanner=null;}
+}
+async function lookupBagCode(code){
+  code=(code||'').trim();
+  if(!code){showToast('Enter or scan a bag code','error');return;}
+  try{
+    const data=await apiFetch('/laundry/scan/'+encodeURIComponent(code));
+    const r=data.record;
+    document.getElementById('scanResultCard').style.display='block';
+    document.getElementById('scanInfo').textContent=r.studentName+' · '+r.studentUserId;
+    document.getElementById('scanSub').textContent=(r.hostel||'')+(r.room?' · Room '+r.room:'')+' · '+r.usedWashes+'/'+r.totalWashes+' washes used';
+    document.getElementById('scanStepper').innerHTML=r.currentStatus&&r.currentStatus!=='idle'?stepperHtml(r.currentStatus):'<div style="font-size:11px;color:var(--muted);">No active bag — student hasn\'t submitted a wash request yet.</div>';
+    const sel=document.getElementById('scanStatus');
+    sel.innerHTML=(data.statusSteps||[]).map(s=>`<option value="${s}">${(data.statusLabels||{})[s]||s}</option>`).join('');
+    sel.value=r.currentStatus&&r.currentStatus!=='idle'?r.currentStatus:'submitted';
+    document.getElementById('scanNotes').value='';
+    document.getElementById('scanResultCard').dataset.id=r._id;
+    document.getElementById('scanResultCard').dataset.active=r.currentStatus&&r.currentStatus!=='idle'?'1':'0';
+  }catch(e){showToast(e.message,'error');document.getElementById('scanResultCard').style.display='none';}
+}
+function stepperHtml(currentStatus){
+  const steps=['submitted','collected','washing','drying','ironing','ready','out_for_delivery','delivered'];
+  const icons={submitted:'📦',collected:'🧺',washing:'🌀',drying:'💨',ironing:'🔥',ready:'✅',out_for_delivery:'🚚',delivered:'🎉'};
+  const curIdx=steps.indexOf(currentStatus);
+  return `<div style="display:flex;justify-content:space-between;gap:2px;">${steps.map((s,i)=>{
+    const done=i<curIdx,active=i===curIdx;
+    const color=done?'var(--green)':active?'var(--teal)':'var(--border)';
+    const bg=done?'var(--green)':active?'var(--teal)':'#fff';
+    const fg=done||active?'#fff':'var(--muted)';
+    return `<div style="flex:1;text-align:center;" title="${s}"><div style="width:20px;height:20px;border-radius:50%;background:${bg};border:2px solid ${color};color:${fg};display:flex;align-items:center;justify-content:center;font-size:9px;margin:0 auto 3px;">${done?'✓':icons[s]}</div></div>`;
+  }).join('')}</div>`;
+}
+async function applyScanUpdate(){
+  const card=document.getElementById('scanResultCard');
+  const id=card.dataset.id;
+  if(card.dataset.active!=='1'){showToast('This student has no active bag to update.','error');return;}
+  try{
+    await apiFetch('/laundry/'+id,{method:'PATCH',body:JSON.stringify({status:document.getElementById('scanStatus').value,adminNotes:document.getElementById('scanNotes').value})});
+    showToast('Status updated ✅','success');
+    lookupBagCode(document.getElementById('manualBagCode').value||id);
+    loadAll();
+  }catch(e){showToast(e.message,'error');}
+}
 function show(id,el){
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
   document.getElementById('s-'+id).classList.add('active');
   document.querySelectorAll('.asb-link').forEach(a=>a.classList.remove('active'));
   if(el)el.classList.add('active');
+  if(id==='scan')startScanner(); else stopScanner();
   loadAll();
 }
 function openModal(id){document.getElementById(id).classList.add('open');}
@@ -108,7 +198,6 @@ async function loadAll(){
   try{
     const data=await apiFetch('/laundry/all');
     const raw=data.records||[];
-    // De-duplicate by student, keep latest
     const seen={};
     raw.forEach(r=>{
       const k=r.studentUserId||String(r.studentId);
@@ -118,29 +207,29 @@ async function loadAll(){
 
     const gs=r=>r.currentStatus||'idle';
     const today=new Date().toDateString();
+    const inProgress=st=>['collected','washing','drying','ironing'].includes(st);
 
     document.getElementById('dTotal').textContent=allRecs.length;
     document.getElementById('dSub').textContent=allRecs.filter(r=>gs(r)==='submitted').length;
-    document.getElementById('dWash').textContent=allRecs.filter(r=>gs(r)==='washing').length;
-    document.getElementById('dReady').textContent=allRecs.filter(r=>gs(r)==='ready').length;
+    document.getElementById('dWash').textContent=allRecs.filter(r=>inProgress(gs(r))).length;
+    document.getElementById('dReady').textContent=allRecs.filter(r=>['ready','out_for_delivery'].includes(gs(r))).length;
 
-    // Count collected today from wash history
-    let collectedToday=0;
+    let deliveredToday=0;
     raw.forEach(r=>{
       (r.washHistory||[]).forEach(h=>{
-        if(h.status==='collected'&&h.collectedAt&&new Date(h.collectedAt).toDateString()===today) collectedToday++;
+        const ts=h.stageTimestamps&&h.stageTimestamps.delivered;
+        if(h.status==='delivered'&&ts&&new Date(ts).toDateString()===today) deliveredToday++;
       });
     });
-    document.getElementById('dColl').textContent=collectedToday;
+    document.getElementById('dColl').textContent=deliveredToday;
 
     renderList('listAll',allRecs,'all');
     renderList('listSub',allRecs.filter(r=>gs(r)==='submitted'));
-    renderList('listWash',allRecs.filter(r=>gs(r)==='washing'));
-    renderList('listReady',allRecs.filter(r=>gs(r)==='ready'));
+    renderList('listWash',allRecs.filter(r=>inProgress(gs(r))));
+    renderList('listReady',allRecs.filter(r=>['ready','out_for_delivery'].includes(gs(r))));
 
-    // Collected = records with at least one collected history entry
-    const collectedRecs=raw.filter(r=>(r.washHistory||[]).some(h=>h.status==='collected'));
-    renderCollected('listColl',collectedRecs);
+    const deliveredRecs=raw.filter(r=>(r.washHistory||[]).some(h=>h.status==='delivered'));
+    renderCollected('listColl',deliveredRecs);
   }catch(e){console.error(e);}
 }
 
@@ -154,13 +243,15 @@ function filterTable(q){
 function fmtDate(d){return d?new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';}
 function fmtDateShort(d){return d?new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}):'—';}
 
+const STATUS_LABEL={submitted:'Submitted',collected:'Collected',washing:'Washing',drying:'Drying',ironing:'Ironing',ready:'Ready',out_for_delivery:'Out for Delivery',delivered:'Delivered',idle:'No Active Bag'};
+
 function renderList(elId,records,mode){
   const el=document.getElementById(elId);
   if(!el)return;
   if(!records.length){el.innerHTML='<div class="empty"><div class="ei">📭</div><p>No records here</p></div>';return;}
   const gs=r=>r.currentStatus||'idle';
-  const statusColor={submitted:'var(--yellow)',washing:'var(--teal)',ready:'var(--green)',idle:'var(--muted)'};
-  const statusBg={submitted:'#fff8e0',washing:'#e8f6f8',ready:'#e0f2ee',idle:'#f5f5f5'};
+  const statusColor={submitted:'var(--yellow)',collected:'var(--teal)',washing:'var(--teal)',drying:'var(--teal)',ironing:'var(--teal)',ready:'var(--green)',out_for_delivery:'var(--green)',delivered:'var(--green)',idle:'var(--muted)'};
+  const statusBg={submitted:'#fff8e0',collected:'#e8f6f8',washing:'#e8f6f8',drying:'#e8f6f8',ironing:'#e8f6f8',ready:'#e0f2ee',out_for_delivery:'#e0f2ee',delivered:'#e0f2ee',idle:'#f5f5f5'};
 
   el.innerHTML=`<div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:11px;">
     <thead><tr style="background:var(--light);">
@@ -179,7 +270,7 @@ function renderList(elId,records,mode){
       return `<tr class="l-row" style="border-bottom:1px solid #e8f4f6;">
         <td style="padding:9px 11px;font-weight:700;color:var(--navy);">${r.studentName||'—'}</td>
         <td style="padding:9px 11px;font-size:10px;"><div style="color:var(--teal);">${r.studentUserId||'—'}</div><div style="color:var(--muted);">${r.hostel||''} ${r.room?'Rm '+r.room:''}</div></td>
-        <td style="padding:9px 11px;"><span style="background:${statusBg[st]||'#f5f5f5'};color:${statusColor[st]||'var(--muted)'};padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;text-transform:capitalize;">${st==='idle'?'No Active Bag':st}</span></td>
+        <td style="padding:9px 11px;"><span style="background:${statusBg[st]||'#f5f5f5'};color:${statusColor[st]||'var(--muted)'};padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;">${STATUS_LABEL[st]||st}</span></td>
         <td style="padding:9px 11px;font-size:10px;color:var(--teal);max-width:150px;">${clothes}</td>
         <td style="padding:9px 11px;font-size:10px;color:var(--muted);">${subDate}</td>
         <td style="padding:9px 11px;font-size:10px;"><span style="font-weight:700;">${r.usedWashes||0}</span><span style="color:var(--muted);">/${r.totalWashes||30}</span></td>
@@ -193,17 +284,18 @@ function renderList(elId,records,mode){
 function renderCollected(elId,records){
   const el=document.getElementById(elId);
   if(!el)return;
-  if(!records.length){el.innerHTML='<div class="empty"><div class="ei">📬</div><p>No collected records yet</p></div>';return;}
+  if(!records.length){el.innerHTML='<div class="empty"><div class="ei">📬</div><p>No delivered records yet</p></div>';return;}
   let rows='';
   records.forEach(r=>{
-    (r.washHistory||[]).filter(h=>h.status==='collected').forEach(h=>{
+    (r.washHistory||[]).filter(h=>h.status==='delivered').forEach(h=>{
+      const deliveredAt=h.stageTimestamps&&h.stageTimestamps.delivered;
       rows+=`<tr style="border-bottom:1px solid #e8f4f6;">
         <td style="padding:9px 11px;font-weight:700;color:var(--navy);">${r.studentName||'—'}</td>
         <td style="padding:9px 11px;font-size:10px;color:var(--teal);">${r.studentUserId||'—'}</td>
         <td style="padding:9px 11px;font-size:10px;color:var(--teal);">${h.clothesDesc||'—'}</td>
         <td style="padding:9px 11px;font-size:10px;color:var(--muted);">${fmtDate(h.submittedAt)}</td>
-        <td style="padding:9px 11px;font-size:10px;color:var(--green);font-weight:700;">${fmtDate(h.collectedAt)}</td>
-        <td style="padding:9px 11px;"><span style="background:#e0f2ee;color:var(--green);padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;">Collected ✓</span></td>
+        <td style="padding:9px 11px;font-size:10px;color:var(--green);font-weight:700;">${fmtDate(deliveredAt)}</td>
+        <td style="padding:9px 11px;"><span style="background:#e0f2ee;color:var(--green);padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;">Delivered ✓</span></td>
       </tr>`;
     });
   });
@@ -213,7 +305,7 @@ function renderCollected(elId,records){
       <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">ID</th>
       <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Clothes</th>
       <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Date Submitted</th>
-      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Date Collected</th>
+      <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Date Delivered</th>
       <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Status</th>
     </tr></thead>
     <tbody>${rows}</tbody></table></div>`;
@@ -241,23 +333,6 @@ async function doUpdate(){
 
 loadAll();
 </script>
-<!-- ════════════════════════════════════════════════════════════
-     MOBILE MENU CODE FOR ALL PORTAL PAGES
-     
-     FILES TO UPDATE:
-     - pages/student.html
-     - pages/academic-admin.html
-     - pages/laundry-admin.html
-     - pages/council-portal.html
-════════════════════════════════════════════════════════════ -->
-
-<!-- STEP 1: Add this HTML right after <body> tag -->
-<!-- ================================================ -->
-
-
-<!-- STEP 2: Add this JavaScript before </body> tag -->
-<!-- ============================================== -->
-
 <script>
 // Mobile Sidebar Toggle
 function toggleSidebar() {
@@ -302,39 +377,5 @@ document.querySelectorAll('input, select, textarea').forEach(function(element) {
 });
 </script>
 
-
-<!-- ════════════════════════════════════════════════════════════
-     DETAILED INSTRUCTIONS
-════════════════════════════════════════════════════════════ -->
-
-<!--
-For student.html:
-1. Find: <body>
-   Add AFTER it: The HTML from STEP 1
-   
-2. Find: </body>
-   Add BEFORE it: The JavaScript from STEP 2
-
-For academic-admin.html:
-1. Find: <body>
-   Add AFTER it: The HTML from STEP 1
-   
-2. Find: </body>
-   Add BEFORE it: The JavaScript from STEP 2
-
-For laundry-admin.html:
-1. Find: <body>
-   Add AFTER it: The HTML from STEP 1
-   
-2. Find: </body>
-   Add BEFORE it: The JavaScript from STEP 2
-
-For council-portal.html:
-1. Find: <body>
-   Add AFTER it: The HTML from STEP 1
-   
-2. Find: </body>
-   Add BEFORE it: The JavaScript from STEP 2
--->
 <script src="/js/features.js"></script>
 </body></html>

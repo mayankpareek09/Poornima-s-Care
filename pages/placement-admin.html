@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Placement Admin — Poornima's Care</title>
+<link rel="stylesheet" href="../css/main.css"/>
+<script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<script src="../js/embed-helper.js"></script>
+</head><body>
+<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="admin-wrap">
+<div class="admin-sb">
+  <div class="asb-top">
+    <div class="asb-logo">Poornima's <span>Care</span></div>
+    <div class="asb-av" id="tnAv">—</div>
+    <div class="asb-nm" id="sbNm">—</div>
+    <div class="asb-id" id="sbId">—</div>
+  </div>
+  <div class="asb-sec">Career Services</div>
+  <div class="asb-link active" id="nl-dash" onclick="showView('dash',this)"><span class="asb-ic">⚡</span> Dashboard</div>
+  <div class="asb-link" id="nl-opps" onclick="showView('opps',this);loadOppsAdmin()"><span class="asb-ic">💼</span> Placements &amp; Internships</div>
+  <div class="asb-link" id="nl-sch" onclick="showView('sch',this);loadSchAdmin()"><span class="asb-ic">🎓</span> Scholarships</div>
+  <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
+    <button class="btn-p full" style="font-size:11px;padding:8px;" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+<div class="admin-main"><div class="page-body">
+
+<div id="v-dash" class="sec active">
+  <div class="admin-hdr"><div class="admin-hdr-t">⚡ Career Services Dashboard</div></div>
+  <div class="admin-body">
+    <div class="g4 mb-4">
+      <div class="sc"><div class="sc-ic">🏢</div><div class="sc-n" id="dPlace" style="color:var(--navy);">—</div><div class="sc-l">Open Placements</div></div>
+      <div class="sc"><div class="sc-ic">🎯</div><div class="sc-n" id="dIntern" style="color:var(--teal);">—</div><div class="sc-l">Open Internships</div></div>
+      <div class="sc"><div class="sc-ic">🎓</div><div class="sc-n" id="dSchol" style="color:var(--green);">—</div><div class="sc-l">Open Scholarships</div></div>
+      <div class="sc"><div class="sc-ic">📋</div><div class="sc-n" id="dApps" style="color:var(--yellow);">—</div><div class="sc-l">Total Applications</div></div>
+    </div>
+    <div class="card">
+      <div class="card-t">Quick Actions</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-p" onclick="showView('opps',document.getElementById('nl-opps'));loadOppsAdmin();openModal('addOppModal')">+ Post Placement/Internship</button>
+        <button class="btn-p" style="background:var(--teal);border-color:var(--teal);" onclick="showView('sch',document.getElementById('nl-sch'));loadSchAdmin();openModal('addSchModal')">+ Post Scholarship</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="v-opps" class="sec">
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">💼 Placements &amp; Internships</div>
+    <button class="btn-p" style="padding:8px 14px;font-size:12px;" onclick="openModal('addOppModal')">+ Post New</button>
+  </div>
+  <div class="admin-body" id="oppsAdminList"><div class="empty"><div class="ei">💼</div><p>Loading…</p></div></div>
+</div>
+
+<div id="v-sch" class="sec">
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">🎓 Scholarships</div>
+    <button class="btn-p" style="padding:8px 14px;font-size:12px;" onclick="openModal('addSchModal')">+ Post New</button>
+  </div>
+  <div class="admin-body" id="schAdminList"><div class="empty"><div class="ei">🎓</div><p>Loading…</p></div></div>
+</div>
+
+<div id="v-applicants" class="sec">
+  <div class="admin-hdr"><div class="admin-hdr-t">📋 Applicants — <span id="applicantsFor"></span></div></div>
+  <div class="admin-body" id="applicantsList"></div>
+</div>
+
+</div></div>
+</div>
+
+<!-- Add Opportunity Modal -->
+<div class="modal-ov" id="addOppModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('addOppModal')">✕</button>
+    <div class="modal-title">Post Placement / Internship</div>
+    <div class="flbl">Type</div>
+    <select class="fsel" id="noType"><option value="placement">🏢 Placement</option><option value="internship">🎯 Internship</option></select>
+    <div class="frow mb-2">
+      <div><div class="flbl">Company <span class="req">*</span></div><input class="finp" id="noCompany" placeholder="Company name"/></div>
+      <div><div class="flbl">Role <span class="req">*</span></div><input class="finp" id="noRole" placeholder="Job title"/></div>
+    </div>
+    <div class="frow mb-2">
+      <div><div class="flbl">Compensation</div><input class="finp" id="noComp" placeholder="e.g. 6 LPA / ₹15,000/mo"/></div>
+      <div><div class="flbl">Location</div><input class="finp" id="noLoc" placeholder="e.g. Jaipur / Remote"/></div>
+    </div>
+    <div class="flbl">Eligibility</div>
+    <input class="finp" id="noElig" placeholder="e.g. CGPA 7+, B.Tech CSE/IT"/>
+    <div class="flbl">Description</div>
+    <textarea class="ftxt" id="noDesc" placeholder="Role details…"></textarea>
+    <div class="frow mb-2">
+      <div><div class="flbl">Drive Date</div><input class="finp" type="date" id="noDriveDate"/></div>
+      <div><div class="flbl">Application Deadline <span class="req">*</span></div><input class="finp" type="date" id="noDeadline"/></div>
+    </div>
+    <button class="btn-p full" onclick="postOpportunity()">Post →</button>
+  </div>
+</div>
+
+<!-- Add Scholarship Modal -->
+<div class="modal-ov" id="addSchModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('addSchModal')">✕</button>
+    <div class="modal-title">Post Scholarship</div>
+    <div class="flbl">Name <span class="req">*</span></div>
+    <input class="finp" id="nsName" placeholder="Scholarship name"/>
+    <div class="frow mb-2">
+      <div><div class="flbl">Provider</div><input class="finp" id="nsProvider" placeholder="e.g. State Govt"/></div>
+      <div><div class="flbl">Amount</div><input class="finp" id="nsAmount" placeholder="e.g. ₹25,000 / Full tuition"/></div>
+    </div>
+    <div class="flbl">Eligibility</div>
+    <input class="finp" id="nsElig" placeholder="Who can apply"/>
+    <div class="flbl">How to Apply</div>
+    <textarea class="ftxt" id="nsApplyInfo" placeholder="Application process or link…"></textarea>
+    <div class="flbl">Deadline <span class="req">*</span></div>
+    <input class="finp" type="date" id="nsDeadline"/>
+    <button class="btn-p full" onclick="postScholarship()">Post →</button>
+  </div>
+</div>
+
+<script src="../js/api.js"></script><script src="../js/features.js"></script>
+<script>
+const user=requireAuth(['placement_admin']);if(!user)throw new Error('auth');
+document.getElementById('tnAv').textContent=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+document.getElementById('sbNm').textContent=user.name;
+document.getElementById('sbId').textContent=user.userId+' · Career Services';
+
+function toggleSidebar(){document.querySelector('.admin-sb').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active');}
+function showView(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.getElementById('v-'+id).classList.add('active');
+  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
+  if(el)el.classList.add('active');
+  if(id==='dash')loadDashboard();
+}
+
+async function loadDashboard(){
+  try{
+    const [oppData,schData]=await Promise.all([apiFetch('/opportunities?includeClosed=1'),apiFetch('/scholarships')]);
+    const opps=oppData.opportunities||[];
+    document.getElementById('dPlace').textContent=opps.filter(o=>o.type==='placement'&&o.status==='open').length;
+    document.getElementById('dIntern').textContent=opps.filter(o=>o.type==='internship'&&o.status==='open').length;
+    document.getElementById('dSchol').textContent=(schData.scholarships||[]).length;
+    document.getElementById('dApps').textContent='—';
+  }catch(e){console.error(e);}
+}
+loadDashboard();
+
+async function loadOppsAdmin(){
+  const el=document.getElementById('oppsAdminList');
+  try{
+    const data=await apiFetch('/opportunities?includeClosed=1');
+    const opps=data.opportunities||[];
+    if(!opps.length){el.innerHTML='<div class="empty"><div class="ei">💼</div><p>No postings yet</p></div>';return;}
+    el.innerHTML=opps.map(o=>`<div class="card mb-2">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
+        <div>
+          <div class="card-t" style="margin-bottom:2px;">${o.role} @ ${o.company}</div>
+          <div style="font-size:10px;color:var(--muted);">${o.type==='placement'?'🏢 Placement':'🎯 Internship'} · ${o.compensation||'—'} · Deadline ${new Date(o.deadline).toLocaleDateString('en-IN')}</div>
+        </div>
+        <span style="background:${o.status==='open'?'#e0f2ee':'#f5f5f5'};color:${o.status==='open'?'var(--green)':'var(--muted)'};padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;text-transform:capitalize;">${o.status}</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn-sm" onclick="viewApplicants('${o._id}','${(o.role+' @ '+o.company).replace(/'/g,"\\'")}')">View Applicants</button>
+        ${o.status==='open'?`<button class="btn-sm" onclick="closeOpp('${o._id}')">Close</button>`:''}
+        <button class="btn-red" onclick="deleteOpp('${o._id}')">Delete</button>
+      </div>
+    </div>`).join('');
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
+}
+async function postOpportunity(){
+  const company=document.getElementById('noCompany').value.trim();
+  const role=document.getElementById('noRole').value.trim();
+  const deadline=document.getElementById('noDeadline').value;
+  if(!company||!role||!deadline){showToast('Company, role, and deadline are required','error');return;}
+  try{
+    await apiFetch('/opportunities',{method:'POST',body:JSON.stringify({
+      type:document.getElementById('noType').value,company,role,
+      compensation:document.getElementById('noComp').value.trim(),location:document.getElementById('noLoc').value.trim(),
+      eligibility:document.getElementById('noElig').value.trim(),description:document.getElementById('noDesc').value.trim(),
+      driveDate:document.getElementById('noDriveDate').value||null,deadline,
+    })});
+    showToast('Posted! 💼','success');closeModal('addOppModal');
+    ['noCompany','noRole','noComp','noLoc','noElig','noDesc','noDriveDate','noDeadline'].forEach(id=>document.getElementById(id).value='');
+    loadOppsAdmin();loadDashboard();
+  }catch(e){showToast(e.message,'error');}
+}
+async function closeOpp(id){try{await apiFetch('/opportunities/'+id+'/close',{method:'PATCH'});showToast('Closed','success');loadOppsAdmin();loadDashboard();}catch(e){showToast(e.message,'error');}}
+async function deleteOpp(id){if(!confirm('Delete this posting?'))return;try{await apiFetch('/opportunities/'+id,{method:'DELETE'});showToast('Deleted','success');loadOppsAdmin();loadDashboard();}catch(e){showToast(e.message,'error');}}
+
+async function viewApplicants(id,label){
+  showView('applicants',null);
+  document.getElementById('applicantsFor').textContent=label;
+  const el=document.getElementById('applicantsList');
+  el.innerHTML='<div style="color:var(--muted);">Loading…</div>';
+  try{
+    const data=await apiFetch('/opportunities/'+id+'/applicants');
+    const apps=data.applicants||[];
+    if(!apps.length){el.innerHTML='<div class="empty"><div class="ei">📋</div><p>No applicants yet</p></div>';return;}
+    el.innerHTML=apps.map(a=>`<div class="card mb-2">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div><div style="font-weight:700;color:var(--navy);">${a.studentName}</div><div style="font-size:11px;color:var(--muted);">${a.studentUserId}</div></div>
+        <select class="fsel" style="width:auto;margin:0;" onchange="updateApplicant('${a._id}',this.value,'${id}','${label.replace(/'/g,"\\'")}')">
+          <option value="applied" ${a.status==='applied'?'selected':''}>Applied</option>
+          <option value="shortlisted" ${a.status==='shortlisted'?'selected':''}>Shortlisted</option>
+          <option value="selected" ${a.status==='selected'?'selected':''}>Selected</option>
+          <option value="rejected" ${a.status==='rejected'?'selected':''}>Rejected</option>
+        </select>
+      </div>
+    </div>`).join('');
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
+}
+async function updateApplicant(appId,status,oppId,label){
+  try{await apiFetch('/opportunities/applications/'+appId,{method:'PATCH',body:JSON.stringify({status})});showToast('Updated','success');viewApplicants(oppId,label);}
+  catch(e){showToast(e.message,'error');}
+}
+
+async function loadSchAdmin(){
+  const el=document.getElementById('schAdminList');
+  try{
+    const data=await apiFetch('/scholarships');
+    const list=data.scholarships||[];
+    if(!list.length){el.innerHTML='<div class="empty"><div class="ei">🎓</div><p>No scholarships posted yet</p></div>';return;}
+    el.innerHTML=list.map(s=>`<div class="card mb-2">
+      <div class="card-t">${s.name}</div>
+      <div style="font-size:11px;color:var(--teal);">${s.provider||'—'} · ${s.amount||'—'}</div>
+      <div style="font-size:10px;color:var(--red);font-weight:700;margin-top:6px;">Deadline ${new Date(s.deadline).toLocaleDateString('en-IN')}</div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn-sm" onclick="closeSch('${s._id}')">Close</button>
+        <button class="btn-red" onclick="deleteSch('${s._id}')">Delete</button>
+      </div>
+    </div>`).join('');
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
+}
+async function postScholarship(){
+  const name=document.getElementById('nsName').value.trim();
+  const deadline=document.getElementById('nsDeadline').value;
+  if(!name||!deadline){showToast('Name and deadline required','error');return;}
+  try{
+    await apiFetch('/scholarships',{method:'POST',body:JSON.stringify({
+      name,provider:document.getElementById('nsProvider').value.trim(),amount:document.getElementById('nsAmount').value.trim(),
+      eligibility:document.getElementById('nsElig').value.trim(),applyInfo:document.getElementById('nsApplyInfo').value.trim(),deadline,
+    })});
+    showToast('Posted! 🎓','success');closeModal('addSchModal');
+    ['nsName','nsProvider','nsAmount','nsElig','nsApplyInfo','nsDeadline'].forEach(id=>document.getElementById(id).value='');
+    loadSchAdmin();loadDashboard();
+  }catch(e){showToast(e.message,'error');}
+}
+async function closeSch(id){try{await apiFetch('/scholarships/'+id+'/close',{method:'PATCH'});showToast('Closed','success');loadSchAdmin();loadDashboard();}catch(e){showToast(e.message,'error');}}
+async function deleteSch(id){if(!confirm('Delete this scholarship?'))return;try{await apiFetch('/scholarships/'+id,{method:'DELETE'});showToast('Deleted','success');loadSchAdmin();loadDashboard();}catch(e){showToast(e.message,'error');}}
+</script>
+</body></html>

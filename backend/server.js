@@ -110,6 +110,10 @@ app.use('/api/library',       apiLimiter, require('./routes/library'));
 app.use('/api/polls',         apiLimiter, require('./routes/polls'));
 app.use('/api/campus-locations', apiLimiter, require('./routes/campus-locations'));
 app.use('/api/badges',        apiLimiter, require('./routes/badges'));
+app.use('/api/opportunities', apiLimiter, require('./routes/opportunities'));
+app.use('/api/scholarships',  apiLimiter, require('./routes/scholarships'));
+app.use('/api/medical',       apiLimiter, require('./routes/medical'));
+app.use('/api/chat',          apiLimiter, require('./routes/chat'));
 
 // Serve login page for root
 app.get('/', (req, res) => res.sendFile(path.join(frontendPath, 'index.html')));

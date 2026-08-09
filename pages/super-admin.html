@@ -61,6 +61,12 @@
     <div style="color:var(--muted);font-size:12px;margin-top:4px;">Full visibility across every department and feature</div>
   </div>
 
+  <!-- Insights -->
+  <div class="sa-section">
+    <div class="sa-section-title">🧠 Insights</div>
+    <div id="insightsList" style="display:grid;gap:8px;"></div>
+  </div>
+
   <!-- Users -->
   <div class="sa-section">
     <div class="sa-section-title">👥 Users</div>
@@ -129,6 +135,13 @@
       <div class="sa-card"><div class="sa-n" id="dEvents" style="color:#2980B9;">—</div><div class="sa-l">Events</div></div>
       <div class="sa-card"><div class="sa-n" id="dClubs" style="color:#27AE60;">—</div><div class="sa-l">Clubs</div></div>
       <div class="sa-card"><div class="sa-n" id="dLaundry" style="color:#e67e22;">—</div><div class="sa-l">Laundry Pending</div></div>
+      <div class="sa-card"><div class="sa-n" id="dLostFound" style="color:#e74c3c;">—</div><div class="sa-l">Lost &amp; Found Open</div></div>
+      <div class="sa-card"><div class="sa-n" id="dLibIssued" style="color:#8E44AD;">—</div><div class="sa-l">Books Issued</div></div>
+      <div class="sa-card"><div class="sa-n" id="dLibOverdue" style="color:#e74c3c;">—</div><div class="sa-l">Books Overdue</div></div>
+      <div class="sa-card"><div class="sa-n" id="dPolls" style="color:#1ABC9C;">—</div><div class="sa-l">Active Polls</div></div>
+      <div class="sa-card"><div class="sa-n" id="dOpps" style="color:#3498DB;">—</div><div class="sa-l">Open Placements/Internships</div></div>
+      <div class="sa-card"><div class="sa-n" id="dSch" style="color:#F39C12;">—</div><div class="sa-l">Open Scholarships</div></div>
+      <div class="sa-card"><div class="sa-n" id="dMed" style="color:#e67e22;">—</div><div class="sa-l">Pending Medical Requests</div></div>
     </div>
   </div>
 </div>
@@ -298,6 +311,19 @@ async function loadDash() {
     document.getElementById('dEvents').textContent  = s.events;
     document.getElementById('dClubs').textContent   = s.clubs;
     document.getElementById('dLaundry').textContent = s.laundry.pending;
+    document.getElementById('dLostFound').textContent = s.lostFoundOpen ?? 'N/A';
+    document.getElementById('dLibIssued').textContent = s.library?.issued ?? 'N/A';
+    document.getElementById('dLibOverdue').textContent = s.library?.overdue ?? 'N/A';
+    document.getElementById('dPolls').textContent = s.activePolls ?? 'N/A';
+    document.getElementById('dOpps').textContent = s.openOpportunities ?? 'N/A';
+    document.getElementById('dSch').textContent = s.openScholarships ?? 'N/A';
+    document.getElementById('dMed').textContent = s.pendingMedical ?? 'N/A';
+
+    // Insights
+    document.getElementById('insightsList').innerHTML = (data.insights||[]).map(i=>`
+      <div style="background:#112D32;border:1px solid rgba(155,89,182,.25);border-radius:10px;padding:12px 14px;color:#D0EEF2;font-size:12px;display:flex;gap:10px;align-items:flex-start;">
+        <span style="flex-shrink:0;">💡</span><span>${i}</span>
+      </div>`).join('');
   } catch(e) { showToast('Stats failed: '+e.message,'error'); }
 }
 

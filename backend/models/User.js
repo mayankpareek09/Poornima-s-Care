@@ -10,7 +10,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['student','academic_admin','hostel_admin','campus_admin','laundry_admin',
            'council_admin','club_captain','vice_captain',
-           'canteen_admin','mess_admin','store_admin','guard','faculty','super_admin','library_admin'],
+           'canteen_admin','mess_admin','store_admin','guard','faculty','super_admin','library_admin',
+           'placement_admin','medical_admin'],
     required: true
   },
   // Student fields

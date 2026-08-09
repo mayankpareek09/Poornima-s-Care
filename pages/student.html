@@ -44,6 +44,10 @@
   <div class="asb-link" id="nl-polls" onclick="show('polls',this)"><span class="asb-ic">🗳️</span> Polls</div>
   <div class="asb-link" id="nl-directory" onclick="show('directory',this)"><span class="asb-ic">🗺️</span> Campus Directory</div>
   <div class="asb-link" id="nl-badges" onclick="show('badges',this)"><span class="asb-ic">🏅</span> Badges</div>
+  <div class="asb-link" id="nl-opportunities" onclick="show('opportunities',this)"><span class="asb-ic">💼</span> Placements &amp; Internships</div>
+  <div class="asb-link" id="nl-scholarships" onclick="show('scholarships',this)"><span class="asb-ic">🎓</span> Scholarships</div>
+  <div class="asb-link" id="nl-medical" onclick="show('medical',this)"><span class="asb-ic">🏥</span> Medical Center</div>
+  <div class="asb-link" id="nl-chat" onclick="show('chat',this)"><span class="asb-ic">💬</span> Campus Chat</div>
   <div class="asb-sec">Account</div>
   <div class="asb-link" id="nl-profile" onclick="show('profile',this)"><span class="asb-ic">👤</span> Profile</div>
   <div class="asb-link ai" id="nl-chatbot" onclick="show('chatbot',this)"><span class="asb-ic">🤖</span> ORION AI</div>
@@ -322,6 +326,64 @@
   <div id="badgesList" class="g3"><div class="empty"><div class="ei">🏅</div><p>Loading…</p></div></div>
 </div>
 
+<!-- OPPORTUNITIES -->
+<div class="sec" id="s-opportunities">
+  <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:3px;">💼 Placements &amp; Internships</div>
+  <div style="font-size:12px;color:var(--teal);margin-bottom:16px;">Browse open drives and track your applications.</div>
+  <div class="ftabs" style="margin-bottom:14px;">
+    <button class="ftab active" onclick="setOppType('',this)">All</button>
+    <button class="ftab" onclick="setOppType('placement',this)">🏢 Placements</button>
+    <button class="ftab" onclick="setOppType('internship',this)">🎯 Internships</button>
+    <button class="ftab" onclick="showMyApplications(this)">📋 My Applications</button>
+  </div>
+  <div id="oppList" class="g2"><div class="empty"><div class="ei">💼</div><p>Loading…</p></div></div>
+</div>
+
+<!-- SCHOLARSHIPS -->
+<div class="sec" id="s-scholarships">
+  <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:3px;">🎓 Scholarships</div>
+  <div style="font-size:12px;color:var(--teal);margin-bottom:16px;">Financial aid and merit scholarships open to students.</div>
+  <div id="schList" class="g2"><div class="empty"><div class="ei">🎓</div><p>Loading…</p></div></div>
+</div>
+
+<!-- MEDICAL CENTER -->
+<div class="sec" id="s-medical">
+  <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:16px;">🏥 Medical Center</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-t">Book an Appointment</div>
+      <div class="flbl">Symptoms / Reason <span class="req">*</span></div>
+      <textarea class="ftxt" id="medSymptoms" placeholder="Briefly describe what's wrong…"></textarea>
+      <div class="flbl">Urgency</div>
+      <select class="fsel" id="medUrgency">
+        <option value="routine">Routine</option>
+        <option value="urgent">Urgent</option>
+      </select>
+      <div class="flbl">Preferred Date &amp; Time <span class="req">*</span></div>
+      <input class="finp" type="datetime-local" id="medDate"/>
+      <button class="btn-p full" onclick="bookMedical()">Request Appointment →</button>
+      <div style="font-size:10px;color:var(--muted);margin-top:8px;">🚨 For emergencies, use the SOS button instead — this is for routine consultations.</div>
+    </div>
+    <div class="card">
+      <div class="card-t">My Appointments</div>
+      <div id="medList"><div class="empty"><div class="ei">🏥</div><p>Loading…</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CAMPUS CHAT -->
+<div class="sec" id="s-chat">
+  <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:3px;">💬 Campus Chat</div>
+  <div style="font-size:12px;color:var(--teal);margin-bottom:16px;">A public chat room for everyone on campus — be respectful.</div>
+  <div class="card" style="max-width:640px;">
+    <div id="chatMessages" style="height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px;"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <input class="finp" id="chatInput" style="margin:0;flex:1;" placeholder="Type a message…" maxlength="500" onkeydown="if(event.key==='Enter')sendChat()"/>
+      <button class="btn-p" style="padding:9px 16px;" onclick="sendChat()">Send</button>
+    </div>
+  </div>
+</div>
+
 <!-- CLUBS -->
 <div class="sec" id="s-clubs">
   <div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:14px;">🏫 Student Clubs</div>
@@ -578,7 +640,8 @@ function show(id, btn){
   document.getElementById('s-'+id).classList.add('active');
   document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
   if(btn) btn.classList.add('active');
-  const loaders={complaints:loadComplaints,laundry:loadLaundry,timetable:loadTT,events:loadEvents,clubs:loadClubs,materials:loadMaterials,bus:loadBus,exam:loadStudentExam,lostfound:loadLostFound,library:loadLibrary,polls:loadPolls,directory:loadDirectory,badges:loadBadges};
+  if(id!=='chat') stopChatPolling();
+  const loaders={complaints:loadComplaints,laundry:loadLaundry,timetable:loadTT,events:loadEvents,clubs:loadClubs,materials:loadMaterials,bus:loadBus,exam:loadStudentExam,lostfound:loadLostFound,library:loadLibrary,polls:loadPolls,directory:loadDirectory,badges:loadBadges,opportunities:loadOpportunities,scholarships:loadScholarships,medical:loadMedical,chat:loadChat};
   if(loaders[id]) loaders[id]();
 }
 
@@ -988,6 +1051,147 @@ async function loadBadges(){
       <div style="font-size:10px;color:var(--muted);">${b.current}/${b.threshold}${b.earned?' ✅':''}</div>
     </div>`).join('');
   }catch(e){document.getElementById('badgesList').innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
+}
+
+// OPPORTUNITIES (Placements & Internships)
+let oppType='', oppShowingMine=false;
+function setOppType(t,btn){oppType=t;oppShowingMine=false;document.querySelectorAll('#s-opportunities .ftab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');loadOpportunities();}
+function showMyApplications(btn){oppShowingMine=true;document.querySelectorAll('#s-opportunities .ftab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');loadOpportunities();}
+async function loadOpportunities(){
+  const el=document.getElementById('oppList');
+  try{
+    if(oppShowingMine){
+      const data=await apiFetch('/opportunities/my');
+      const apps=data.applications||[];
+      el.innerHTML=apps.length?apps.map(a=>{
+        const o=a.opportunityId||{};
+        const stColor={applied:'var(--yellow)',shortlisted:'var(--teal)',selected:'var(--green)',rejected:'var(--red)'};
+        return `<div class="card"><div class="card-t">${o.role||'—'} @ ${o.company||'—'}</div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">${o.type==='placement'?'🏢 Placement':'🎯 Internship'} · Applied ${new Date(a.createdAt).toLocaleDateString('en-IN')}</div>
+          <span style="background:${stColor[a.status]}22;color:${stColor[a.status]};padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;text-transform:capitalize;">${a.status}</span>
+          ${a.notes?`<div style="font-size:11px;color:var(--teal);margin-top:8px;">📝 ${a.notes}</div>`:''}
+        </div>`;
+      }).join(''):'<div class="empty"><div class="ei">📋</div><p>No applications yet</p></div>';
+      return;
+    }
+    const data=await apiFetch('/opportunities'+(oppType?'?type='+oppType:''));
+    const opps=data.opportunities||[];
+    el.innerHTML=opps.length?opps.map(o=>`<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+        <div class="card-t">${o.role}</div>
+        <span style="background:${o.type==='placement'?'#e0f2ee':'#fff8e0'};color:${o.type==='placement'?'var(--green)':'var(--yellow)'};padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;">${o.type==='placement'?'PLACEMENT':'INTERNSHIP'}</span>
+      </div>
+      <div style="font-size:12px;color:var(--teal);font-weight:600;margin-bottom:4px;">${o.company}</div>
+      ${o.compensation?`<div style="font-size:11px;color:var(--navy);font-weight:700;">💰 ${o.compensation}</div>`:''}
+      ${o.location?`<div style="font-size:10px;color:var(--muted);">📍 ${o.location}</div>`:''}
+      ${o.eligibility?`<div style="font-size:10px;color:var(--muted);margin-top:4px;">Eligibility: ${o.eligibility}</div>`:''}
+      ${o.description?`<div style="font-size:11px;color:var(--muted);margin-top:6px;">${o.description}</div>`:''}
+      <div style="font-size:10px;color:var(--red);font-weight:700;margin-top:8px;">⏰ Apply by ${new Date(o.deadline).toLocaleDateString('en-IN')}</div>
+      <button class="btn-p full mt-2" onclick="applyOpportunity('${o._id}')">Apply →</button>
+    </div>`).join(''):'<div class="empty"><div class="ei">💼</div><p>No open opportunities right now</p></div>';
+  }catch(e){el.innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
+}
+async function applyOpportunity(id){
+  try{await apiFetch('/opportunities/'+id+'/apply',{method:'POST'});showToast('Application submitted! 💼','success');loadOpportunities();}
+  catch(e){showToast(e.message,'error');}
+}
+
+// SCHOLARSHIPS
+async function loadScholarships(){
+  const el=document.getElementById('schList');
+  try{
+    const data=await apiFetch('/scholarships');
+    const list=data.scholarships||[];
+    el.innerHTML=list.length?list.map(s=>`<div class="card">
+      <div class="card-t">${s.name}</div>
+      ${s.provider?`<div style="font-size:11px;color:var(--teal);margin-bottom:4px;">${s.provider}</div>`:''}
+      ${s.amount?`<div style="font-size:12px;color:var(--navy);font-weight:700;">💰 ${s.amount}</div>`:''}
+      ${s.eligibility?`<div style="font-size:10px;color:var(--muted);margin-top:4px;">Eligibility: ${s.eligibility}</div>`:''}
+      ${s.applyInfo?`<div style="font-size:11px;color:var(--muted);margin-top:6px;">${s.applyInfo}</div>`:''}
+      <div style="font-size:10px;color:var(--red);font-weight:700;margin-top:8px;">⏰ Apply by ${new Date(s.deadline).toLocaleDateString('en-IN')}</div>
+    </div>`).join(''):'<div class="empty"><div class="ei">🎓</div><p>No open scholarships right now</p></div>';
+  }catch(e){el.innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
+}
+
+// MEDICAL CENTER
+async function bookMedical(){
+  const symptoms=document.getElementById('medSymptoms').value.trim();
+  const preferredDate=document.getElementById('medDate').value;
+  if(!symptoms||!preferredDate){showToast('Symptoms and preferred date are required','error');return;}
+  try{
+    await apiFetch('/medical/book',{method:'POST',body:JSON.stringify({symptoms,urgency:document.getElementById('medUrgency').value,preferredDate})});
+    showToast('Appointment requested! 🏥','success');
+    document.getElementById('medSymptoms').value='';document.getElementById('medDate').value='';
+    loadMedical();
+  }catch(e){showToast(e.message,'error');}
+}
+async function loadMedical(){
+  const el=document.getElementById('medList');
+  try{
+    const data=await apiFetch('/medical/my');
+    const appts=data.appointments||[];
+    const stColor={pending:'var(--yellow)',confirmed:'var(--teal)',completed:'var(--green)',cancelled:'var(--muted)'};
+    el.innerHTML=appts.length?appts.map(a=>`<div class="laundry-item">
+      <div class="li-icon">${a.urgency==='urgent'?'🚨':'🏥'}</div>
+      <div class="li-info"><div class="li-name">${a.symptoms.substring(0,50)}${a.symptoms.length>50?'…':''}</div>
+        <div class="li-sub">${a.status==='confirmed'&&a.confirmedSlot?'Confirmed: '+new Date(a.confirmedSlot).toLocaleString('en-IN'):'Requested: '+new Date(a.preferredDate).toLocaleString('en-IN')}
+        ${a.doctorNotes?' · Note: '+a.doctorNotes:''}</div></div>
+      <span style="color:${stColor[a.status]};font-weight:700;font-size:10px;text-transform:capitalize;">${a.status}</span>
+      ${['pending','confirmed'].includes(a.status)?`<button class="btn-sm" onclick="cancelMedical('${a._id}')">Cancel</button>`:''}
+    </div>`).join(''):'<div class="empty"><div class="ei">🏥</div><p>No appointments yet</p></div>';
+  }catch(e){el.innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
+}
+async function cancelMedical(id){
+  if(!confirm('Cancel this appointment?'))return;
+  try{await apiFetch('/medical/'+id+'/cancel',{method:'PATCH'});showToast('Cancelled','success');loadMedical();}
+  catch(e){showToast(e.message,'error');}
+}
+
+// CAMPUS CHAT (polling-based — no WebSocket infra in this app, so we poll
+// every 4s for new messages while the chat tab is open, and stop as soon as
+// the student navigates away).
+let chatPollTimer=null, chatLastTs=null;
+async function loadChat(){
+  const box=document.getElementById('chatMessages');
+  try{
+    const data=await apiFetch('/chat/messages');
+    const msgs=data.messages||[];
+    chatLastTs=msgs.length?msgs[msgs.length-1].createdAt:new Date().toISOString();
+    renderChatMessages(msgs,true);
+    startChatPolling();
+  }catch(e){box.innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
+}
+function renderChatMessages(msgs,replace){
+  const box=document.getElementById('chatMessages');
+  const html=msgs.map(m=>{
+    const mine=m.senderId===user._id||m.senderName===user.name;
+    return `<div style="align-self:${mine?'flex-end':'flex-start'};max-width:78%;">
+      <div style="font-size:9px;color:var(--muted);margin-bottom:2px;${mine?'text-align:right;':''}">${mine?'You':m.senderName+' · '+m.senderRole}</div>
+      <div style="background:${mine?'var(--teal)':'var(--light)'};color:${mine?'#fff':'var(--navy)'};padding:8px 12px;border-radius:12px;${mine?'border-bottom-right-radius:3px;':'border-bottom-left-radius:3px;'}font-size:12px;word-break:break-word;">${m.message}</div>
+    </div>`;
+  }).join('');
+  if(replace) box.innerHTML=html||'<div class="empty"><div class="ei">💬</div><p>No messages yet — say hi!</p></div>';
+  else box.insertAdjacentHTML('beforeend',html);
+  box.scrollTop=box.scrollHeight;
+}
+function startChatPolling(){
+  stopChatPolling();
+  chatPollTimer=setInterval(async()=>{
+    try{
+      const data=await apiFetch('/chat/messages?since='+encodeURIComponent(chatLastTs));
+      const msgs=data.messages||[];
+      if(msgs.length){chatLastTs=msgs[msgs.length-1].createdAt;renderChatMessages(msgs,false);}
+    }catch(e){}
+  },4000);
+}
+function stopChatPolling(){if(chatPollTimer){clearInterval(chatPollTimer);chatPollTimer=null;}}
+async function sendChat(){
+  const input=document.getElementById('chatInput');
+  const message=input.value.trim();
+  if(!message)return;
+  input.value='';
+  try{await apiFetch('/chat/messages',{method:'POST',body:JSON.stringify({message})});}
+  catch(e){showToast(e.message,'error');}
 }
 
 function searchStop(q){

@@ -32,6 +32,7 @@
   <div class="asb-sec">Council</div>
   <div class="asb-link active" id="lnk-clubs" onclick="show('clubs',this)"><span class="asb-ic">🏆</span> All Clubs</div>
   <div class="asb-link" id="lnk-events" onclick="show('events',this)"><span class="asb-ic">🎉</span> Events</div>
+  <div class="asb-link" id="lnk-polls" onclick="show('polls',this);loadCouncilPolls()"><span class="asb-ic">🗳️</span> Polls</div>
 </div>
 <div class="admin-main">
 
@@ -74,6 +75,15 @@
       <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="openModal('addEvModal')">+ Add Event</button>
     </div>
     <div class="admin-body"><div id="evList"><div style="color:var(--muted);font-size:12px;">Loading…</div></div></div>
+  </div>
+
+  <!-- POLLS -->
+  <div class="sec" id="s-polls">
+    <div class="admin-hdr">
+      <div class="admin-hdr-t">🗳️ Polls &amp; Surveys</div>
+      <button class="btn-p" style="font-size:11px;padding:7px 13px;" onclick="openModal('addPollModal')">+ Create Poll</button>
+    </div>
+    <div class="admin-body" id="councilPollsList"><div class="empty"><div class="ei">🗳️</div><p>Loading…</p></div></div>
   </div>
 </div>
 </div>
@@ -287,6 +297,59 @@ async function addEvent(){
     await apiFetch('/events',{method:'POST',body:JSON.stringify({title,date,time:document.getElementById('evTime').value,clubName,venue:document.getElementById('evVenue').value,description:document.getElementById('evDesc').value,isOngoing:document.getElementById('evOngoing').checked,type:'club'})});
     closeModal('addEvModal');showToast('Event added!','success');loadEvents();
   }catch(e){showToast(e.message,'error');}
+}
+
+// POLLS
+async function loadCouncilPolls(){
+  const el=document.getElementById('councilPollsList');
+  try{
+    const data=await apiFetch('/polls?status=active');
+    const closedData=await apiFetch('/polls?status=closed');
+    const polls=[...(data.polls||[]),...(closedData.polls||[])];
+    if(!polls.length){el.innerHTML='<div class="empty"><div class="ei">🗳️</div><p>No polls yet — create one to gather student opinions.</p></div>';return;}
+    el.innerHTML=polls.map(p=>{
+      const total=p.totalVotes||0;
+      return `<div class="card mb-3">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+          <div class="card-t">${p.question}</div>
+          <span class="status-pill" style="font-size:9px;flex-shrink:0;">${p.status==='active'?'🟢 Active':'⚪ Closed'}</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:10px;">${total} vote${total===1?'':'s'} · by ${p.createdByName}</div>
+        ${p.options.map(o=>{
+          const pct=total?Math.round((o.votes/total)*100):0;
+          return `<div style="margin-bottom:6px;">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;"><span>${o.text}</span><span style="color:var(--muted);">${o.votes} (${pct}%)</span></div>
+            <div style="background:var(--light);border-radius:6px;height:7px;overflow:hidden;"><div style="background:var(--teal);height:100%;width:${pct}%;"></div></div>
+          </div>`;
+        }).join('')}
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          ${p.status==='active'?`<button class="btn-sm" onclick="closePoll('${p._id}')">Close Poll</button>`:''}
+          <button class="btn-red" onclick="deletePoll('${p._id}')">Delete</button>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
+}
+async function createPoll(){
+  const question=document.getElementById('npQuestion').value.trim();
+  const options=document.getElementById('npOptions').value.split('\n').map(o=>o.trim()).filter(Boolean);
+  if(!question||options.length<2){showToast('Question and at least 2 options are required','error');return;}
+  try{
+    await apiFetch('/polls',{method:'POST',body:JSON.stringify({question,options})});
+    closeModal('addPollModal');showToast('Poll created! 🗳️','success');
+    document.getElementById('npQuestion').value='';document.getElementById('npOptions').value='';
+    loadCouncilPolls();
+  }catch(e){showToast(e.message,'error');}
+}
+async function closePoll(id){
+  if(!confirm('Close this poll? No more votes will be accepted.'))return;
+  try{await apiFetch('/polls/'+id+'/close',{method:'PATCH'});showToast('Poll closed','success');loadCouncilPolls();}
+  catch(e){showToast(e.message,'error');}
+}
+async function deletePoll(id){
+  if(!confirm('Delete this poll permanently?'))return;
+  try{await apiFetch('/polls/'+id,{method:'DELETE'});showToast('Poll deleted','success');loadCouncilPolls();}
+  catch(e){showToast(e.message,'error');}
 }
 
 function openEditEvModal(ev){

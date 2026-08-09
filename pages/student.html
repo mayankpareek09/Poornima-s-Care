@@ -40,6 +40,10 @@
   <div class="asb-link" id="nl-hostel" onclick="show('hostel',this)"><span class="asb-ic">🏠</span> Hostel</div>
   <div class="asb-link" id="nl-bus" onclick="show('bus',this)"><span class="asb-ic">🚌</span> Bus</div>
   <div class="asb-link" id="nl-lostfound" onclick="show('lostfound',this)"><span class="asb-ic">🔍</span> Lost &amp; Found</div>
+  <div class="asb-link" id="nl-library" onclick="show('library',this)"><span class="asb-ic">📚</span> Library</div>
+  <div class="asb-link" id="nl-polls" onclick="show('polls',this)"><span class="asb-ic">🗳️</span> Polls</div>
+  <div class="asb-link" id="nl-directory" onclick="show('directory',this)"><span class="asb-ic">🗺️</span> Campus Directory</div>
+  <div class="asb-link" id="nl-badges" onclick="show('badges',this)"><span class="asb-ic">🏅</span> Badges</div>
   <div class="asb-sec">Account</div>
   <div class="asb-link" id="nl-profile" onclick="show('profile',this)"><span class="asb-ic">👤</span> Profile</div>
   <div class="asb-link ai" id="nl-chatbot" onclick="show('chatbot',this)"><span class="asb-ic">🤖</span> ORION AI</div>
@@ -268,6 +272,54 @@
       <div id="lfList" style="max-height:520px;overflow-y:auto;"><div class="empty"><div class="ei">🔍</div><p>Loading…</p></div></div>
     </div>
   </div>
+</div>
+
+<!-- CLUBS -->
+<!-- LIBRARY -->
+<div class="sec" id="s-library">
+  <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:16px;">📚 Library</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-t">My Issued Books <span id="libMyCount" style="font-size:11px;font-weight:400;color:var(--muted);"></span></div>
+      <div id="libMyBooks"><div class="empty"><div class="ei">📖</div><p>Loading…</p></div></div>
+    </div>
+    <div class="card">
+      <div class="card-t">Browse Catalog</div>
+      <div class="search-bar mb-2"><input type="text" id="libSearch" placeholder="Search title, author, ISBN…" oninput="loadLibrary()"/></div>
+      <div id="libCatalog" style="max-height:480px;overflow-y:auto;"><div class="empty"><div class="ei">📚</div><p>Loading…</p></div></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:8px;">📌 Visit the Library desk with your ID card to get a book issued — issuing happens in person.</div>
+    </div>
+  </div>
+</div>
+
+<!-- POLLS -->
+<div class="sec" id="s-polls">
+  <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:16px;">🗳️ Polls &amp; Surveys</div>
+  <div id="pollsList"><div class="empty"><div class="ei">🗳️</div><p>Loading…</p></div></div>
+</div>
+
+<!-- CAMPUS DIRECTORY -->
+<div class="sec" id="s-directory">
+  <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:3px;">🗺️ Campus Directory</div>
+  <div style="font-size:12px;color:var(--teal);margin-bottom:16px;">Find buildings, hostels, and facilities on campus.</div>
+  <div class="ftabs" id="dirCatBtns">
+    <button class="ftab active" onclick="setDirCat('',this)">All</button>
+    <button class="ftab" onclick="setDirCat('Academic Block',this)">Academic</button>
+    <button class="ftab" onclick="setDirCat('Hostel',this)">Hostel</button>
+    <button class="ftab" onclick="setDirCat('Dining',this)">Dining</button>
+    <button class="ftab" onclick="setDirCat('Sports',this)">Sports</button>
+    <button class="ftab" onclick="setDirCat('Library',this)">Library</button>
+    <button class="ftab" onclick="setDirCat('Medical',this)">Medical</button>
+    <button class="ftab" onclick="setDirCat('Administration',this)">Admin</button>
+  </div>
+  <div id="dirList" class="g3"><div class="empty"><div class="ei">🗺️</div><p>Loading…</p></div></div>
+</div>
+
+<!-- BADGES -->
+<div class="sec" id="s-badges">
+  <div style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:3px;">🏅 Achievement Badges</div>
+  <div style="font-size:12px;color:var(--teal);margin-bottom:16px;" id="badgeSummary">Loading…</div>
+  <div id="badgesList" class="g3"><div class="empty"><div class="ei">🏅</div><p>Loading…</p></div></div>
 </div>
 
 <!-- CLUBS -->
@@ -526,7 +578,7 @@ function show(id, btn){
   document.getElementById('s-'+id).classList.add('active');
   document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
   if(btn) btn.classList.add('active');
-  const loaders={complaints:loadComplaints,laundry:loadLaundry,timetable:loadTT,events:loadEvents,clubs:loadClubs,materials:loadMaterials,bus:loadBus,exam:loadStudentExam,lostfound:loadLostFound};
+  const loaders={complaints:loadComplaints,laundry:loadLaundry,timetable:loadTT,events:loadEvents,clubs:loadClubs,materials:loadMaterials,bus:loadBus,exam:loadStudentExam,lostfound:loadLostFound,library:loadLibrary,polls:loadPolls,directory:loadDirectory,badges:loadBadges};
   if(loaders[id]) loaders[id]();
 }
 
@@ -844,6 +896,100 @@ async function closeLostFound(id){
   try{await apiFetch('/lostfound/'+id+'/close',{method:'PATCH',body:JSON.stringify({})});showToast('Listing closed ✅','success');loadLostFound();}
   catch(e){showToast(e.message,'error');}
 }
+
+// LIBRARY
+async function loadLibrary(){
+  try{
+    const myData=await apiFetch('/library/my');
+    const issues=myData.issues||[];
+    const active=issues.filter(i=>i.status==='issued');
+    document.getElementById('libMyCount').textContent=`(${active.length}/${myData.maxBooks||3})`;
+    document.getElementById('libMyBooks').innerHTML=issues.length?issues.map(i=>`<div class="laundry-item">
+      <div class="li-icon">📖</div>
+      <div class="li-info"><div class="li-name">${i.bookTitle}</div><div class="li-sub">
+        ${i.status==='returned'?'Returned '+new Date(i.returnedAt).toLocaleDateString('en-IN'):'Due '+new Date(i.dueDate).toLocaleDateString('en-IN')}
+        ${i.currentFine?` · <span style="color:var(--red);font-weight:700;">₹${i.currentFine} fine (overdue)</span>`:''}
+        ${i.fineAmount>0&&i.status==='returned'?` · Fine paid: ₹${i.fineAmount}`:''}
+      </div></div>
+      <span class="status-pill" style="font-size:9px;">${i.status==='issued'?'📖 Issued':'✅ Returned'}</span>
+    </div>`).join(''):'<div class="empty"><div class="ei">📖</div><p>No books issued yet</p></div>';
+  }catch(e){document.getElementById('libMyBooks').innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
+  try{
+    const q=document.getElementById('libSearch').value.trim();
+    const data=await apiFetch('/library/books'+(q?'?q='+encodeURIComponent(q):''));
+    const books=data.books||[];
+    document.getElementById('libCatalog').innerHTML=books.length?books.map(b=>`<div class="laundry-item">
+      <div class="li-icon" style="background:${b.coverColor||'#0B2E33'};color:#fff;">📖</div>
+      <div class="li-info"><div class="li-name">${b.title}</div><div class="li-sub">${b.author} · ${b.category} · ${b.availableCopies>0?b.availableCopies+' available':'All copies issued'}</div></div>
+    </div>`).join(''):'<div class="empty"><div class="ei">📚</div><p>No books found</p></div>';
+  }catch(e){document.getElementById('libCatalog').innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
+}
+
+// POLLS
+async function loadPolls(){
+  const el=document.getElementById('pollsList');
+  try{
+    const data=await apiFetch('/polls');
+    const polls=data.polls||[];
+    if(!polls.length){el.innerHTML='<div class="empty"><div class="ei">🗳️</div><p>No active polls right now</p></div>';return;}
+    el.innerHTML=polls.map(p=>{
+      const total=p.totalVotes||0;
+      const voted=p.myVote!==null&&p.myVote!==undefined;
+      return `<div class="card mb-3">
+        <div class="card-t">${p.question}</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:10px;">By ${p.createdByName} · ${total} vote${total===1?'':'s'}</div>
+        ${p.options.map((o,i)=>{
+          const pct=total?Math.round((o.votes/total)*100):0;
+          const isMine=voted&&p.myVote===i;
+          return voted?`<div style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;"><span style="font-weight:${isMine?'800':'500'};color:${isMine?'var(--teal)':'var(--navy)'};">${o.text}${isMine?' ✓':''}</span><span style="color:var(--muted);">${pct}%</span></div>
+            <div style="background:var(--light);border-radius:6px;height:8px;overflow:hidden;"><div style="background:${isMine?'var(--teal)':'var(--border)'};height:100%;width:${pct}%;"></div></div>
+          </div>`:`<button class="btn-p full mb-2" style="text-align:left;background:#fff;color:var(--navy);border:1.5px solid var(--border);" onclick="votePoll('${p._id}',${i})">${o.text}</button>`;
+        }).join('')}
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
+}
+async function votePoll(id,option){
+  try{await apiFetch('/polls/'+id+'/vote',{method:'PATCH',body:JSON.stringify({option})});showToast('Vote recorded! 🗳️','success');loadPolls();}
+  catch(e){showToast(e.message,'error');}
+}
+
+// CAMPUS DIRECTORY
+let dirCat='';
+function setDirCat(c,btn){dirCat=c;document.querySelectorAll('#dirCatBtns .ftab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');loadDirectory();}
+async function loadDirectory(){
+  const el=document.getElementById('dirList');
+  try{
+    const data=await apiFetch('/campus-locations'+(dirCat?'?category='+encodeURIComponent(dirCat):''));
+    const locs=data.locations||[];
+    if(!locs.length){el.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">🗺️</div><p>No locations added yet — check back soon.</p></div>';return;}
+    el.innerHTML=locs.map(l=>`<div class="card">
+      <div style="font-size:26px;margin-bottom:8px;">${l.icon||'📍'}</div>
+      <div class="card-t" style="margin-bottom:2px;">${l.name}</div>
+      <div style="font-size:10px;color:var(--teal);margin-bottom:6px;">${l.category}${l.block?' · '+l.block:''}${l.floor?' · '+l.floor:''}</div>
+      ${l.description?`<div style="font-size:11px;color:var(--muted);margin-bottom:6px;">${l.description}</div>`:''}
+      ${l.hours?`<div style="font-size:10px;color:var(--navy);font-weight:600;">🕐 ${l.hours}</div>`:''}
+    </div>`).join('');
+  }catch(e){el.innerHTML=`<div class="info-box" style="color:var(--red);grid-column:1/-1;">${e.message}</div>`;}
+}
+
+// BADGES
+async function loadBadges(){
+  try{
+    const data=await apiFetch('/badges/my');
+    const badges=data.badges||[];
+    document.getElementById('badgeSummary').textContent=`${data.earnedCount} of ${data.totalCount} badges earned`;
+    document.getElementById('badgesList').innerHTML=badges.map(b=>`<div class="card" style="text-align:center;opacity:${b.earned?'1':'0.5'};">
+      <div style="font-size:36px;margin-bottom:8px;filter:${b.earned?'none':'grayscale(1)'};">${b.icon}</div>
+      <div class="card-t" style="margin-bottom:4px;">${b.name}</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">${b.desc}</div>
+      <div style="background:var(--light);border-radius:6px;height:6px;overflow:hidden;margin-bottom:4px;"><div style="background:${b.earned?'var(--green)':'var(--teal)'};height:100%;width:${Math.min(100,Math.round(b.current/b.threshold*100))}%;"></div></div>
+      <div style="font-size:10px;color:var(--muted);">${b.current}/${b.threshold}${b.earned?' ✅':''}</div>
+    </div>`).join('');
+  }catch(e){document.getElementById('badgesList').innerHTML=`<div class="info-box" style="color:var(--red);">${e.message}</div>`;}
+}
+
 function searchStop(q){
   const el=document.getElementById('busSearchRes');
   if(!q.trim()){el.innerHTML='';return;}

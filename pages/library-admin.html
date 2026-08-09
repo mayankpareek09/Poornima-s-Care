@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Library Admin — Poornima's Care</title>
+<link rel="stylesheet" href="../css/main.css"/>
+<script>window.PC_API_URL = "https://poornima-s-care.onrender.com";</script>
+<script src="../js/embed-helper.js"></script>
+</head><body>
+<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="admin-wrap">
+<div class="admin-sb">
+  <div class="asb-top">
+    <div class="asb-logo">Poornima's <span>Care</span></div>
+    <div class="asb-av" id="tnAv">—</div>
+    <div class="asb-nm" id="sbNm">—</div>
+    <div class="asb-id" id="sbId">—</div>
+  </div>
+  <div class="asb-sec">Library</div>
+  <div class="asb-link active" id="nl-dash" onclick="showView('dash',this)"><span class="asb-ic">⚡</span> Dashboard</div>
+  <div class="asb-link" id="nl-issue" onclick="showView('issue',this)"><span class="asb-ic">📖</span> Issue Book</div>
+  <div class="asb-link" id="nl-active" onclick="showView('active',this);loadIssues()"><span class="asb-ic">📋</span> Active / Overdue</div>
+  <div class="asb-link" id="nl-catalog" onclick="showView('catalog',this);loadCatalog()"><span class="asb-ic">📚</span> Catalog</div>
+  <div style="padding:14px 16px;margin-top:auto;border-top:1px solid rgba(184,227,233,.12);">
+    <button class="btn-p full" style="font-size:11px;padding:8px;" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+<div class="admin-main"><div class="page-body">
+
+<div id="v-dash" class="sec active">
+  <div class="admin-hdr"><div class="admin-hdr-t">⚡ Library Dashboard</div></div>
+  <div class="admin-body">
+    <div class="g4 mb-4">
+      <div class="sc"><div class="sc-ic">📚</div><div class="sc-n" id="dBooks" style="color:var(--navy);">—</div><div class="sc-l">Total Titles</div></div>
+      <div class="sc"><div class="sc-ic">📖</div><div class="sc-n" id="dIssued" style="color:var(--teal);">—</div><div class="sc-l">Currently Issued</div></div>
+      <div class="sc"><div class="sc-ic">⚠️</div><div class="sc-n" id="dOverdue" style="color:var(--red);">—</div><div class="sc-l">Overdue</div></div>
+      <div class="sc"><div class="sc-ic">✅</div><div class="sc-n" id="dAvail" style="color:var(--green);">—</div><div class="sc-l">Copies Available</div></div>
+    </div>
+    <div class="card mt-3">
+      <div class="card-t">Quick Actions</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-p" onclick="showView('issue',document.getElementById('nl-issue'))">📖 Issue a Book</button>
+        <button class="btn-p" style="background:var(--teal);border-color:var(--teal);" onclick="showView('catalog',document.getElementById('nl-catalog'));loadCatalog()">📚 Add to Catalog</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="v-issue" class="sec">
+  <div class="admin-hdr"><div class="admin-hdr-t">📖 Issue a Book</div></div>
+  <div class="admin-body">
+    <div class="card" style="max-width:520px;">
+      <div class="flbl">Student University ID <span class="req">*</span></div>
+      <input class="finp" id="issStudentId" placeholder="e.g. PU2021CS045"/>
+      <div class="flbl">Search Book <span class="req">*</span></div>
+      <input class="finp" id="issBookSearch" placeholder="Search by title, author, or ISBN…" oninput="searchIssueBook(this.value)"/>
+      <div id="issBookResults" style="margin-bottom:12px;"></div>
+      <div id="issSelectedBook" style="display:none;" class="info-box mb-3"></div>
+      <button class="btn-p full" id="issBtn" onclick="doIssue()" disabled>Issue Book →</button>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;">Loan period: 14 days · Fine: ₹2/day overdue · Max 3 books per student</div>
+    </div>
+  </div>
+</div>
+
+<div id="v-active" class="sec">
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">📋 Active &amp; Overdue Issues</div>
+    <input id="activeSearch" class="finp" style="margin:0;width:200px;" placeholder="Search student/book…" oninput="loadIssues()"/>
+  </div>
+  <div class="admin-body" id="activeList"><div class="empty"><div class="ei">📋</div><p>Loading…</p></div></div>
+</div>
+
+<div id="v-catalog" class="sec">
+  <div class="admin-hdr">
+    <div class="admin-hdr-t">📚 Book Catalog</div>
+    <button class="btn-p" style="padding:8px 14px;font-size:12px;" onclick="openModal('addBookModal')">+ Add Book</button>
+  </div>
+  <div class="admin-body">
+    <div class="search-bar mb-3"><input type="text" id="catalogSearch" placeholder="Search catalog…" oninput="loadCatalog()"/></div>
+    <div id="catalogList" class="g3"><div class="empty"><div class="ei">📚</div><p>Loading…</p></div></div>
+  </div>
+</div>
+
+</div></div>
+</div>
+
+<!-- Add Book Modal -->
+<div class="modal-ov" id="addBookModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('addBookModal')">✕</button>
+    <div class="modal-title">Add Book to Catalog</div>
+    <div class="flbl">Title <span class="req">*</span></div>
+    <input class="finp" id="nbTitle" placeholder="Book title"/>
+    <div class="flbl">Author <span class="req">*</span></div>
+    <input class="finp" id="nbAuthor" placeholder="Author name"/>
+    <div class="frow mb-2">
+      <div><div class="flbl">Category</div>
+        <select class="fsel" id="nbCategory">
+          <option>Computer Science</option><option>Electronics</option><option>Mechanical</option><option>Civil</option>
+          <option>Mathematics</option><option>Physics</option><option>Chemistry</option><option>Cyber Security</option>
+          <option>Management</option><option>Fiction</option><option>Reference</option><option>Competitive Exams</option><option>Other</option>
+        </select>
+      </div>
+      <div><div class="flbl">Copies</div><input class="finp" type="number" id="nbCopies" value="1" min="1"/></div>
+    </div>
+    <div class="flbl">ISBN (optional)</div>
+    <input class="finp" id="nbIsbn" placeholder="ISBN"/>
+    <button class="btn-p full" onclick="addBook()">Add to Catalog →</button>
+  </div>
+</div>
+
+<script src="../js/api.js"></script><script src="../js/features.js"></script>
+<script>
+const user=requireAuth(['library_admin']);if(!user)throw new Error('auth');
+document.getElementById('tnAv').textContent=user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+document.getElementById('sbNm').textContent=user.name;
+document.getElementById('sbId').textContent=user.userId+' · Library';
+
+function toggleSidebar(){document.querySelector('.admin-sb').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active');}
+function showView(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.getElementById('v-'+id).classList.add('active');
+  document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));
+  if(el)el.classList.add('active');
+  if(id==='dash')loadDashboard();
+}
+
+async function loadDashboard(){
+  try{
+    const [booksData, issuesData] = await Promise.all([apiFetch('/library/books'), apiFetch('/library/issues')]);
+    const books=booksData.books||[], issues=issuesData.issues||[];
+    document.getElementById('dBooks').textContent=books.length;
+    document.getElementById('dIssued').textContent=issues.filter(i=>i.status==='issued').length;
+    document.getElementById('dOverdue').textContent=issues.filter(i=>i.isOverdue).length;
+    document.getElementById('dAvail').textContent=books.reduce((s,b)=>s+(b.availableCopies||0),0);
+  }catch(e){console.error(e);}
+}
+loadDashboard();
+
+let selectedBook=null;
+let bookSearchTimer=null;
+function searchIssueBook(q){
+  clearTimeout(bookSearchTimer);
+  if(!q.trim()){document.getElementById('issBookResults').innerHTML='';return;}
+  bookSearchTimer=setTimeout(async()=>{
+    try{
+      const data=await apiFetch('/library/books?q='+encodeURIComponent(q));
+      const books=(data.books||[]).slice(0,6);
+      document.getElementById('issBookResults').innerHTML=books.map(b=>`<div class="laundry-item" style="cursor:pointer;" onclick='selectIssueBook(${JSON.stringify(b).replace(/'/g,"&apos;")})'>
+        <div class="li-icon" style="background:${b.coverColor||'#0B2E33'};">📖</div>
+        <div class="li-info"><div class="li-name">${b.title}</div><div class="li-sub">${b.author} · ${b.availableCopies}/${b.totalCopies} available</div></div>
+      </div>`).join('')||'<div class="info-box">No matches</div>';
+    }catch(e){}
+  },300);
+}
+function selectIssueBook(book){
+  selectedBook=book;
+  document.getElementById('issBookResults').innerHTML='';
+  document.getElementById('issBookSearch').value=book.title;
+  const box=document.getElementById('issSelectedBook');
+  box.style.display='block';
+  box.innerHTML=`Selected: <strong>${book.title}</strong> by ${book.author} — ${book.availableCopies} cop${book.availableCopies===1?'y':'ies'} available`;
+  document.getElementById('issBtn').disabled=book.availableCopies<1;
+  if(book.availableCopies<1) box.innerHTML+='<div style="color:var(--red);margin-top:4px;">⚠️ No copies available right now</div>';
+}
+async function doIssue(){
+  const studentUserId=document.getElementById('issStudentId').value.trim();
+  if(!studentUserId||!selectedBook){showToast('Enter student ID and select a book','error');return;}
+  const btn=document.getElementById('issBtn');
+  btn.disabled=true;btn.textContent='Issuing…';
+  try{
+    const data=await apiFetch('/library/issue',{method:'POST',body:JSON.stringify({bookId:selectedBook._id,studentUserId})});
+    showToast(data.message,'success');
+    document.getElementById('issStudentId').value='';
+    document.getElementById('issBookSearch').value='';
+    document.getElementById('issSelectedBook').style.display='none';
+    selectedBook=null;
+    loadDashboard();
+  }catch(e){showToast(e.message,'error');}
+  finally{btn.disabled=false;btn.textContent='Issue Book →';}
+}
+
+async function loadIssues(){
+  const el=document.getElementById('activeList');
+  try{
+    const data=await apiFetch('/library/issues?status=issued');
+    let issues=data.issues||[];
+    const q=document.getElementById('activeSearch').value.trim().toLowerCase();
+    if(q)issues=issues.filter(i=>(i.studentName+i.studentUserId+i.bookTitle).toLowerCase().includes(q));
+    if(!issues.length){el.innerHTML='<div class="empty"><div class="ei">📋</div><p>No active issues</p></div>';return;}
+    issues.sort((a,b)=>(b.isOverdue?1:0)-(a.isOverdue?1:0));
+    el.innerHTML=`<div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:11px;">
+      <thead><tr style="background:var(--light);">
+        <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Student</th>
+        <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Book</th>
+        <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Due Date</th>
+        <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Status</th>
+        <th style="padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;">Action</th>
+      </tr></thead><tbody>${issues.map(i=>`
+        <tr style="border-bottom:1px solid #e8f4f6;${i.isOverdue?'background:#fff5f5;':''}">
+          <td style="padding:9px 11px;"><div style="font-weight:700;color:var(--navy);">${i.studentName}</div><div style="color:var(--muted);font-size:10px;">${i.studentUserId}</div></td>
+          <td style="padding:9px 11px;color:var(--teal);">${i.bookTitle}</td>
+          <td style="padding:9px 11px;">${new Date(i.dueDate).toLocaleDateString('en-IN')}</td>
+          <td style="padding:9px 11px;">${i.isOverdue?`<span style="color:var(--red);font-weight:700;">⚠️ Overdue (₹${i.currentFine||0})</span>`:'<span style="color:var(--green);">On time</span>'}</td>
+          <td style="padding:9px 11px;"><button class="btn-sm" onclick="returnBook('${i._id}')">Mark Returned</button></td>
+        </tr>`).join('')}</tbody></table></div>`;
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
+}
+async function returnBook(issueId){
+  try{const data=await apiFetch('/library/return/'+issueId,{method:'PATCH'});showToast(data.message,'success');loadIssues();loadDashboard();}
+  catch(e){showToast(e.message,'error');}
+}
+
+async function loadCatalog(){
+  const el=document.getElementById('catalogList');
+  try{
+    const q=document.getElementById('catalogSearch').value.trim();
+    const data=await apiFetch('/library/books'+(q?'?q='+encodeURIComponent(q):''));
+    const books=data.books||[];
+    if(!books.length){el.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">📚</div><p>No books in catalog yet</p></div>';return;}
+    el.innerHTML=books.map(b=>`<div class="card">
+      <div style="width:100%;height:70px;background:${b.coverColor||'#0B2E33'};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:10px;">📖</div>
+      <div class="card-t" style="margin-bottom:2px;">${b.title}</div>
+      <div style="font-size:11px;color:var(--teal);margin-bottom:6px;">${b.author}</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">${b.category}${b.isbn?' · '+b.isbn:''}</div>
+      <div style="font-size:11px;"><strong>${b.availableCopies}</strong>/${b.totalCopies} available</div>
+      <button class="btn-sm mt-2" onclick="deleteBook('${b._id}')">Remove</button>
+    </div>`).join('');
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠️</div><p>${e.message}</p></div>`;}
+}
+async function addBook(){
+  const title=document.getElementById('nbTitle').value.trim();
+  const author=document.getElementById('nbAuthor').value.trim();
+  if(!title||!author){showToast('Title and author required','error');return;}
+  try{
+    await apiFetch('/library/books',{method:'POST',body:JSON.stringify({
+      title,author,category:document.getElementById('nbCategory').value,
+      totalCopies:document.getElementById('nbCopies').value,isbn:document.getElementById('nbIsbn').value.trim(),
+    })});
+    showToast('Book added! 📚','success');
+    closeModal('addBookModal');
+    ['nbTitle','nbAuthor','nbIsbn'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('nbCopies').value='1';
+    loadCatalog();loadDashboard();
+  }catch(e){showToast(e.message,'error');}
+}
+async function deleteBook(id){
+  if(!confirm('Remove this book from the catalog?'))return;
+  try{await apiFetch('/library/books/'+id,{method:'DELETE'});showToast('Removed','success');loadCatalog();loadDashboard();}
+  catch(e){showToast(e.message,'error');}
+}
+</script>
+</body></html>

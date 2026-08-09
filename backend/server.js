@@ -106,6 +106,10 @@ app.use('/api/suggestions',   apiLimiter, require('./routes/suggestions'));
 app.use('/api/visitors',      apiLimiter, require('./routes/visitors'));
 app.use('/api/appointments',  apiLimiter, require('./routes/appointments'));
 app.use('/api/lostfound',     apiLimiter, require('./routes/lostfound'));
+app.use('/api/library',       apiLimiter, require('./routes/library'));
+app.use('/api/polls',         apiLimiter, require('./routes/polls'));
+app.use('/api/campus-locations', apiLimiter, require('./routes/campus-locations'));
+app.use('/api/badges',        apiLimiter, require('./routes/badges'));
 
 // Serve login page for root
 app.get('/', (req, res) => res.sendFile(path.join(frontendPath, 'index.html')));

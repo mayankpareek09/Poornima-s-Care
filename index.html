@@ -89,6 +89,7 @@ body{background:linear-gradient(135deg,var(--navy) 0%,#1a4f58 50%,var(--navy) 10
         <div class="csub" onclick="selectAdmin('canteen_admin',this)">🍽️ Canteen Admin</div>
         <div class="csub" onclick="selectAdmin('mess_admin',this)">🍛 Mess Admin</div>
         <div class="csub" onclick="selectAdmin('store_admin',this)">🛍️ Store Admin</div>
+        <div class="csub" onclick="selectAdmin('library_admin',this)">📚 Library Admin</div>
       </div>
       <div class="council-sub" id="councilSub">
         <div class="csub active" id="cs-chair" onclick="selectCouncil('council_admin','cs-chair')">👑 Chair / Co-Chair</div>
@@ -207,6 +208,7 @@ async function doLogin(){
       canteen_admin:  'pages/canteen-admin.html',
       mess_admin:     'pages/mess-admin.html',
       store_admin:    'pages/store-admin.html',
+      library_admin:  'pages/library-admin.html',
       guard:          'pages/guard-portal.html',
       faculty:        'pages/faculty-portal.html',
     };

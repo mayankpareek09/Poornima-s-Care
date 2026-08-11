@@ -12,7 +12,7 @@ const lostFoundSchema = new mongoose.Schema({
     enum: ['Electronics','Books & Stationery','ID Card','Clothing','Accessories','Keys','Bag','Documents','Other']
   },
   location:     { type: String, default: '', trim: true, maxlength: 150 }, // where lost/found
-  photo:        { type: String, default: '' }, // base64 or URL, optional
+  photo:        { type: String, default: '', maxlength: 2_000_000 }, // base64 or Cloudinary URL — route validates format/size before this is ever hit
   status:       { type: String, enum: ['open', 'claimed', 'closed'], default: 'open' },
   // Filled in when someone claims a "found" item, or when the reporter of a
   // "lost" item confirms they got it back.

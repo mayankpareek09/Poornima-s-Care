@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/Event');
 const { protect, requireRole } = require('../middleware/auth');
+const { sanitizeBody } = require('../utils/apiHelpers');
 
 // GET /api/events — public
 router.get('/', async (req, res) => {
@@ -40,7 +41,7 @@ router.put('/:id', protect, requireRole('academic_admin','council_admin','club_c
     if (['club_captain','vice_captain'].includes(req.user.role) && event.createdById?.toString() !== req.user._id.toString()) {
       return res.status(403).json({ success: false, message: 'You can only edit events you created.' });
     }
-    const updated = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updated = await Event.findByIdAndUpdate(req.params.id, sanitizeBody(req.body), { new: true });
     res.json({ success: true, message: 'Event updated!', event: updated });
   } catch (err) {
     res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });

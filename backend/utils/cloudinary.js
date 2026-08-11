@@ -31,16 +31,27 @@ if (isConfigured && !process.env.CLOUDINARY_URL) {
  * base64 string directly, so a Cloudinary outage never blocks a profile
  * update.
  */
-async function uploadProfilePhoto(base64DataUri, userId) {
+/**
+ * Uploads a base64 data-URI image to Cloudinary and returns its secure URL.
+ * Throws if Cloudinary isn't configured or the upload fails — callers should
+ * check isConfigured first and catch errors to fall back to storing the
+ * base64 string directly, so a Cloudinary outage never blocks a save.
+ */
+async function uploadImage(base64DataUri, publicId, folder = 'poornima-s-care/uploads') {
   const result = await cloudinary.uploader.upload(base64DataUri, {
-    folder: 'poornima-s-care/profile-photos',
-    public_id: String(userId),
+    folder,
+    public_id: String(publicId),
     overwrite: true,
     resource_type: 'image',
-    // Keep uploads reasonably small — profile photos don't need to be huge.
-    transformation: [{ width: 512, height: 512, crop: 'limit', quality: 'auto' }],
+    // Keep uploads reasonably small.
+    transformation: [{ width: 800, height: 800, crop: 'limit', quality: 'auto' }],
   });
   return result.secure_url;
 }
 
-module.exports = { isConfigured, uploadProfilePhoto };
+// Backwards-compatible name used by existing profile-photo callers.
+function uploadProfilePhoto(base64DataUri, userId) {
+  return uploadImage(base64DataUri, userId, 'poornima-s-care/profile-photos');
+}
+
+module.exports = { isConfigured, uploadProfilePhoto, uploadImage };

@@ -378,8 +378,8 @@
   <div class="card" style="max-width:640px;">
     <div id="chatMessages" style="height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px;"></div>
     <div style="display:flex;gap:8px;margin-top:12px;">
-      <input class="finp" id="chatInput" style="margin:0;flex:1;" placeholder="Type a message…" maxlength="500" onkeydown="if(event.key==='Enter')sendChat()"/>
-      <button class="btn-p" style="padding:9px 16px;" onclick="sendChat()">Send</button>
+      <input class="finp" id="campusChatInput" style="margin:0;flex:1;" placeholder="Type a message…" maxlength="500" onkeydown="if(event.key==='Enter')sendCampusChat()"/>
+      <button class="btn-p" style="padding:9px 16px;" onclick="sendCampusChat()">Send</button>
     </div>
   </div>
 </div>
@@ -537,21 +537,9 @@
 
 <!-- CHATBOT -->
 <div class="sec" id="s-chatbot">
-  <div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:4px;">🤖 ORION — Campus AI</div>
-  <div style="font-size:11px;color:var(--teal);margin-bottom:16px;">Ask anything about Poornima University</div>
-  <div class="card" style="max-width:680px;width:100%;">
-    <div id="chatMsgs" style="min-height:300px;max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
-      <div style="align-self:flex-start;background:#e8f6f8;border:1px solid var(--light);border-radius:10px;padding:11px 14px;max-width:80%;font-size:12px;">
-        <div style="font-weight:700;color:var(--navy);margin-bottom:4px;">ORION</div>
-        Hi! I'm ORION, your campus assistant. Ask me about contacts, fees, rules, transport or anything campus-related.
-      </div>
-    </div>
-    <div class="flex gap-2">
-      <input class="finp" style="margin-bottom:0;flex:1;" id="chatInput" placeholder="Ask ORION anything…" onkeydown="if(event.key==='Enter')sendChat()"/>
-      <button class="btn-p" onclick="sendChat()">Send →</button>
-    </div>
-  </div>
-</div>
+  <!-- ORION AI panel renders here automatically (see initOrionAI in features.js) —
+       it answers from your real data (complaints, laundry, timetable, events),
+       not an external AI call, so there's no API key to manage or leak. -->
 </div>
 
 <!-- EXAM CALENDAR -->
@@ -870,7 +858,7 @@ function searchMat(q){renderMats(allMats.filter(m=>(m.title+' '+(m.course||'')).
 function renderMats(mats){
   const el=document.getElementById('matList');
   if(!mats.length){el.innerHTML='<div class="empty"><div class="ei">📚</div><p>No materials uploaded yet</p></div>';return;}
-  el.innerHTML=mats.map(m=>`<div class="cc"><div class="cc-hdr"><div><div class="cc-title">${m.title}</div><div class="cc-sub">${m.course||''} · ${m.type||'Notes'}</div></div>${m.fileUrl?`<a href="${m.fileUrl}" target="_blank" class="btn-sm">Open →</a>`:''}</div>${m.description?`<div class="cc-body">${m.description}</div>`:''}</div>`).join('');
+  el.innerHTML=mats.map(m=>`<div class="cc"><div class="cc-hdr"><div><div class="cc-title">${escHtml(m.title)}</div><div class="cc-sub">${escHtml(m.course||'')} · ${escHtml(m.type||'Notes')}</div></div>${m.fileUrl?`<a href="${escHtml(m.fileUrl)}" target="_blank" rel="noopener noreferrer" class="btn-sm">Open →</a>`:''}</div>${m.description?`<div class="cc-body">${escHtml(m.description)}</div>`:''}</div>`).join('');
 }
 async function uploadMaterial(){
   const title=document.getElementById('mTitle').value.trim();
@@ -1185,8 +1173,8 @@ function startChatPolling(){
   },4000);
 }
 function stopChatPolling(){if(chatPollTimer){clearInterval(chatPollTimer);chatPollTimer=null;}}
-async function sendChat(){
-  const input=document.getElementById('chatInput');
+async function sendCampusChat(){
+  const input=document.getElementById('campusChatInput');
   const message=input.value.trim();
   if(!message)return;
   input.value='';
@@ -1220,21 +1208,6 @@ async function saveProfile(){
   if(phone&&!/^\d{10}$/.test(phone)){showToast('Phone must be 10 digits','error');return;}
   try{await apiFetch('/auth/profile',{method:'PATCH',body:JSON.stringify({dob,phone})});const u=getUser();u.dob=dob;u.phone=phone;localStorage.setItem('pc_user',JSON.stringify(u));const msg=document.getElementById('profileMsg');msg.textContent='✅ Profile updated!';msg.style.display='block';setTimeout(()=>msg.style.display='none',3000);}
   catch(e){showToast(e.message,'error');}
-}
-
-// CHATBOT
-async function sendChat(){
-  const input=document.getElementById('chatInput');const q=input.value.trim();if(!q)return;input.value='';
-  const msgs=document.getElementById('chatMsgs');
-  msgs.innerHTML+=`<div style="align-self:flex-end;background:var(--navy);border-radius:10px;padding:10px 13px;max-width:75%;font-size:12px;color:var(--light);">${q}</div>`;
-  msgs.innerHTML+=`<div id="orionThink" style="align-self:flex-start;background:#e8f6f8;border:1px solid var(--light);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--muted);">ORION is thinking…</div>`;
-  msgs.scrollTop=msgs.scrollHeight;
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'You are ORION, the AI assistant for Poornima University, Jaipur. Be helpful, concise and friendly.',messages:[{role:'user',content:q}]})});
-    const data=await res.json();const reply=(data.content||[]).map(i=>i.text||'').join('');
-    document.getElementById('orionThink').outerHTML=`<div style="align-self:flex-start;background:#e8f6f8;border:1px solid var(--light);border-radius:10px;padding:11px 14px;max-width:80%;font-size:12px;"><div style="font-weight:700;color:var(--navy);margin-bottom:4px;">ORION</div>${reply||'Could not get response.'}</div>`;
-  }catch(e){document.getElementById('orionThink').outerHTML=`<div style="align-self:flex-start;background:#fbe8e8;border:1px solid #f0c0c0;border-radius:10px;padding:10px 13px;font-size:12px;color:#A32D2D;">ORION unavailable right now.</div>`;}
-  msgs.scrollTop=msgs.scrollHeight;
 }
 </script>
 <script>

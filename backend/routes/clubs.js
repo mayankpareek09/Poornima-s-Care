@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Club = require('../models/Club');
 const { protect, requireRole } = require('../middleware/auth');
+const { sanitizeBody } = require('../utils/apiHelpers');
 
 const CAPTAIN_ROLES = ['club_captain','vice_captain'];
 
@@ -29,7 +30,7 @@ router.put('/:id', protect, requireRole('academic_admin','council_admin','club_c
       if (!clubIdStr || clubIdStr !== req.params.id)
         return res.status(403).json({ success: false, message: 'You can only edit your own club.' });
     }
-    const club = await Club.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const club = await Club.findByIdAndUpdate(req.params.id, sanitizeBody(req.body), { new: true });
     if (!club) return res.status(404).json({ success: false, message: 'Club not found.' });
     res.json({ success: true, message: 'Club updated!', club });
   } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }

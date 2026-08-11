@@ -258,8 +258,10 @@ function initOrionAI() {
   const user = _getUser();
   if (!user || user.role !== 'student') return;
 
-  // Inject Orion panel — find dashboard content area
-  const container = document.querySelector('.dashboard-content') ||
+  // Inject Orion panel — the dedicated ORION AI section is the primary
+  // target; the rest are fallbacks for pages that don't have one.
+  const container = document.querySelector('#s-chatbot') ||
+                    document.querySelector('.dashboard-content') ||
                     document.querySelector('.main-content') ||
                     document.querySelector('.content-area') ||
                     document.querySelector('#main-content') ||
@@ -331,7 +333,7 @@ async function runOrion() {
       const r = await fetch(`${FEAT_API}/api/laundry/my`, { headers: _authHeaders() });
       const data = await r.json();
       if (!data.success) throw new Error(data.message);
-      const l = data.laundry;
+      const l = data.record;
       const used = l?.usedWashes || 0;
       const total = l?.totalWashes || 30;
       const pct = Math.round(used / total * 100);
@@ -364,6 +366,26 @@ async function runOrion() {
             <p style="margin:4px 0 0;font-size:12px;color:#aaa;">${new Date(e.date).toLocaleDateString()} · ${e.venue||'TBA'}</p>
             <span style="font-size:11px;padding:2px 8px;background:rgba(102,126,234,0.3);border-radius:10px;color:#667eea;">${e.type}</span>
           </div>`).join('')}`;
+    } else if (query.includes('timetable') || query.includes('schedule') || query.includes('class')) {
+      const user = _getUser();
+      const r = await fetch(`${FEAT_API}/api/timetable${user?.course ? '?course=' + encodeURIComponent(user.course) : ''}`, { headers: _authHeaders() });
+      const data = await r.json();
+      if (!data.success) throw new Error(data.message);
+      const tt = (data.timetables || [])[0];
+      if (!tt) {
+        results.innerHTML = `<div style="color:#aaa;font-size:13px;padding:8px 0;">No timetable found for your course yet.</div>`;
+      } else {
+        const days = ['monday','tuesday','wednesday','thursday','friday','saturday'];
+        const today = days[new Date().getDay() - 1]; // getDay() 0=Sunday
+        const todaySlots = (tt.slots || []).filter(s => today && s[today] && s.type !== 'empty');
+        results.innerHTML = `
+          <div style="color:#aaa;font-size:11px;margin-bottom:10px;">${today ? "Today's classes" : "It's Sunday — no classes"} · ${tt.course} Sem ${tt.semester}</div>
+          ${todaySlots.length ? todaySlots.map(s => `
+            <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:12px;color:#aaa;">${s.time}</span>
+              <b style="font-size:13px;">${s[today]}</b>
+            </div>`).join('') : '<div style="color:#aaa;font-size:12px;">No classes scheduled today.</div>'}`;
+      }
     } else if (query.includes('pending') || query.includes('todo') || query.includes('summary')) {
       const [compR, laundR] = await Promise.all([
         fetch(`${FEAT_API}/api/complaints`, { headers: _authHeaders() }),
@@ -372,7 +394,7 @@ async function runOrion() {
       const compData = await compR.json();
       const laundData = await laundR.json();
       const openComp = (compData.complaints||[]).filter(c=>c.status!=='resolved').length;
-      const laundry = laundData.laundry;
+      const laundry = laundData.record;
       const quotaLeft = (laundry?.totalWashes||30) - (laundry?.usedWashes||0);
       results.innerHTML = `
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">

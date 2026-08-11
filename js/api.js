@@ -46,6 +46,17 @@ function requireAuth(allowedRoles) {
 }
 
 // ── Fetch wrapper ────────────────────────────────
+// Escapes HTML special characters before injecting user-supplied text into
+// innerHTML. Server-side sanitization already strips tags before storage,
+// but this covers any data written before that fix, and any other user text
+// rendered on the page — belt and suspenders.
+function escHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 async function apiFetch(endpoint, options = {}) {
   const token = getToken();
   const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };

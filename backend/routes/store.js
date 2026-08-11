@@ -3,6 +3,7 @@ const router       = express.Router();
 const StoreProduct = require('../models/StoreProduct');
 const StoreOrder   = require('../models/StoreOrder');
 const { protect, requireRole } = require('../middleware/auth');
+const { sanitizeBody } = require('../utils/apiHelpers');
 
 const ADMIN_ROLES = ['store_admin','campus_admin','super_admin'];
 
@@ -38,7 +39,7 @@ router.post('/products', protect, requireRole(ADMIN_ROLES), async (req, res) => 
 // PATCH /api/store/products/:id
 router.patch('/products/:id', protect, requireRole(ADMIN_ROLES), async (req, res) => {
   try {
-    const product = await StoreProduct.findByIdAndUpdate(req.params.id, req.body, { new:true });
+    const product = await StoreProduct.findByIdAndUpdate(req.params.id, sanitizeBody(req.body), { new:true });
     if (!product) return res.status(404).json({ success:false, message:'Product not found' });
     res.json({ success:true, product });
   } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
@@ -97,16 +98,38 @@ router.post('/orders', protect, async (req, res) => {
 
     let total = 0;
     const orderItems = [];
-    for (const { productId, size, qty } of items) {
-      const dbItem = await StoreProduct.findById(productId);
-      if (!dbItem) return res.status(400).json({ success:false, message:`Item not found` });
-      if (!dbItem.isAvailable) return res.status(400).json({ success:false, message:`"${dbItem.name}" not available.` });
-      if (dbItem.sizes.length && !size)
-        return res.status(400).json({ success:false, message:`Please select a size for "${dbItem.name}"` });
-      const q = Math.min(Math.max(1, qty), 10);
-      const sub = dbItem.price * q;
-      total += sub;
-      orderItems.push({ productId: dbItem._id, name: dbItem.name, size: size || '', price: dbItem.price, qty: q, subtotal: sub });
+    const stockDecrements = []; // track what we've already decremented, to roll back if a later item in the same order fails
+    try {
+      for (const { productId, size, qty } of items) {
+        const dbItem = await StoreProduct.findById(productId);
+        if (!dbItem) return res.status(400).json({ success:false, message:`Item not found` });
+        if (!dbItem.isAvailable) return res.status(400).json({ success:false, message:`"${dbItem.name}" not available.` });
+        if (dbItem.sizes.length && !size)
+          return res.status(400).json({ success:false, message:`Please select a size for "${dbItem.name}"` });
+        const q = Math.min(Math.max(1, qty), 10);
+
+        // Atomic conditional decrement — only succeeds if enough stock is
+        // still available at the moment of the write, so two students
+        // ordering the last item concurrently can't both succeed.
+        const decremented = await StoreProduct.findOneAndUpdate(
+          { _id: dbItem._id, stock: { $gte: q } },
+          { $inc: { stock: -q } },
+          { new: true }
+        );
+        if (!decremented) {
+          // Roll back anything already decremented earlier in this same order
+          for (const rb of stockDecrements) await StoreProduct.findByIdAndUpdate(rb.productId, { $inc: { stock: rb.qty } });
+          return res.status(400).json({ success:false, message:`"${dbItem.name}" — only ${dbItem.stock} left in stock.` });
+        }
+        stockDecrements.push({ productId: dbItem._id, qty: q });
+
+        const sub = dbItem.price * q;
+        total += sub;
+        orderItems.push({ productId: dbItem._id, name: dbItem.name, size: size || '', price: dbItem.price, qty: q, subtotal: sub });
+      }
+    } catch (stockErr) {
+      for (const rb of stockDecrements) await StoreProduct.findByIdAndUpdate(rb.productId, { $inc: { stock: rb.qty } });
+      throw stockErr;
     }
 
     const order = await StoreOrder.create({
@@ -151,10 +174,20 @@ router.patch('/orders/:id', protect, requireRole(ADMIN_ROLES), async (req, res) 
     const { status } = req.body;
     if (!['processing','ready','collected','cancelled'].includes(status))
       return res.status(400).json({ success:false, message:'Invalid status' });
-    const update = { status };
-    if (status === 'collected') update.collectedAt = new Date();
-    const order = await StoreOrder.findByIdAndUpdate(req.params.id, update, { new:true });
+    const order = await StoreOrder.findById(req.params.id);
     if (!order) return res.status(404).json({ success:false, message:'Order not found' });
+
+    // Cancelling an order releases the stock it was holding back, so the
+    // count doesn't permanently drift low from cancelled orders.
+    if (status === 'cancelled' && order.status !== 'cancelled') {
+      for (const item of order.items) {
+        await StoreProduct.findByIdAndUpdate(item.productId, { $inc: { stock: item.qty } });
+      }
+    }
+
+    order.status = status;
+    if (status === 'collected') order.collectedAt = new Date();
+    await order.save();
     res.json({ success:true, order });
   } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }
 });

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const BusRoute = require('../models/BusRoute');
 const { protect, requireRole } = require('../middleware/auth');
+const { sanitizeBody } = require('../utils/apiHelpers');
 
 // GET /api/bus — any logged-in user
 router.get('/', async (req, res) => {
@@ -16,7 +17,7 @@ router.get('/', async (req, res) => {
 // POST /api/bus — academic admin
 router.post('/', protect, requireRole('academic_admin'), async (req, res) => {
   try {
-    const route = await BusRoute.create({ ...req.body, updatedBy: req.user.name });
+    const route = await BusRoute.create({ ...sanitizeBody(req.body), updatedBy: req.user.name });
     res.status(201).json({ success: true, message: 'Bus route created!', route });
   } catch (err) {
     res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message });
@@ -26,7 +27,7 @@ router.post('/', protect, requireRole('academic_admin'), async (req, res) => {
 // PUT /api/bus/:id — academic admin
 router.put('/:id', protect, requireRole('academic_admin'), async (req, res) => {
   try {
-    const route = await BusRoute.findByIdAndUpdate(req.params.id, { ...req.body, updatedBy: req.user.name }, { new: true });
+    const route = await BusRoute.findByIdAndUpdate(req.params.id, { ...sanitizeBody(req.body), updatedBy: req.user.name }, { new: true });
     if (!route) return res.status(404).json({ success: false, message: 'Route not found.' });
     res.json({ success: true, message: 'Bus route updated!', route });
   } catch (err) {

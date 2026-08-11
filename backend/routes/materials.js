@@ -3,6 +3,17 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const { protect, requireRole } = require('../middleware/auth');
 const { escapeRegex } = require('../utils/sanitize');
+const { sanitizeString } = require('../utils/apiHelpers');
+
+// Only http(s) links are allowed for material file/external links — this
+// blocks javascript: and data: URIs, which would otherwise execute when a
+// student clicks "Open →" on another student's uploaded material.
+function safeUrl(url) {
+  if (!url) return '';
+  const trimmed = String(url).trim();
+  if (!/^https?:\/\//i.test(trimmed)) return '';
+  return trimmed;
+}
 
 // Inline schema — no separate file needed
 const materialSchema = new mongoose.Schema({
@@ -50,8 +61,9 @@ router.post('/', protect, async (req, res) => {
     const { title, subject, course, semester, type, description, fileUrl, externalUrl, tags } = req.body;
     if (!title || !subject) return res.status(400).json({ success: false, message: 'Title and subject are required.' });
     const mat = await Material.create({
-      title, subject, course, semester, type, description, fileUrl, externalUrl,
-      tags: tags || [], uploadedBy: req.user.name, uploadedById: req.user._id,
+      title: sanitizeString(title), subject: sanitizeString(subject), course, semester, type,
+      description: sanitizeString(description || ''), fileUrl: safeUrl(fileUrl), externalUrl: safeUrl(externalUrl),
+      tags: (tags || []).map(t => sanitizeString(String(t))), uploadedBy: req.user.name, uploadedById: req.user._id,
       uploaderRole: req.user.role || 'student',
       uploaderCourse: req.user.course || '',
       uploaderYear: req.user.year || '',
@@ -61,7 +73,7 @@ router.post('/', protect, async (req, res) => {
 });
 
 // PATCH /api/materials/:id/download — increment counter
-router.patch('/:id/download', async (req, res) => {
+router.patch('/:id/download', protect, async (req, res) => {
   try {
     await Material.findByIdAndUpdate(req.params.id, { $inc: { downloads: 1 } });
     res.json({ success: true });

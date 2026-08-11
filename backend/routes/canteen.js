@@ -3,8 +3,7 @@ const router   = express.Router();
 const CanteenItem  = require('../models/CanteenItem');
 const CanteenOrder = require('../models/CanteenOrder');
 const { protect, requireRole } = require('../middleware/auth');
-
-const ADMIN_ROLES = ['canteen_admin','campus_admin','super_admin'];
+const { sanitizeBody } = require('../utils/apiHelpers');const ADMIN_ROLES = ['canteen_admin','campus_admin','super_admin'];
 
 // GET /api/canteen/items
 router.get('/items', async (req, res) => {
@@ -28,7 +27,7 @@ router.post('/items', protect, requireRole(ADMIN_ROLES), async (req, res) => {
 // PATCH /api/canteen/items/:id
 router.patch('/items/:id', protect, requireRole(ADMIN_ROLES), async (req, res) => {
   try {
-    const item = await CanteenItem.findByIdAndUpdate(req.params.id, req.body, { new:true });
+    const item = await CanteenItem.findByIdAndUpdate(req.params.id, sanitizeBody(req.body), { new:true });
     if (!item) return res.status(404).json({ success:false, message:'Item not found' });
     res.json({ success:true, item });
   } catch(e) { res.status(500).json({ success:false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : e.message }); }

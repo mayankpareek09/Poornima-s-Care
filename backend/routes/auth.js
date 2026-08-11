@@ -3,7 +3,7 @@ const router  = express.Router();
 const jwt     = require('jsonwebtoken');
 const User    = require('../models/User');
 const { protect } = require('../middleware/auth');
-const { sanitizeString } = require('../utils/apiHelpers');
+const { sanitizeString, validateImageDataUri } = require('../utils/apiHelpers');
 const cloudinaryUtil = require('../utils/cloudinary');
 
 const MAX_ATTEMPTS = 5;
@@ -151,6 +151,52 @@ router.post('/verify-otp', async (req, res) => {
   } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
 });
 
+// POST /api/auth/forgot-password — request an OTP to reset your password.
+// Always responds with the same message whether or not the userId exists,
+// so this endpoint can't be used to enumerate valid student IDs.
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ success: false, message: 'University ID is required.' });
+    const normalizedId = normalizeRegNo(userId);
+    const user = await User.findOne({ userId: normalizedId });
+    const genericMsg = 'If that ID exists, an OTP has been sent to the registered phone number.';
+    if (!user) return res.json({ success: true, message: genericMsg });
+
+    const otp = generateOTP();
+    user.otp = otp;
+    user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+    await user.save();
+    await sendSmsOtp(user.phone || '', otp);
+    console.log(`\n🔑 Password reset OTP for ${normalizedId}: ════════ ${otp} ════════\n`);
+    res.json({ success: true, message: genericMsg });
+  } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
+});
+
+// POST /api/auth/reset-password — verify the OTP and set a new password.
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { userId, otp, newPassword } = req.body;
+    if (!userId || !otp || !newPassword)
+      return res.status(400).json({ success: false, message: 'University ID, OTP, and new password are all required.' });
+    if (newPassword.length < 6)
+      return res.status(400).json({ success: false, message: 'New password must be at least 6 characters.' });
+
+    const normalizedId = normalizeRegNo(userId);
+    const user = await User.findOne({ userId: normalizedId });
+    if (!user || !user.otp || user.otp !== otp)
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP.' });
+    if (user.otpExpires < new Date())
+      return res.status(400).json({ success: false, message: 'OTP expired. Please request a new one.' });
+
+    user.password = newPassword; // pre('save') hook hashes this
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+    res.json({ success: true, message: 'Password reset! You can now sign in with your new password.' });
+  } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }
+});
+
 // GET /api/auth/me
 router.get('/me', protect, async (req, res) => {
   res.json({ success: true, user: req.user.toJSON() });
@@ -164,6 +210,8 @@ router.patch('/profile', protect, async (req, res) => {
     if (dob !== undefined) update.dob = dob;
     if (phone !== undefined) update.phone = phone;
     if (profilePhoto !== undefined) {
+      const imgCheck = validateImageDataUri(profilePhoto);
+      if (!imgCheck.ok) return res.status(400).json({ success: false, message: imgCheck.message });
       // A raw data URI means the client sent a fresh base64 photo. If
       // Cloudinary is configured, move it out of Mongo and store the URL
       // instead; otherwise keep the previous behavior so nothing breaks for

@@ -101,11 +101,35 @@ body{background:linear-gradient(135deg,var(--navy) 0%,#1a4f58 50%,var(--navy) 10
       <input class="finp" id="loginId" placeholder="e.g. PU2021CS045" autocomplete="username"/>
       <div class="flbl">Password</div>
       <input class="finp" id="loginPwd" type="password" placeholder="••••••••" autocomplete="current-password"/>
+      <div style="text-align:right;margin-bottom:10px;">
+        <a style="font-size:11px;color:var(--teal);cursor:pointer;" onclick="openModal('forgotPwdModal')">Forgot password?</a>
+      </div>
       <div class="login-err" id="loginErr"></div>
       <button class="btn-login" id="loginBtn" onclick="doLogin()">Sign In →</button>
       <div class="login-links">
         <a onclick="window.location.href='register.html'">New student? Register →</a>
       </div>
+    </div>
+  </div>
+
+  <div class="modal-ov" id="forgotPwdModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('forgotPwdModal')">✕</button>
+      <div class="modal-title">Reset Password</div>
+      <div id="fpStep1">
+        <div class="flbl">University ID</div>
+        <input class="finp" id="fpUserId" placeholder="e.g. PU2021CS045"/>
+        <button class="btn-p full" onclick="requestPasswordReset()">Send OTP →</button>
+      </div>
+      <div id="fpStep2" style="display:none;">
+        <div style="font-size:11px;color:var(--teal);margin-bottom:12px;">OTP sent to your registered phone number. Check the server console if testing locally.</div>
+        <div class="flbl">OTP</div>
+        <input class="finp" id="fpOtp" placeholder="6-digit code" maxlength="6"/>
+        <div class="flbl">New Password</div>
+        <input class="finp" type="password" id="fpNewPwd" placeholder="At least 6 characters"/>
+        <button class="btn-p full" onclick="submitPasswordReset()">Reset Password →</button>
+      </div>
+      <div id="fpMsg" style="display:none;margin-top:10px;font-size:12px;"></div>
     </div>
   </div>
 </div>
@@ -227,6 +251,29 @@ async function doLogin(){
 }
 
 document.addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+async function requestPasswordReset(){
+  const userId = document.getElementById('fpUserId').value.trim();
+  const msg = document.getElementById('fpMsg');
+  if(!userId){ msg.style.display='block'; msg.style.color='var(--red)'; msg.textContent='Enter your University ID.'; return; }
+  try{
+    const data = await apiFetch('/auth/forgot-password', { method:'POST', body: JSON.stringify({ userId }) });
+    document.getElementById('fpStep1').style.display='none';
+    document.getElementById('fpStep2').style.display='block';
+    msg.style.display='block'; msg.style.color='var(--teal)'; msg.textContent=data.message;
+  }catch(e){ msg.style.display='block'; msg.style.color='var(--red)'; msg.textContent=e.message; }
+}
+async function submitPasswordReset(){
+  const userId = document.getElementById('fpUserId').value.trim();
+  const otp = document.getElementById('fpOtp').value.trim();
+  const newPassword = document.getElementById('fpNewPwd').value;
+  const msg = document.getElementById('fpMsg');
+  try{
+    const data = await apiFetch('/auth/reset-password', { method:'POST', body: JSON.stringify({ userId, otp, newPassword }) });
+    msg.style.display='block'; msg.style.color='var(--green)'; msg.textContent=data.message+' Closing…';
+    setTimeout(()=>{ closeModal('forgotPwdModal'); document.getElementById('fpStep1').style.display='block'; document.getElementById('fpStep2').style.display='none'; document.getElementById('fpOtp').value=''; document.getElementById('fpNewPwd').value=''; }, 1800);
+  }catch(e){ msg.style.display='block'; msg.style.color='var(--red)'; msg.textContent=e.message; }
+}
 </script>
 <script src="/js/features.js"></script>
 </body></html>

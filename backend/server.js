@@ -39,25 +39,59 @@ app.use((req, res, next) => {
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  // Locks down browser features this app never uses, so an XSS payload
+  // (if one ever slipped through) couldn't turn on the camera/mic/location
+  // silently. The Scan QR feature is the one place camera is used, and that
+  // grant comes from the page's own getUserMedia call, not this header —
+  // Permissions-Policy restricts cross-origin/embedded use, not same-origin.
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), payment=()');
   next();
 });
 
-// Serve static frontend files
+// Serve static frontend files — explicit allowlist only. The previous
+// `express.static(path.join(__dirname, '../'))` served the ENTIRE project
+// root, which includes backend/ (server.js, every route, every model, and
+// critically backend/.env — DB password, JWT secret, admin secret were all
+// publicly downloadable at /backend/.env). This mounts only the actual
+// frontend directories and the specific static files at the root that pages
+// reference, so nothing outside those is ever reachable over HTTP.
 const frontendPath = path.join(__dirname, '../');
-app.use(express.static(frontendPath, {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.html')) {
+const staticHeaders = {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
     }
   }
-}));
+};
+app.use('/css', express.static(path.join(frontendPath, 'css'), staticHeaders));
+app.use('/js', express.static(path.join(frontendPath, 'js'), staticHeaders));
+app.use('/pages', express.static(path.join(frontendPath, 'pages'), staticHeaders));
+['index.html', 'register.html', 'manifest.json', 'sw.js', 'icon-192.png', 'icon-512.png'].forEach(file => {
+  app.get('/' + file, (req, res) => res.sendFile(path.join(frontendPath, file), staticHeaders));
+});
 
 // DB connect
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB connected'))
   .catch(err => { console.error('❌ MongoDB error:', err.message); process.exit(1); });
+
+// Health check — reports whether the server process is up and whether it
+// currently has a working MongoDB connection. Useful for Render's health
+// checks and for quickly checking "is the DB actually connected" without
+// digging through logs.
+app.get(['/health', '/api/health'], (req, res) => {
+  const dbState = mongoose.connection.readyState; // 0=disconnected 1=connected 2=connecting 3=disconnecting
+  const dbStatus = ['disconnected', 'connected', 'connecting', 'disconnecting'][dbState] || 'unknown';
+  res.status(dbState === 1 ? 200 : 503).json({
+    success: dbState === 1,
+    status: dbState === 1 ? 'ok' : 'degraded',
+    db: dbStatus,
+    uptimeSeconds: Math.round(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
+});
 
 // Rate limiter — protects login/register from brute-force and spam
 // 20 requests per 15 minutes per IP on auth endpoints
@@ -118,9 +152,8 @@ app.use('/api/chat',          apiLimiter, require('./routes/chat'));
 // Serve login page for root
 app.get('/', (req, res) => res.sendFile(path.join(frontendPath, 'index.html')));
 
-// Serve register page
+// Serve register page (short alias — /register.html is covered by the allowlist above)
 app.get('/register', (req, res) => res.sendFile(path.join(frontendPath, 'register.html')));
-app.get('/register.html', (req, res) => res.sendFile(path.join(frontendPath, 'register.html')));
 
 // Fallback: serve index / login for unmatched routes (SPA style)
 app.get('*', (req, res) => {
@@ -136,6 +169,21 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 const os = require('os');
+
+// Without these, one unhandled promise rejection anywhere in the app (a
+// missed .catch() in some route, a background job, etc.) crashes the entire
+// Node process — logging everyone out and taking the whole site down until
+// Render restarts it. This logs the error and keeps serving instead.
+process.on('unhandledRejection', (reason) => {
+  console.error('❌ Unhandled promise rejection:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught exception:', err);
+  // Intentionally not exiting — Express's own request-level try/catch blocks
+  // handle almost all real errors already; this is a last-resort net for
+  // anything outside a request context, and killing the process on every
+  // such error would be worse than logging and continuing.
+});
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🚀 Poornima's Care — Running on port ${PORT}`);

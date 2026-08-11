@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const LostFound = require('../models/LostFound');
 const { protect, requireRole } = require('../middleware/auth');
-const { sanitizeString } = require('../utils/apiHelpers');
+const { sanitizeString, validateImageDataUri } = require('../utils/apiHelpers');
 const { createNotification } = require('../utils/notificationHelper');
+const cloudinaryUtil = require('../utils/cloudinary');
 
 // GET /api/lostfound — browse all open items (any logged-in user), newest first.
 // Optional query filters: type=lost|found, category=..., q=search text
@@ -38,6 +39,14 @@ router.post('/', protect, async (req, res) => {
     if (!itemName || !itemName.trim())
       return res.status(400).json({ success: false, message: 'Item name is required.' });
 
+    const imgCheck = validateImageDataUri(photo);
+    if (!imgCheck.ok) return res.status(400).json({ success: false, message: imgCheck.message });
+    let photoValue = photo || '';
+    if (photoValue.startsWith('data:image') && cloudinaryUtil.isConfigured) {
+      try { photoValue = await cloudinaryUtil.uploadImage(photoValue, req.user._id + '-' + Date.now(), 'poornima-s-care/lostfound'); }
+      catch (uploadErr) { console.error('Cloudinary upload failed for lost&found photo:', uploadErr.message); }
+    }
+
     const item = await LostFound.create({
       reporterId: req.user._id,
       reporterName: req.user.name,
@@ -47,7 +56,7 @@ router.post('/', protect, async (req, res) => {
       description: sanitizeString(description || ''),
       category: category || 'Other',
       location: sanitizeString(location || ''),
-      photo: photo || '',
+      photo: photoValue,
     });
     res.status(201).json({ success: true, message: 'Reported! ' + (type === 'lost' ? 'We\'ll notify you if someone reports finding it.' : 'Thanks for reporting — the owner can now find it here.'), item });
   } catch (err) { res.status(500).json({ success: false, message: process.env.NODE_ENV==="production" ? "Server error. Please try again." : err.message }); }

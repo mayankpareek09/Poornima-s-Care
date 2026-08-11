@@ -51,7 +51,21 @@ This file tracks every finding across the 3-part audit so nothing is lost betwee
 
 ## PART 2 — Portals (Student, Faculty, Guard, Visitor, Laundry, Mess, Canteen, Store, Hostel, Academic Admin, Campus Admin, Student Council, Clubs, Events, Complaints, Appointments, Transport) + navigation/UI/UX/mobile/workflows
 
-**Status: NOT STARTED.**
+**Status: IN PROGRESS.**
+
+### Findings so far
+
+| # | Severity | File / Line | Issue | Root Cause | Fix | Verified |
+|---|----|------|-------|------------|-----|----|
+| 1 | 🟢 Low | `pages/store-admin.html` | `showView()` function defined twice | Leftover duplicate from an earlier edit — both copies were byte-for-byte identical, so no functional bug (2nd silently overwrote the 1st with the same code), but dead/redundant code | Removed the duplicate, kept one copy | ✅ Verified — 0 duplicate functions/IDs across all 22 pages now, `switchType()` body (accidentally clipped during the first fix attempt) restored and confirmed intact, brace/div counts balanced |
+| 2 | 🔵 Checked | All 22 pages | Duplicate function names / element IDs (the same bug class as the earlier Campus Chat/ORION collision) | — | Scanned every page programmatically — only the store-admin.html case above found | No other duplicates anywhere |
+| 3 | 🔵 Checked | Every `apiFetch()` call across all 22 pages vs. every backend route file | Endpoint path mismatches (the same bug class as the earlier `data.laundry` vs `data.record` field bug) | — | Cross-referenced every API call prefix against every registered backend route group programmatically | 0 mismatches — every endpoint called from the frontend exists on the backend |
+| 4 | 🔵 Checked | Guard Portal — visitor registration + OTP verify workflow | — | — | Traced `registerVisitor()`/`verifyOtp()` against `visitors.js` field-by-field | Correctly wired, client-side validation present, no bug |
+| 5 | 🔵 Checked | Faculty Portal — profile + appointment request workflow | — | — | Traced against `appointments.js` | Correctly wired, no bug |
+| 6 | 🔵 Checked | Mess Admin — menu + token verification workflow | — | — | Traced against `mess.js` | Correctly wired, no bug |
+
+### Still to check
+Student, Hostel, Academic Admin, Campus Admin, Student Council, Clubs, Events, Complaints workflows in depth; Laundry/Canteen/Store admin workflows in depth; mobile responsiveness spot-check across portals; UI/UX consistency pass.
 
 ---
 

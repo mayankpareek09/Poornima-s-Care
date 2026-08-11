@@ -97,7 +97,6 @@ function switchType(t){
   document.getElementById('productsTitle').textContent=t==='store'?'🏷️ Store Products':'🏷️ Stationery Products';
   if(document.getElementById('v-orders').classList.contains('active'))loadOrders();else loadProducts();
 }
-function showView(id,el){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.asb-link').forEach(l=>l.classList.remove('active'));document.getElementById('v-'+id).classList.add('active');if(el)el.classList.add('active');}
 async function loadOrders(){
   try{
     const [sD,oD]=await Promise.all([apiFetch('/store/stats?type='+curType),apiFetch('/store/orders?type='+curType)]);

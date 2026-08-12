@@ -62,7 +62,7 @@ async function sendSmsOtp(phone, otp) {
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
   try {
-    const { userId, password, role } = req.body;
+    const { userId, password } = req.body;
     if (!userId || !password)
       return res.status(400).json({ success: false, message: 'User ID and password are required.' });
 
@@ -87,9 +87,14 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ success: false, message: `Invalid credentials. ${remaining > 0 ? remaining + ' attempt(s) remaining.' : 'Account locked for 15 minutes.'}` });
     }
 
-    const roleForLogin = role === 'club_captain' ? ['club_captain','vice_captain'] : [role];
-    if (!roleForLogin.includes(user.role))
-      return res.status(403).json({ success: false, message: `This account is not registered as ${role.replace('_',' ')}.` });
+    // Login is based on userId + password only — the account's real role
+    // (from the database) always determines where the user lands and what
+    // they can access. There used to be a required "role" field here that
+    // had to match a pre-selected tab on the login page, but that never
+    // added real security (the JWT and every permission check already use
+    // user.role from the DB, not anything the client sends) — it only
+    // forced people to know/guess which of 15 admin types their own
+    // account was before they could even attempt to log in.
 
     user.loginAttempts = 0; user.lockUntil = undefined;
     await user.save();

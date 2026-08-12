@@ -72,32 +72,7 @@ body{background:linear-gradient(135deg,var(--navy) 0%,#1a4f58 50%,var(--navy) 10
       <div class="hero-sub">Campus management portal · Session 2026-27</div>
     </div>
     <div class="login-body">
-      <div class="portal-tabs" id="portalTabs">
-        <div class="ptab active" id="pt-student" onclick="selectPortal('student')"><span class="ptab-ic">🎓</span><span class="ptab-lb">Student</span></div>
-        <div class="ptab" id="pt-admin" onclick="selectPortal('admin')"><span class="ptab-ic">🔐</span><span class="ptab-lb">Admin</span></div>
-        <div class="ptab" id="pt-laundry_admin" onclick="selectPortal('laundry_admin')"><span class="ptab-ic">👕</span><span class="ptab-lb">Laundry</span></div>
-        <div class="ptab" id="pt-council" onclick="selectPortal('council')"><span class="ptab-ic">👑</span><span class="ptab-lb">Council</span></div>
-        <div class="ptab" id="pt-guard" onclick="selectPortal('guard')"><span class="ptab-ic">🛂</span><span class="ptab-lb">Guard</span></div>
-        <div class="ptab" id="pt-faculty" onclick="selectPortal('faculty')"><span class="ptab-ic">🧑‍🏫</span><span class="ptab-lb">Faculty</span></div>
-        <!-- Hidden super admin tab — revealed by clicking logo square 5 times -->
-        <div class="ptab" id="pt-super" onclick="selectPortal('super')" style="display:none;grid-column:1/-1;background:#1A0A2E;border-color:#8E44AD;"><span class="ptab-ic">⚡</span><span class="ptab-lb" style="color:#9B59B6;">Super Admin</span></div>
-      </div>
-      <div class="admin-sub" id="adminSub" style="display:none;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;">
-        <div class="csub active" onclick="selectAdmin('academic_admin',this)">🎓 Academic Admin</div>
-        <div class="csub" onclick="selectAdmin('hostel_admin',this)">🏠 Hostel Admin</div>
-        <div class="csub" onclick="selectAdmin('campus_admin',this)">🏛️ Campus Admin</div>
-        <div class="csub" onclick="selectAdmin('canteen_admin',this)">🍽️ Canteen Admin</div>
-        <div class="csub" onclick="selectAdmin('mess_admin',this)">🍛 Mess Admin</div>
-        <div class="csub" onclick="selectAdmin('store_admin',this)">🛍️ Store Admin</div>
-        <div class="csub" onclick="selectAdmin('library_admin',this)">📚 Library Admin</div>
-        <div class="csub" onclick="selectAdmin('placement_admin',this)">💼 Placement Admin</div>
-        <div class="csub" onclick="selectAdmin('medical_admin',this)">🏥 Medical Admin</div>
-      </div>
-      <div class="council-sub" id="councilSub">
-        <div class="csub active" id="cs-chair" onclick="selectCouncil('council_admin','cs-chair')">👑 Chair / Co-Chair</div>
-        <div class="csub" id="cs-captain" onclick="selectCouncil('club_captain','cs-captain')">🏫 Captain / VC</div>
-      </div>
-      <div class="flbl">Enrollment ID</div>
+      <div class="flbl">University ID</div>
       <input class="finp" id="loginId" placeholder="e.g. PU2021CS045" autocomplete="username"/>
       <div class="flbl">Password</div>
       <input class="finp" id="loginPwd" type="password" placeholder="••••••••" autocomplete="current-password"/>
@@ -106,6 +81,7 @@ body{background:linear-gradient(135deg,var(--navy) 0%,#1a4f58 50%,var(--navy) 10
       </div>
       <div class="login-err" id="loginErr"></div>
       <button class="btn-login" id="loginBtn" onclick="doLogin()">Sign In →</button>
+      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:14px;">One login for every role — student, faculty, or any admin account. You'll land on the right dashboard automatically.</div>
       <div class="login-links">
         <a onclick="window.location.href='register.html'">New student? Register →</a>
       </div>
@@ -135,67 +111,6 @@ body{background:linear-gradient(135deg,var(--navy) 0%,#1a4f58 50%,var(--navy) 10
 </div>
 <script src="js/api.js"></script>
 <script>
-let role = 'student';
-
-// ── Secret super admin access ──
-// Method 1: Visit index.html?sa=1  (only you know this)
-// Method 2: Click the SESSION text 3 times
-function revealSuperAdmin(){
-  const tab = document.getElementById('pt-super');
-  tab.style.display = tab.style.display === 'none' ? 'block' : 'none';
-}
-// URL param method
-if(window.location.search.includes('sa=1')){
-  document.getElementById('pt-super').style.display = 'block';
-  selectPortal('super');
-}
-// Click "Session 2026-27" text 3 times method
-let saClicks = 0, saTimer;
-document.querySelector('.hero-sub').style.cursor = 'default';
-document.querySelector('.hero-sub').addEventListener('click', function(){
-  saClicks++;
-  clearTimeout(saTimer);
-  saTimer = setTimeout(function(){ saClicks = 0; }, 4000);
-  if(saClicks >= 3){
-    saClicks = 0;
-    revealSuperAdmin();
-  }
-});
-
-function selectPortal(p){
-  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('pt-'+p).classList.add('active');
-  document.getElementById('adminSub').style.display = 'none';
-  document.getElementById('councilSub').classList.remove('show');
-
-  if(p === 'admin'){
-    role = 'academic_admin';
-    document.getElementById('adminSub').style.display = 'grid';
-  } else if(p === 'council'){
-    role = 'council_admin';
-    document.getElementById('councilSub').classList.add('show');
-  } else if(p === 'super'){
-    role = 'super_admin';
-  } else if(p === 'laundry_admin'){
-    role = 'laundry_admin';
-  } else {
-    role = p;
-  }
-  document.getElementById('loginErr').textContent = '';
-}
-
-function selectAdmin(r, el){
-  role = r;
-  document.querySelectorAll('#adminSub .csub').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function selectCouncil(r, activeId){
-  role = r;
-  document.querySelectorAll('#councilSub .csub').forEach(t=>t.classList.remove('active'));
-  document.getElementById(activeId).classList.add('active');
-}
-
 async function doLogin(){
   const id  = document.getElementById('loginId').value.trim();
   const pwd = document.getElementById('loginPwd').value.trim();
@@ -213,7 +128,7 @@ async function doLogin(){
     const res = await fetch(API_URL + '/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: id, password: pwd, role })
+      body: JSON.stringify({ userId: id, password: pwd })
     });
     const data = await res.json();
     if(!data.success){ err.textContent = data.message || 'Login failed. Try again.'; return; }

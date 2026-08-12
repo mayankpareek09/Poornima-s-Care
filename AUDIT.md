@@ -64,6 +64,11 @@ This file tracks every finding across the 3-part audit so nothing is lost betwee
 | 5 | 🔵 Checked | Faculty Portal — profile + appointment request workflow | — | — | Traced against `appointments.js` | Correctly wired, no bug |
 | 6 | 🔵 Checked | Mess Admin — menu + token verification workflow | — | — | Traced against `mess.js` | Correctly wired, no bug |
 
+### UX change (requested, not a bug) — unified login
+| # | File | Change | Why | Verified |
+|---|------|--------|-----|----|
+| 7 | `index.html`, `backend/routes/auth.js` | Removed the multi-tab role-selection UI (Student/Admin/Laundry/Council/Guard/Faculty + 9-option admin sub-menu + council sub-menu) in favor of a single ID+password form | The pre-selected role never added real security — the backend already looked up the account's real role from the DB and used that for the JWT and every permission check. The selected tab only gated whether login was *allowed to proceed*, forcing users to know which of 15 admin types their own account was before they could log in. Removed the matching check server-side; redirect already used `data.user.role` (the real role), so no redirect-logic change was needed — just deleted the friction. Also removed a "secret super admin" 3-click reveal mechanism that referenced now-deleted DOM elements (would have thrown null-reference errors if triggered; also unnecessary now since a super_admin account just logs in normally) | ✅ Syntax clean, div balance verified, full regression clean, login endpoint confirmed reachable without a role field |
+
 ### Still to check
 Student, Hostel, Academic Admin, Campus Admin, Student Council, Clubs, Events, Complaints workflows in depth; Laundry/Canteen/Store admin workflows in depth; mobile responsiveness spot-check across portals; UI/UX consistency pass.
 
